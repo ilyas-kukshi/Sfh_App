@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "16266303128",
+    "project_id": "sakina-fashion-house",
+    "storage_bucket": "sakina-fashion-house.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:16266303128:android:4c2fa3c498b3f64d46e2ed",
+        "android_client_info": {
+          "package_name": "com.example.sfh_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "16266303128-2no262drv9pbip0ofvv91imdfe858a1b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAalAPTKZZ2lSH7WHCEscA4ClU96Qe1XFI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "16266303128-2no262drv9pbip0ofvv91imdfe858a1b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

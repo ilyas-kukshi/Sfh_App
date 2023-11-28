@@ -1,12 +1,18 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sfh_app/models/category/category_model.dart';
 import 'package:sfh_app/services/category_services.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 
 class AddCategory extends StatefulWidget {
-  const AddCategory({super.key});
+  CategoryModel? category;
+  AddCategory({super.key, this.category});
 
   @override
   State<AddCategory> createState() => _AddCategoryState();
@@ -15,6 +21,7 @@ class AddCategory extends StatefulWidget {
 class _AddCategoryState extends State<AddCategory> {
   ImagePicker picker = ImagePicker();
   XFile? file;
+  CroppedFile? croppedFile;
 
   TextEditingController name = TextEditingController();
   @override
@@ -32,12 +39,20 @@ class _AddCategoryState extends State<AddCategory> {
               child: CircleAvatar(
                 radius: 60,
                 child: Center(
-                    child: file == null
-                        ? Text(
+                    child: croppedFile == null
+                        ? const Text(
                             "Click to pick image",
                             overflow: TextOverflow.ellipsis,
                           )
-                        : CachedNetworkImage(imageUrl: file!.path)),
+                        : Container(
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(color: Colors.green)),
+                            child: Image.file(
+                              File(croppedFile!.path),
+                              fit: BoxFit.fill,
+                            ),
+                          )),
               ),
             ),
             const SizedBox(height: 10),
@@ -58,20 +73,59 @@ class _AddCategoryState extends State<AddCategory> {
     );
   }
 
+  Future<String?> uploadPhoto() async {
+    var ref = FirebaseStorage.instance.ref(name.text);
+
+    try {
+      await ref.putFile(File(croppedFile!.path));
+    } catch (error) {
+      Fluttertoast.showToast(msg: error.toString());
+      return null;
+    }
+
+    return await ref.getDownloadURL();
+  }
+
   addCategory() async {
-    bool added = await CategoryServices().addCategory(CategoryModel(
-        name: name.text,
-        id: 'id',
-        imageUri: 'id',
-        products: [],
-        subCategories: [],
-        v: 0));
+    String? imageUrl = await uploadPhoto();
+
+    if (imageUrl != null) {
+      bool added = await CategoryServices().addCategory(CategoryModel(
+          name: name.text,
+          id: 'id',
+          imageUri: imageUrl,
+          products: [],
+          subCategories: [],
+          v: 0));
+    }
   }
 
   pickImage() async {
     file = await picker.pickImage(source: ImageSource.gallery);
 
     if (file != null) {
+      print(file!.path);
+      croppedFile = await ImageCropper().cropImage(
+        sourcePath: file!.path,
+        aspectRatioPresets: [
+          CropAspectRatioPreset.square,
+        ],
+        uiSettings: [
+          AndroidUiSettings(
+              toolbarTitle: 'Cropper',
+              toolbarColor: Colors.deepOrange,
+              toolbarWidgetColor: Colors.white,
+              initAspectRatio: CropAspectRatioPreset.original,
+              lockAspectRatio: false),
+          IOSUiSettings(
+            title: 'Cropper',
+          ),
+          WebUiSettings(
+            context: context,
+          ),
+        ],
+      );
+
       setState(() {});
     }
 

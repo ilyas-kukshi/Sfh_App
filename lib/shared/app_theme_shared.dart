@@ -12,6 +12,7 @@ class AppThemeShared {
       bool automaticallyImplyLeading = false,
       bool? centerTitle = true,
       Widget? leading,
+      bool backButton = true,
       List<Widget>? actions,
       Color? backgroundColor = const Color(0xff439A97),
       double textSize = 26,
@@ -24,7 +25,15 @@ class AppThemeShared {
       ),
       automaticallyImplyLeading: false,
       centerTitle: centerTitle,
-      leading: leading,
+      leading: leading ?? (backButton
+              ? GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: const Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.white,
+                  ),
+                )
+              : const Offstage()),
       actions: actions,
       backgroundColor: backgroundColor,
     );
@@ -131,9 +140,11 @@ class AppThemeShared {
           floatingLabelBehavior: FloatingLabelBehavior.always,
           contentPadding: const EdgeInsets.all(20),
           hintText: hintText,
-          hintStyle: TextStyle(fontSize: 18, color: Colors.black.withOpacity(0.7)),
+          hintStyle:
+              TextStyle(fontSize: 18, color: Colors.black.withOpacity(0.7)),
           labelText: labelText,
-          labelStyle: TextStyle(fontSize: 16, color: AppThemeShared.primaryColor),
+          labelStyle:
+              TextStyle(fontSize: 16, color: AppThemeShared.primaryColor),
           suffixIcon: suffixIcon,
           isDense: true,
           prefixIcon: prefixIcon,
@@ -214,7 +225,8 @@ class AppThemeShared {
       child: DropdownButtonFormField(
           decoration: InputDecoration(
             labelText: labelText,
-            labelStyle: TextStyle(fontSize: 16, color: AppThemeShared.primaryColor),
+            labelStyle:
+                TextStyle(fontSize: 16, color: AppThemeShared.primaryColor),
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(borderRadius),
                 borderSide: BorderSide(

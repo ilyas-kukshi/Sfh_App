@@ -10,7 +10,7 @@ class CategoryServices {
       print(jsonEncode(category));
       var response = await http.post(
           Uri.parse("${Constants.baseUrl}category/add"),
-          body: {"name": category.name});
+          body: {"name": category.name, "imageUri": category.imageUri});
 
       if (response.statusCode == 201) {
         return true;
@@ -22,5 +22,24 @@ class CategoryServices {
       print(error);
     }
     return false;
+  }
+
+  Future<List<CategoryModel>> getAll() async {
+    List<CategoryModel> categories = [];
+    try {
+      var response =
+          await http.get(Uri.parse("http://192.168.1.100:8080/category/get"));
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        for (var category in data["categories"]) {
+          categories.add(CategoryModel.fromJson(category));
+        }
+        return categories;
+      }
+    } catch (error) {
+      print(error);
+      return [];
+    }
+    return [];
   }
 }
