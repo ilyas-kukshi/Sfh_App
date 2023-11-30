@@ -28,6 +28,12 @@ class _DashboardDrawerState extends State<DashboardDrawer> {
                 },
                 child: Text("Manage Category",
                     style: Theme.of(context).textTheme.titleMedium)),
+            GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, '/addProducts');
+                },
+                child: Text("Add Product",
+                    style: Theme.of(context).textTheme.titleMedium)),
           ],
         ),
       ),

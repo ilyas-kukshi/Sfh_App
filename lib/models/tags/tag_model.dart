@@ -16,8 +16,8 @@ String tagModelToJson(TagModel data) => json.encode(data.toJson());
 class TagModel with _$TagModel {
   const factory TagModel({
     required String name,
-    required String categoryId,
-    String? id,
+    required String category,
+    @JsonKey(name: '_id') String? id,
     int? v,
   }) = _TagModel;
 

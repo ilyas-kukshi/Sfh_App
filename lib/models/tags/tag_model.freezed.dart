@@ -21,7 +21,7 @@ TagModel _$TagModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$TagModel {
   String get name => throw _privateConstructorUsedError;
-  String get categoryId => throw _privateConstructorUsedError;
+  String get category => throw _privateConstructorUsedError;
   String? get id => throw _privateConstructorUsedError;
   int? get v => throw _privateConstructorUsedError;
 
@@ -36,7 +36,7 @@ abstract class $TagModelCopyWith<$Res> {
   factory $TagModelCopyWith(TagModel value, $Res Function(TagModel) then) =
       _$TagModelCopyWithImpl<$Res, TagModel>;
   @useResult
-  $Res call({String name, String categoryId, String? id, int? v});
+  $Res call({String name, String category, String? id, int? v});
 }
 
 /// @nodoc
@@ -53,7 +53,7 @@ class _$TagModelCopyWithImpl<$Res, $Val extends TagModel>
   @override
   $Res call({
     Object? name = null,
-    Object? categoryId = null,
+    Object? category = null,
     Object? id = freezed,
     Object? v = freezed,
   }) {
@@ -62,9 +62,9 @@ class _$TagModelCopyWithImpl<$Res, $Val extends TagModel>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      categoryId: null == categoryId
-          ? _value.categoryId
-          : categoryId // ignore: cast_nullable_to_non_nullable
+      category: null == category
+          ? _value.category
+          : category // ignore: cast_nullable_to_non_nullable
               as String,
       id: freezed == id
           ? _value.id
@@ -85,7 +85,7 @@ abstract class _$$_TagModelCopyWith<$Res> implements $TagModelCopyWith<$Res> {
       __$$_TagModelCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String name, String categoryId, String? id, int? v});
+  $Res call({String name, String category, String? id, int? v});
 }
 
 /// @nodoc
@@ -100,7 +100,7 @@ class __$$_TagModelCopyWithImpl<$Res>
   @override
   $Res call({
     Object? name = null,
-    Object? categoryId = null,
+    Object? category = null,
     Object? id = freezed,
     Object? v = freezed,
   }) {
@@ -109,9 +109,9 @@ class __$$_TagModelCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      categoryId: null == categoryId
-          ? _value.categoryId
-          : categoryId // ignore: cast_nullable_to_non_nullable
+      category: null == category
+          ? _value.category
+          : category // ignore: cast_nullable_to_non_nullable
               as String,
       id: freezed == id
           ? _value.id
@@ -129,7 +129,7 @@ class __$$_TagModelCopyWithImpl<$Res>
 @JsonSerializable()
 class _$_TagModel implements _TagModel {
   const _$_TagModel(
-      {required this.name, required this.categoryId, this.id, this.v});
+      {required this.name, required this.category, this.id, this.v});
 
   factory _$_TagModel.fromJson(Map<String, dynamic> json) =>
       _$$_TagModelFromJson(json);
@@ -137,7 +137,7 @@ class _$_TagModel implements _TagModel {
   @override
   final String name;
   @override
-  final String categoryId;
+  final String category;
   @override
   final String? id;
   @override
@@ -145,7 +145,7 @@ class _$_TagModel implements _TagModel {
 
   @override
   String toString() {
-    return 'TagModel(name: $name, categoryId: $categoryId, id: $id, v: $v)';
+    return 'TagModel(name: $name, category: $category, id: $id, v: $v)';
   }
 
   @override
@@ -154,15 +154,15 @@ class _$_TagModel implements _TagModel {
         (other.runtimeType == runtimeType &&
             other is _$_TagModel &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.categoryId, categoryId) ||
-                other.categoryId == categoryId) &&
+            (identical(other.category, category) ||
+                other.category == category) &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.v, v) || other.v == v));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, name, categoryId, id, v);
+  int get hashCode => Object.hash(runtimeType, name, category, id, v);
 
   @JsonKey(ignore: true)
   @override
@@ -181,7 +181,7 @@ class _$_TagModel implements _TagModel {
 abstract class _TagModel implements TagModel {
   const factory _TagModel(
       {required final String name,
-      required final String categoryId,
+      required final String category,
       final String? id,
       final int? v}) = _$_TagModel;
 
@@ -190,7 +190,7 @@ abstract class _TagModel implements TagModel {
   @override
   String get name;
   @override
-  String get categoryId;
+  String get category;
   @override
   String? get id;
   @override

@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:sfh_app/models/category/category_model.dart';
-import 'package:sfh_app/screens/add_category.dart';
+import 'package:sfh_app/screens/category/add_category.dart';
+import 'package:sfh_app/screens/category/manage_categories.dart';
 import 'package:sfh_app/screens/dashboard/dashboard_main.dart';
-import 'package:sfh_app/screens/manage_categories.dart';
+import 'package:sfh_app/screens/product/add_products.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 
 void main() async {
@@ -40,11 +41,13 @@ class MyApp extends StatelessWidget {
         return PageTransition(
             child: AddCategory(category: settings.arguments as CategoryModel?),
             type: PageTransitionType.leftToRight);
-            case '/manageCategories':
+      case '/manageCategories':
         return PageTransition(
             child: const ManageCategories(),
             type: PageTransitionType.leftToRight);
-
+      case '/addProducts':
+        return PageTransition(
+            child: const AddProducts(), type: PageTransitionType.leftToRight);
 
       default:
         return PageTransition(
@@ -52,7 +55,7 @@ class MyApp extends StatelessWidget {
               category: settings.arguments as CategoryModel,
             ),
             type: PageTransitionType.leftToRight);
-        
     }
   }
 }
+

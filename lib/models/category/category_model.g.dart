@@ -12,7 +12,7 @@ _$_CategoryModel _$$_CategoryModelFromJson(Map<String, dynamic> json) =>
       imageUri: json['imageUri'] as String?,
       subCategories: json['subCategories'] as List<dynamic>?,
       products: json['products'] as List<dynamic>?,
-      id: json['id'] as String?,
+      id: json['_id'] as String?,
       v: json['v'] as int?,
     );
 
@@ -22,6 +22,6 @@ Map<String, dynamic> _$$_CategoryModelToJson(_$_CategoryModel instance) =>
       'imageUri': instance.imageUri,
       'subCategories': instance.subCategories,
       'products': instance.products,
-      'id': instance.id,
+      '_id': instance.id,
       'v': instance.v,
     };

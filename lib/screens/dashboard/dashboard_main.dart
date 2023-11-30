@@ -1,19 +1,20 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sfh_app/models/category/category_model.dart';
 import 'package:sfh_app/screens/dashboard/bottom_nav.dart';
 import 'package:sfh_app/screens/dashboard/dashboard_drawer.dart';
 import 'package:sfh_app/services/category_services.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 
-class DashboardMain extends StatefulWidget {
+class DashboardMain extends ConsumerStatefulWidget {
   const DashboardMain({super.key});
 
   @override
-  State<DashboardMain> createState() => _DashboardMainState();
+  ConsumerState<DashboardMain> createState() => _DashboardMainState();
 }
 
-class _DashboardMainState extends State<DashboardMain> {
+class _DashboardMainState extends ConsumerState<DashboardMain> {
   GlobalKey<ScaffoldState> globalKey = GlobalKey();
 
   List<CategoryModel> categories = [];
@@ -26,6 +27,7 @@ class _DashboardMainState extends State<DashboardMain> {
 
   @override
   Widget build(BuildContext context) {
+    final allCatgories = ref.watch(allCategoriesProvider);
     return Scaffold(
       key: globalKey,
       drawer: const DashboardDrawer(),
@@ -46,31 +48,40 @@ class _DashboardMainState extends State<DashboardMain> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            FutureBuilder(
-              future: getCategories(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (snapshot.hasData) {
-                    categories = snapshot.data as List<CategoryModel>;
-                    return SizedBox(
-                      height: 175,
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: categories.length,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) {
-                          return categoryCard(categories[index]);
-                        },
-                      ),
-                    );
-                  } else {
-                    return const Text("No data");
-                  }
-                } else {
-                  return const CircularProgressIndicator();
-                }
+            allCatgories.when(
+              data: (data) {
+                print(data);
+                return SizedBox(
+                  height: 175,
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: data.length,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      return categoryCard(data[index]);
+                    },
+                  ),
+                );
               },
+              error: (error, stackTrace) {
+                return Text(error.toString());
+              },
+              loading: () => const CircularProgressIndicator(),
             ),
+            // FutureBuilder(
+            //   future: allCatgories,
+            //   builder: (context, snapshot) {
+            //     if (snapshot.connectionState == ConnectionState.done) {
+            //       if (snapshot.hasData) {
+
+            //       } else {
+            //         return const Text("No data");
+            //       }
+            //     } else {
+            //       return const CircularProgressIndicator();
+            //     }
+            //   },
+            // ),
             const Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(
@@ -103,8 +114,10 @@ class _DashboardMainState extends State<DashboardMain> {
                     //       image: DecorationImage(
                     //           image: imageProvider, fit: BoxFit.cover)),
                     // ),
-                    placeholder: (context, url) => const CircularProgressIndicator(),
-                    errorWidget: (context, url, error) => const Icon(Icons.error),
+                    placeholder: (context, url) =>
+                        const CircularProgressIndicator(),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
                   )
                 : const Offstage(),
             const SizedBox(height: 10),

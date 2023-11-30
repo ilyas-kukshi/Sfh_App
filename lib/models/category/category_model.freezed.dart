@@ -25,6 +25,7 @@ mixin _$CategoryModel {
   List<dynamic>? get subCategories =>
       throw _privateConstructorUsedError; // List<dynamic>? tags,
   List<dynamic>? get products => throw _privateConstructorUsedError;
+  @JsonKey(name: '_id')
   String? get id => throw _privateConstructorUsedError;
   int? get v => throw _privateConstructorUsedError;
 
@@ -45,7 +46,7 @@ abstract class $CategoryModelCopyWith<$Res> {
       String? imageUri,
       List<dynamic>? subCategories,
       List<dynamic>? products,
-      String? id,
+      @JsonKey(name: '_id') String? id,
       int? v});
 }
 
@@ -111,7 +112,7 @@ abstract class _$$_CategoryModelCopyWith<$Res>
       String? imageUri,
       List<dynamic>? subCategories,
       List<dynamic>? products,
-      String? id,
+      @JsonKey(name: '_id') String? id,
       int? v});
 }
 
@@ -170,7 +171,7 @@ class _$_CategoryModel implements _CategoryModel {
       this.imageUri,
       final List<dynamic>? subCategories,
       final List<dynamic>? products,
-      this.id,
+      @JsonKey(name: '_id') this.id,
       this.v})
       : _subCategories = subCategories,
         _products = products;
@@ -205,6 +206,7 @@ class _$_CategoryModel implements _CategoryModel {
   }
 
   @override
+  @JsonKey(name: '_id')
   final String? id;
   @override
   final int? v;
@@ -260,7 +262,7 @@ abstract class _CategoryModel implements CategoryModel {
       final String? imageUri,
       final List<dynamic>? subCategories,
       final List<dynamic>? products,
-      final String? id,
+      @JsonKey(name: '_id') final String? id,
       final int? v}) = _$_CategoryModel;
 
   factory _CategoryModel.fromJson(Map<String, dynamic> json) =
@@ -275,6 +277,7 @@ abstract class _CategoryModel implements CategoryModel {
   @override // List<dynamic>? tags,
   List<dynamic>? get products;
   @override
+  @JsonKey(name: '_id')
   String? get id;
   @override
   int? get v;

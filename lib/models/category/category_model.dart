@@ -21,7 +21,7 @@ class CategoryModel with _$CategoryModel {
     List<dynamic>? subCategories,
     // List<dynamic>? tags,
     List<dynamic>? products,
-    String? id,
+    @JsonKey(name: '_id') String? id,
     int? v,
   }) = _CategoryModel;
 
