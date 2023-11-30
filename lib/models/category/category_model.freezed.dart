@@ -22,8 +22,8 @@ CategoryModel _$CategoryModelFromJson(Map<String, dynamic> json) {
 mixin _$CategoryModel {
   String get name => throw _privateConstructorUsedError;
   String? get imageUri => throw _privateConstructorUsedError;
-  List<dynamic>? get subCategories => throw _privateConstructorUsedError;
-  List<dynamic>? get tags => throw _privateConstructorUsedError;
+  List<dynamic>? get subCategories =>
+      throw _privateConstructorUsedError; // List<dynamic>? tags,
   List<dynamic>? get products => throw _privateConstructorUsedError;
   String? get id => throw _privateConstructorUsedError;
   int? get v => throw _privateConstructorUsedError;
@@ -44,7 +44,6 @@ abstract class $CategoryModelCopyWith<$Res> {
       {String name,
       String? imageUri,
       List<dynamic>? subCategories,
-      List<dynamic>? tags,
       List<dynamic>? products,
       String? id,
       int? v});
@@ -66,7 +65,6 @@ class _$CategoryModelCopyWithImpl<$Res, $Val extends CategoryModel>
     Object? name = null,
     Object? imageUri = freezed,
     Object? subCategories = freezed,
-    Object? tags = freezed,
     Object? products = freezed,
     Object? id = freezed,
     Object? v = freezed,
@@ -83,10 +81,6 @@ class _$CategoryModelCopyWithImpl<$Res, $Val extends CategoryModel>
       subCategories: freezed == subCategories
           ? _value.subCategories
           : subCategories // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>?,
-      tags: freezed == tags
-          ? _value.tags
-          : tags // ignore: cast_nullable_to_non_nullable
               as List<dynamic>?,
       products: freezed == products
           ? _value.products
@@ -116,7 +110,6 @@ abstract class _$$_CategoryModelCopyWith<$Res>
       {String name,
       String? imageUri,
       List<dynamic>? subCategories,
-      List<dynamic>? tags,
       List<dynamic>? products,
       String? id,
       int? v});
@@ -136,7 +129,6 @@ class __$$_CategoryModelCopyWithImpl<$Res>
     Object? name = null,
     Object? imageUri = freezed,
     Object? subCategories = freezed,
-    Object? tags = freezed,
     Object? products = freezed,
     Object? id = freezed,
     Object? v = freezed,
@@ -153,10 +145,6 @@ class __$$_CategoryModelCopyWithImpl<$Res>
       subCategories: freezed == subCategories
           ? _value._subCategories
           : subCategories // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>?,
-      tags: freezed == tags
-          ? _value._tags
-          : tags // ignore: cast_nullable_to_non_nullable
               as List<dynamic>?,
       products: freezed == products
           ? _value._products
@@ -181,12 +169,10 @@ class _$_CategoryModel implements _CategoryModel {
       {required this.name,
       this.imageUri,
       final List<dynamic>? subCategories,
-      final List<dynamic>? tags,
       final List<dynamic>? products,
       this.id,
       this.v})
       : _subCategories = subCategories,
-        _tags = tags,
         _products = products;
 
   factory _$_CategoryModel.fromJson(Map<String, dynamic> json) =>
@@ -206,17 +192,9 @@ class _$_CategoryModel implements _CategoryModel {
     return EqualUnmodifiableListView(value);
   }
 
-  final List<dynamic>? _tags;
-  @override
-  List<dynamic>? get tags {
-    final value = _tags;
-    if (value == null) return null;
-    if (_tags is EqualUnmodifiableListView) return _tags;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
-
+// List<dynamic>? tags,
   final List<dynamic>? _products;
+// List<dynamic>? tags,
   @override
   List<dynamic>? get products {
     final value = _products;
@@ -233,7 +211,7 @@ class _$_CategoryModel implements _CategoryModel {
 
   @override
   String toString() {
-    return 'CategoryModel(name: $name, imageUri: $imageUri, subCategories: $subCategories, tags: $tags, products: $products, id: $id, v: $v)';
+    return 'CategoryModel(name: $name, imageUri: $imageUri, subCategories: $subCategories, products: $products, id: $id, v: $v)';
   }
 
   @override
@@ -246,7 +224,6 @@ class _$_CategoryModel implements _CategoryModel {
                 other.imageUri == imageUri) &&
             const DeepCollectionEquality()
                 .equals(other._subCategories, _subCategories) &&
-            const DeepCollectionEquality().equals(other._tags, _tags) &&
             const DeepCollectionEquality().equals(other._products, _products) &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.v, v) || other.v == v));
@@ -259,7 +236,6 @@ class _$_CategoryModel implements _CategoryModel {
       name,
       imageUri,
       const DeepCollectionEquality().hash(_subCategories),
-      const DeepCollectionEquality().hash(_tags),
       const DeepCollectionEquality().hash(_products),
       id,
       v);
@@ -283,7 +259,6 @@ abstract class _CategoryModel implements CategoryModel {
       {required final String name,
       final String? imageUri,
       final List<dynamic>? subCategories,
-      final List<dynamic>? tags,
       final List<dynamic>? products,
       final String? id,
       final int? v}) = _$_CategoryModel;
@@ -297,9 +272,7 @@ abstract class _CategoryModel implements CategoryModel {
   String? get imageUri;
   @override
   List<dynamic>? get subCategories;
-  @override
-  List<dynamic>? get tags;
-  @override
+  @override // List<dynamic>? tags,
   List<dynamic>? get products;
   @override
   String? get id;

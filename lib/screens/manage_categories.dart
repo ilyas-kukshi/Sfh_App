@@ -70,8 +70,8 @@ class _ManageCategoriesState extends State<ManageCategories> {
                     //       image: DecorationImage(
                     //           image: imageProvider, fit: BoxFit.cover)),
                     // ),
-                    placeholder: (context, url) => CircularProgressIndicator(),
-                    errorWidget: (context, url, error) => Icon(Icons.error),
+                    placeholder: (context, url) => const CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => const Icon(Icons.error),
                   )
                 : const Offstage(),
             const SizedBox(height: 10),

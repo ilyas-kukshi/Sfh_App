@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -24,11 +23,14 @@ class _AddCategoryState extends State<AddCategory> {
   CroppedFile? croppedFile;
 
   TextEditingController name = TextEditingController();
+  TextEditingController tagController = TextEditingController();
+
+  List<String> tags = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppThemeShared.appBar(title: "Add Category", context: context),
-      body: Center(
+      body: SingleChildScrollView(
         child: Column(
           children: [
             const SizedBox(height: 10),
@@ -58,6 +60,67 @@ class _AddCategoryState extends State<AddCategory> {
             const SizedBox(height: 10),
             AppThemeShared.textFormField(
                 context: context, hintText: "Add name", controller: name),
+            const SizedBox(height: 10),
+            const Text(
+              "Associated Tags",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+            tags.isNotEmpty
+                ? Wrap(
+                    children: tags
+                        .map((e) => Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: AppThemeShared.primaryColor,
+                                        width: 2)),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(e),
+                                      const SizedBox(width: 4),
+                                      GestureDetector(
+                                        onTap: () => setState(() {
+                                          tags.remove(e);
+                                        }),
+                                        child: Icon(
+                                          Icons.close,
+                                          color: AppThemeShared.primaryColor,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ))
+                        .toList(),
+                  )
+                : const Offstage(),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AppThemeShared.textFormField(
+                  context: context,
+                  widthPercent: 0.5,
+                  controller: tagController,
+                ),
+                const SizedBox(width: 10),
+                AppThemeShared.sharedButton(
+                  context: context,
+                  width: 80,
+                  buttonText: "Add",
+                  onTap: () {
+                    tags.add(tagController.text);
+                    tagController.clear();
+                    setState(() {});
+                  },
+                )
+              ],
+            ),
             const SizedBox(height: 10),
             AppThemeShared.sharedButton(
               context: context,
@@ -90,13 +153,22 @@ class _AddCategoryState extends State<AddCategory> {
     String? imageUrl = await uploadPhoto();
 
     if (imageUrl != null) {
-      bool added = await CategoryServices().addCategory(CategoryModel(
-          name: name.text,
-          id: 'id',
-          imageUri: imageUrl,
-          products: [],
-          subCategories: [],
-          v: 0));
+      bool added = await CategoryServices().addCategory(
+          CategoryModel(
+              name: name.text,
+              id: 'id',
+              imageUri: imageUrl,
+              products: [],
+              subCategories: [],
+              v: 0),
+          tags);
+
+      if (added) {
+        Fluttertoast.showToast(msg: "Category Added");
+      } else {
+        await FirebaseStorage.instance.refFromURL(imageUrl).delete();
+        Fluttertoast.showToast(msg: "Category Not Added");
+      }
     }
   }
 
@@ -104,7 +176,7 @@ class _AddCategoryState extends State<AddCategory> {
     file = await picker.pickImage(source: ImageSource.gallery);
 
     if (file != null) {
-      print(file!.path);
+      // print(file!.path);
       croppedFile = await ImageCropper().cropImage(
         sourcePath: file!.path,
         aspectRatioPresets: [
@@ -119,9 +191,6 @@ class _AddCategoryState extends State<AddCategory> {
               lockAspectRatio: false),
           IOSUiSettings(
             title: 'Cropper',
-          ),
-          WebUiSettings(
-            context: context,
           ),
         ],
       );

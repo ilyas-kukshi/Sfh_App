@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'package:flutter/material.dart';
-
 class Utility {
   static String? nameValidator(String? name) {
     if (name!.isEmpty) {

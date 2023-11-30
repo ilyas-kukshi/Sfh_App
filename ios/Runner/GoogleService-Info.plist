@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>16266303128-79mbtmp7em8b86rti4st4kup91gsu9ai.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAf7qVX0dWZuTqntbMP35FzzQCs6TMM7Iw</string>
+	<key>GCM_SENDER_ID</key>
+	<string>16266303128</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.sfhApp</string>
+	<key>PROJECT_ID</key>
+	<string>sakina-fashion-house</string>
+	<key>STORAGE_BUCKET</key>
+	<string>sakina-fashion-house.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:16266303128:ios:1567fab8628cad3746e2ed</string>
+</dict>
+</plist>

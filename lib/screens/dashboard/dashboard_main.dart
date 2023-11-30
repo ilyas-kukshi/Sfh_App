@@ -28,7 +28,7 @@ class _DashboardMainState extends State<DashboardMain> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: globalKey,
-      drawer: DashboardDrawer(),
+      drawer: const DashboardDrawer(),
       appBar: AppThemeShared.appBar(
           title: "",
           context: context,
@@ -103,8 +103,8 @@ class _DashboardMainState extends State<DashboardMain> {
                     //       image: DecorationImage(
                     //           image: imageProvider, fit: BoxFit.cover)),
                     // ),
-                    placeholder: (context, url) => CircularProgressIndicator(),
-                    errorWidget: (context, url, error) => Icon(Icons.error),
+                    placeholder: (context, url) => const CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => const Icon(Icons.error),
                   )
                 : const Offstage(),
             const SizedBox(height: 10),

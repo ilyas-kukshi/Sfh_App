@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                     fontSize: 22))),
         onGenerateRoute: _routing,
-        home: DashboardMain());
+        home: const DashboardMain());
   }
 
   Route _routing(RouteSettings settings) {
@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
             type: PageTransitionType.leftToRight);
             case '/manageCategories':
         return PageTransition(
-            child: ManageCategories(),
+            child: const ManageCategories(),
             type: PageTransitionType.leftToRight);
 
 
@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
               category: settings.arguments as CategoryModel,
             ),
             type: PageTransitionType.leftToRight);
-        ;
+        
     }
   }
 }

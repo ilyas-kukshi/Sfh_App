@@ -5,12 +5,15 @@ import 'package:http/http.dart' as http;
 import 'package:sfh_app/shared/constants.dart';
 
 class CategoryServices {
-  Future<bool> addCategory(CategoryModel category) async {
+  Future<bool> addCategory(CategoryModel category, List<String> tags) async {
     try {
-      print(jsonEncode(category));
-      var response = await http.post(
-          Uri.parse("${Constants.baseUrl}category/add"),
-          body: {"name": category.name, "imageUri": category.imageUri});
+      // print(jsonEncode(category));
+      var response = await http
+          .post(Uri.parse("${Constants.baseUrl}/category/add"), body: {
+        "name": category.name,
+        "imageUri": category.imageUri,
+        "tags": jsonEncode(tags)
+      });
 
       if (response.statusCode == 201) {
         return true;
@@ -28,7 +31,7 @@ class CategoryServices {
     List<CategoryModel> categories = [];
     try {
       var response =
-          await http.get(Uri.parse("http://192.168.1.100:8080/category/get"));
+          await http.get(Uri.parse("${Constants.baseUrl}/category/get"));
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         for (var category in data["categories"]) {
