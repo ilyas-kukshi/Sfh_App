@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sfh_app/models/category/category_model.dart';
 import 'package:sfh_app/screens/dashboard/bottom_nav.dart';
 import 'package:sfh_app/screens/dashboard/dashboard_drawer.dart';
-import 'package:sfh_app/services/category_services.dart';
+import 'package:sfh_app/services/category/category_services.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 
 class DashboardMain extends ConsumerStatefulWidget {
@@ -50,7 +50,6 @@ class _DashboardMainState extends ConsumerState<DashboardMain> {
           children: [
             allCatgories.when(
               data: (data) {
-                print(data);
                 return SizedBox(
                   height: 175,
                   child: ListView.builder(
@@ -97,32 +96,38 @@ class _DashboardMainState extends ConsumerState<DashboardMain> {
   }
 
   Widget categoryCard(CategoryModel category) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Card(
-        child: Column(
-          children: [
-            category.imageUri != null
-                ? CachedNetworkImage(
-                    height: 120,
-                    width: 120,
-                    imageUrl: category.imageUri!,
-                    fit: BoxFit.fill,
-                    // imageBuilder: (context, imageProvider) => Container(
-                    //   decoration: BoxDecoration(
-                    //       shape: BoxShape.circle,
-                    //       image: DecorationImage(
-                    //           image: imageProvider, fit: BoxFit.cover)),
-                    // ),
-                    placeholder: (context, url) =>
-                        const CircularProgressIndicator(),
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
-                  )
-                : const Offstage(),
-            const SizedBox(height: 10),
-            Center(child: Text(category.name))
-          ],
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, '/displayProductsByCategory',
+            arguments: category);
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Card(
+          child: Column(
+            children: [
+              category.imageUri != null
+                  ? CachedNetworkImage(
+                      height: 120,
+                      width: 120,
+                      imageUrl: category.imageUri!,
+                      fit: BoxFit.fill,
+                      // imageBuilder: (context, imageProvider) => Container(
+                      //   decoration: BoxDecoration(
+                      //       shape: BoxShape.circle,
+                      //       image: DecorationImage(
+                      //           image: imageProvider, fit: BoxFit.cover)),
+                      // ),
+                      placeholder: (context, url) =>
+                          const CircularProgressIndicator(),
+                      errorWidget: (context, url, error) =>
+                          const Icon(Icons.error),
+                    )
+                  : const Offstage(),
+              const SizedBox(height: 10),
+              Center(child: Text(category.name))
+            ],
+          ),
         ),
       ),
     );

@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:sfh_app/models/category/category_model.dart';
-import 'package:sfh_app/services/category_services.dart';
+import 'package:sfh_app/services/category/category_services.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 
 class ManageCategories extends StatefulWidget {

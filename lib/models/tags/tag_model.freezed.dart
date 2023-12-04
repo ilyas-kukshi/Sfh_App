@@ -22,6 +22,7 @@ TagModel _$TagModelFromJson(Map<String, dynamic> json) {
 mixin _$TagModel {
   String get name => throw _privateConstructorUsedError;
   String get category => throw _privateConstructorUsedError;
+  @JsonKey(name: '_id')
   String? get id => throw _privateConstructorUsedError;
   int? get v => throw _privateConstructorUsedError;
 
@@ -36,7 +37,8 @@ abstract class $TagModelCopyWith<$Res> {
   factory $TagModelCopyWith(TagModel value, $Res Function(TagModel) then) =
       _$TagModelCopyWithImpl<$Res, TagModel>;
   @useResult
-  $Res call({String name, String category, String? id, int? v});
+  $Res call(
+      {String name, String category, @JsonKey(name: '_id') String? id, int? v});
 }
 
 /// @nodoc
@@ -85,7 +87,8 @@ abstract class _$$_TagModelCopyWith<$Res> implements $TagModelCopyWith<$Res> {
       __$$_TagModelCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String name, String category, String? id, int? v});
+  $Res call(
+      {String name, String category, @JsonKey(name: '_id') String? id, int? v});
 }
 
 /// @nodoc
@@ -129,7 +132,10 @@ class __$$_TagModelCopyWithImpl<$Res>
 @JsonSerializable()
 class _$_TagModel implements _TagModel {
   const _$_TagModel(
-      {required this.name, required this.category, this.id, this.v});
+      {required this.name,
+      required this.category,
+      @JsonKey(name: '_id') this.id,
+      this.v});
 
   factory _$_TagModel.fromJson(Map<String, dynamic> json) =>
       _$$_TagModelFromJson(json);
@@ -139,6 +145,7 @@ class _$_TagModel implements _TagModel {
   @override
   final String category;
   @override
+  @JsonKey(name: '_id')
   final String? id;
   @override
   final int? v;
@@ -182,7 +189,7 @@ abstract class _TagModel implements TagModel {
   const factory _TagModel(
       {required final String name,
       required final String category,
-      final String? id,
+      @JsonKey(name: '_id') final String? id,
       final int? v}) = _$_TagModel;
 
   factory _TagModel.fromJson(Map<String, dynamic> json) = _$_TagModel.fromJson;
@@ -192,6 +199,7 @@ abstract class _TagModel implements TagModel {
   @override
   String get category;
   @override
+  @JsonKey(name: '_id')
   String? get id;
   @override
   int? get v;

@@ -6,7 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sfh_app/models/category/category_model.dart';
-import 'package:sfh_app/services/category_services.dart';
+import 'package:sfh_app/services/category/category_services.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 
 class AddCategory extends StatefulWidget {
@@ -198,15 +198,5 @@ class _AddCategoryState extends State<AddCategory> {
       setState(() {});
     }
 
-    // final lostData = await picker.retrieveLostData();
-    // if (lostData.isEmpty) {
-    //   // Handle selected image
-    //   print(file!.path);
-    // } else {
-    //   if (lostData.file != null) {
-    //     // Handle the case where the user selected an image but left the app before using it
-    //     print("Lost image data: ${lostData.file}");
-    //   }
-    // }
   }
 }

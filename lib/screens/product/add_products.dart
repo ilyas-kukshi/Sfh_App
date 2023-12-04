@@ -1,10 +1,16 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:sfh_app/models/category/category_model.dart';
 import 'package:sfh_app/models/tags/tag_model.dart';
-import 'package:sfh_app/services/category_services.dart';
+import 'package:sfh_app/services/category/category_services.dart';
 import 'package:sfh_app/services/tags_services.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
+import 'package:sfh_app/shared/tag_selection.dart';
+import 'package:sfh_app/shared/utility.dart';
 
 class AddProducts extends ConsumerStatefulWidget {
   const AddProducts({super.key});
@@ -15,61 +21,128 @@ class AddProducts extends ConsumerStatefulWidget {
 
 class _AddProductsState extends ConsumerState<AddProducts> {
   List<TagModel> tags = [];
+
+  ImagePicker picker = ImagePicker();
+  List<XFile> files = [];
+  List<CroppedFile> croppedFiles = [];
+
+  GlobalKey<FormState> key = GlobalKey();
+  TextEditingController name = TextEditingController();
+  TextEditingController price = TextEditingController();
+  TextEditingController discount = TextEditingController();
+  String categoryName = '';
   List<TagModel> selected = [];
+
   @override
   Widget build(BuildContext context) {
     final allCategories = ref.watch(allCategoriesProvider);
     return Scaffold(
       appBar: AppThemeShared.appBar(title: "Add Products", context: context),
       body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            children: [
-              const SizedBox(height: 10),
-              AppThemeShared.textFormField(
-                  context: context, hintText: "Enter name of product"),
-              const SizedBox(height: 10),
-              AppThemeShared.textFormField(
-                  hintText: "Enter price", context: context),
-              const SizedBox(height: 10),
-              AppThemeShared.textFormField(
-                  context: context, hintText: "Enter discount"),
-              const SizedBox(height: 10),
-              allCategories.when(
-                data: (data) {
-                  return AppThemeShared.sharedDropDown(
+        child: Form(
+          key: key,
+          child: Center(
+            child: Column(
+              children: [
+                const SizedBox(height: 10),
+                GestureDetector(
+                  onTap: () => pickImage(),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                            color: AppThemeShared.primaryColor, width: 3)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(48.0),
+                      child: Icon(
+                        Icons.photo_library,
+                        size: 40,
+                        color: AppThemeShared.primaryColor,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                AppThemeShared.textFormField(
                     context: context,
-                    items: data.map((e) => e.name).toList(),
-                    onChanged: (value) async {
-                      String categoryId = getIdFromName(data, value!);
-                      if (categoryId.isNotEmpty) {
-                        tags = await TagServices().getByCategory(categoryId);
-                        setState(() {});
-                      }
-                    },
-                  );
-                },
-                error: (error, stackTrace) => Text(error.toString()),
-                loading: () => const CircularProgressIndicator(),
-              ),
-              tags.isNotEmpty
-                  ? Wrap(
-                      children: tags
-                          .map((e) => TagSelection(
-                                tag: e,
-                                clicked: (tag) {
-                                  if (selected.contains(tag)) {
-                                    selected.remove(tag);
-                                  } else {
-                                    selected.add(tag);
-                                  }
-                                  print(selected);
-                                },
-                              ))
-                          .toList(),
-                    )
-                  : const Offstage(),
-            ],
+                    hintText: "Enter name of product",
+                    controller: name,
+                    textInputAction: TextInputAction.next,
+                    validator: Utility.nameValidator),
+                const SizedBox(height: 10),
+                AppThemeShared.textFormField(
+                    hintText: "Enter price",
+                    context: context,
+                    controller: price,
+                    textInputAction: TextInputAction.next,
+                    keyboardType: TextInputType.number,
+                    validator: Utility.phoneNumberValidator),
+                const SizedBox(height: 10),
+                AppThemeShared.textFormField(
+                  context: context,
+                  hintText: "Enter discount",
+                  controller: discount,
+                  textInputAction: TextInputAction.done,
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 10),
+                allCategories.when(
+                  data: (data) {
+                    return AppThemeShared.sharedDropDown(
+                      context: context,
+                      hint: const Text('Select Category'),
+                      items: data.map((e) => e.name).toList(),
+                      onChanged: (value) async {
+                        String categoryId = getIdFromName(data, value!);
+                        if (categoryId.isNotEmpty) {
+                          tags = await TagServices().getByCategory(categoryId);
+                          setState(() {});
+                        }
+                      },
+                    );
+                  },
+                  error: (error, stackTrace) => Text(error.toString()),
+                  loading: () => const CircularProgressIndicator(),
+                ),
+                const SizedBox(height: 10),
+                tags.isNotEmpty
+                    ? Column(
+                        children: [
+                          Text(
+                            "Select Tags",
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          const SizedBox(height: 10),
+                          Wrap(
+                            children: tags
+                                .map((e) => TagSelection(
+                                      tag: e,
+                                      clicked: (tag) {
+                                        if (selected.contains(tag)) {
+                                          selected.remove(tag);
+                                        } else {
+                                          selected.add(tag);
+                                        }
+                                        print(selected);
+                                      },
+                                    ))
+                                .toList(),
+                          ),
+                        ],
+                      )
+                    : const Offstage(),
+                const SizedBox(height: 10),
+                AppThemeShared.sharedButton(
+                  context: context,
+                  width: MediaQuery.of(context).size.width * 0.85,
+                  buttonText: "Add Product",
+                  onTap: () {
+                    final valid = key.currentState!.validate();
+                    if (valid) {}
+                  },
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -82,45 +155,35 @@ class _AddProductsState extends ConsumerState<AddProducts> {
     }
     return '';
   }
-}
 
-class TagSelection extends StatefulWidget {
-  TagModel tag;
-  Function(TagModel) clicked;
-  TagSelection({super.key, required this.tag, required this.clicked});
+  pickImage() async {
+    files = await picker.pickMultiImage();
 
-  @override
-  State<TagSelection> createState() => _TagSelectionState();
-}
-
-class _TagSelectionState extends State<TagSelection> {
-  bool selected = false;
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: GestureDetector(
-        onTap: () {
-          setState(() {
-            selected = !selected;
-            widget.clicked(widget.tag);
-          });
-        },
-        child: Container(
-          decoration: BoxDecoration(
-              color:
-                  selected ? AppThemeShared.primaryColor : Colors.transparent,
-              border: Border.all(color: AppThemeShared.primaryColor, width: 2)),
-          child: Padding(
-            padding: const EdgeInsets.all(6.0),
-            child: Text(
-              widget.tag.name,
-              style: TextStyle(
-                  color: selected ? Colors.white : AppThemeShared.primaryColor),
+    if (files.isNotEmpty) {
+      for (var file in files) {
+        CroppedFile? curr = await ImageCropper().cropImage(
+          sourcePath: file.path,
+          aspectRatioPresets: [
+            CropAspectRatioPreset.ratio7x5,
+            CropAspectRatioPreset.ratio16x9,
+            CropAspectRatioPreset.ratio4x3
+          ],
+          uiSettings: [
+            AndroidUiSettings(
+                toolbarTitle: 'Cropper',
+                toolbarColor: Colors.deepOrange,
+                toolbarWidgetColor: Colors.white,
+                initAspectRatio: CropAspectRatioPreset.original,
+                lockAspectRatio: false),
+            IOSUiSettings(
+              title: 'Cropper',
             ),
-          ),
-        ),
-      ),
-    );
+          ],
+        );
+        if (curr != null) {
+          croppedFiles.add(curr);
+        }
+      }
+    }
   }
 }
