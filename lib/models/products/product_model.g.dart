@@ -11,9 +11,10 @@ _$_ProductModel _$$_ProductModelFromJson(Map<String, dynamic> json) =>
       imageUris:
           (json['imageUris'] as List<dynamic>).map((e) => e as String).toList(),
       name: json['name'] as String,
-      price: json['price'] as String,
-      discount: json['discount'] as String,
-      category: json['category'] as String,
+      price: json['price'] as int,
+      discount: json['discount'] as int,
+      category:
+          CategoryModel.fromJson(json['category'] as Map<String, dynamic>),
       available: json['available'] as bool,
       tags: (json['tags'] as List<dynamic>?)
           ?.map((e) => TagModel.fromJson(e as Map<String, dynamic>))

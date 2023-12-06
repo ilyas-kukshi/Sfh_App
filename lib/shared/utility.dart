@@ -1,3 +1,11 @@
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:uuid/data.dart';
+import 'package:uuid/uuid.dart';
+
 class Utility {
   static String? nameValidator(String? name) {
     if (name!.isEmpty) {
@@ -78,5 +86,46 @@ class Utility {
       return " Please enter your shop address";
     }
     return null;
+  }
+
+  Future<List<String>?> uploadImages(List<CroppedFile> images) async {
+    List<String> imageUrls = [];
+
+    for (var image in images) {
+      String? downloadUrl = await uploadImage(image);
+      if (downloadUrl == null) {
+        for (String imageUrl in imageUrls) {
+          await FirebaseStorage.instance.refFromURL(imageUrl).delete();
+        }
+        return null;
+      } else {
+        imageUrls.add(downloadUrl);
+      }
+    }
+    return imageUrls;
+  }
+
+  Future<String?> uploadImage(CroppedFile image) async {
+    var ref = FirebaseStorage.instance.ref(getUniqueId());
+
+    try {
+      await ref.putFile(File(image.path));
+    } on FirebaseException catch (error) {
+      Fluttertoast.showToast(msg: error.toString());
+      print(error);
+      return null;
+    }
+    return await ref.getDownloadURL();
+  }
+
+  deleteImageFromRef(List<String> imageUrls) async {
+    for (String imageUrl in imageUrls) {
+      await FirebaseStorage.instance.refFromURL(imageUrl).delete();
+    }
+  }
+
+  String getUniqueId() {
+    var uuid = const Uuid();
+    return uuid.v1();
   }
 }

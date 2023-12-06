@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:sfh_app/models/category/category_model.dart';
 import 'package:sfh_app/services/category/category_services.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
+import 'package:sfh_app/shared/dialogs.dart';
 
 class AddCategory extends StatefulWidget {
   CategoryModel? category;
@@ -127,7 +128,10 @@ class _AddCategoryState extends State<AddCategory> {
               width: MediaQuery.of(context).size.width * 0.85,
               buttonText: "Add Category",
               onTap: () {
-                addCategory();
+                if (name.text.isNotEmpty) {
+                  DialogShared.loadingDialog(context, "Adding Category");
+                  addCategory();
+                }
               },
             )
           ],
@@ -164,10 +168,12 @@ class _AddCategoryState extends State<AddCategory> {
           tags);
 
       if (added) {
+        Navigator.pop(context);
         Fluttertoast.showToast(msg: "Category Added");
       } else {
         await FirebaseStorage.instance.refFromURL(imageUrl).delete();
         Fluttertoast.showToast(msg: "Category Not Added");
+        Navigator.pop(context);
       }
     }
   }
@@ -197,6 +203,5 @@ class _AddCategoryState extends State<AddCategory> {
 
       setState(() {});
     }
-
   }
 }

@@ -3,6 +3,7 @@
 //     final productModel = productModelFromJson(jsonString);
 
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:sfh_app/models/category/category_model.dart';
 import 'dart:convert';
 
 import 'package:sfh_app/models/tags/tag_model.dart';
@@ -30,9 +31,9 @@ class ProductModel with _$ProductModel {
   const factory ProductModel({
     required List<String> imageUris,
     required String name,
-    required String price,
-    required String discount,
-    required String category,
+    required int price,
+    required int discount,
+    required CategoryModel category,
     required bool available,
     List<TagModel>? tags,
     int? views,

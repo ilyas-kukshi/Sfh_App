@@ -22,9 +22,9 @@ ProductModel _$ProductModelFromJson(Map<String, dynamic> json) {
 mixin _$ProductModel {
   List<String> get imageUris => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
-  String get price => throw _privateConstructorUsedError;
-  String get discount => throw _privateConstructorUsedError;
-  String get category => throw _privateConstructorUsedError;
+  int get price => throw _privateConstructorUsedError;
+  int get discount => throw _privateConstructorUsedError;
+  CategoryModel get category => throw _privateConstructorUsedError;
   bool get available => throw _privateConstructorUsedError;
   List<TagModel>? get tags => throw _privateConstructorUsedError;
   int? get views => throw _privateConstructorUsedError;
@@ -51,9 +51,9 @@ abstract class $ProductModelCopyWith<$Res> {
   $Res call(
       {List<String> imageUris,
       String name,
-      String price,
-      String discount,
-      String category,
+      int price,
+      int discount,
+      CategoryModel category,
       bool available,
       List<TagModel>? tags,
       int? views,
@@ -62,6 +62,8 @@ abstract class $ProductModelCopyWith<$Res> {
       DateTime? createdAt,
       DateTime? updatedAt,
       @JsonKey(name: '__v') int? v});
+
+  $CategoryModelCopyWith<$Res> get category;
 }
 
 /// @nodoc
@@ -103,15 +105,15 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
       price: null == price
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
-              as String,
+              as int,
       discount: null == discount
           ? _value.discount
           : discount // ignore: cast_nullable_to_non_nullable
-              as String,
+              as int,
       category: null == category
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
-              as String,
+              as CategoryModel,
       available: null == available
           ? _value.available
           : available // ignore: cast_nullable_to_non_nullable
@@ -146,6 +148,14 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
               as int?,
     ) as $Val);
   }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $CategoryModelCopyWith<$Res> get category {
+    return $CategoryModelCopyWith<$Res>(_value.category, (value) {
+      return _then(_value.copyWith(category: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -159,9 +169,9 @@ abstract class _$$_ProductModelCopyWith<$Res>
   $Res call(
       {List<String> imageUris,
       String name,
-      String price,
-      String discount,
-      String category,
+      int price,
+      int discount,
+      CategoryModel category,
       bool available,
       List<TagModel>? tags,
       int? views,
@@ -170,6 +180,9 @@ abstract class _$$_ProductModelCopyWith<$Res>
       DateTime? createdAt,
       DateTime? updatedAt,
       @JsonKey(name: '__v') int? v});
+
+  @override
+  $CategoryModelCopyWith<$Res> get category;
 }
 
 /// @nodoc
@@ -209,15 +222,15 @@ class __$$_ProductModelCopyWithImpl<$Res>
       price: null == price
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
-              as String,
+              as int,
       discount: null == discount
           ? _value.discount
           : discount // ignore: cast_nullable_to_non_nullable
-              as String,
+              as int,
       category: null == category
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
-              as String,
+              as CategoryModel,
       available: null == available
           ? _value.available
           : available // ignore: cast_nullable_to_non_nullable
@@ -288,11 +301,11 @@ class _$_ProductModel implements _ProductModel {
   @override
   final String name;
   @override
-  final String price;
+  final int price;
   @override
-  final String discount;
+  final int discount;
   @override
-  final String category;
+  final CategoryModel category;
   @override
   final bool available;
   final List<TagModel>? _tags;
@@ -388,9 +401,9 @@ abstract class _ProductModel implements ProductModel {
   const factory _ProductModel(
       {required final List<String> imageUris,
       required final String name,
-      required final String price,
-      required final String discount,
-      required final String category,
+      required final int price,
+      required final int discount,
+      required final CategoryModel category,
       required final bool available,
       final List<TagModel>? tags,
       final int? views,
@@ -408,11 +421,11 @@ abstract class _ProductModel implements ProductModel {
   @override
   String get name;
   @override
-  String get price;
+  int get price;
   @override
-  String get discount;
+  int get discount;
   @override
-  String get category;
+  CategoryModel get category;
   @override
   bool get available;
   @override

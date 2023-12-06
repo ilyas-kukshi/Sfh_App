@@ -2,13 +2,18 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sfh_app/models/category/category_model.dart';
+import 'package:sfh_app/models/products/product_model.dart';
 import 'package:sfh_app/models/tags/tag_model.dart';
 import 'package:sfh_app/services/category/category_services.dart';
+import 'package:sfh_app/services/product_services.dart';
 import 'package:sfh_app/services/tags_services.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
+import 'package:sfh_app/shared/carousel.dart';
+import 'package:sfh_app/shared/dialogs.dart';
 import 'package:sfh_app/shared/tag_selection.dart';
 import 'package:sfh_app/shared/utility.dart';
 
@@ -30,6 +35,7 @@ class _AddProductsState extends ConsumerState<AddProducts> {
   TextEditingController name = TextEditingController();
   TextEditingController price = TextEditingController();
   TextEditingController discount = TextEditingController();
+  CategoryModel? selectedCategory;
   String categoryName = '';
   List<TagModel> selected = [];
 
@@ -45,23 +51,26 @@ class _AddProductsState extends ConsumerState<AddProducts> {
             child: Column(
               children: [
                 const SizedBox(height: 10),
-                GestureDetector(
-                  onTap: () => pickImage(),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                            color: AppThemeShared.primaryColor, width: 3)),
-                    child: Padding(
-                      padding: const EdgeInsets.all(48.0),
-                      child: Icon(
-                        Icons.photo_library,
-                        size: 40,
-                        color: AppThemeShared.primaryColor,
+                croppedFiles.isNotEmpty
+                    ? Carousel(files: croppedFiles)
+                    : GestureDetector(
+                        onTap: () => pickImage(),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                  color: AppThemeShared.primaryColor,
+                                  width: 3)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(48.0),
+                            child: Icon(
+                              Icons.photo_library,
+                              size: 40,
+                              color: AppThemeShared.primaryColor,
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                ),
                 const SizedBox(height: 10),
                 AppThemeShared.textFormField(
                     context: context,
@@ -71,12 +80,12 @@ class _AddProductsState extends ConsumerState<AddProducts> {
                     validator: Utility.nameValidator),
                 const SizedBox(height: 10),
                 AppThemeShared.textFormField(
-                    hintText: "Enter price",
-                    context: context,
-                    controller: price,
-                    textInputAction: TextInputAction.next,
-                    keyboardType: TextInputType.number,
-                    validator: Utility.phoneNumberValidator),
+                  hintText: "Enter price",
+                  context: context,
+                  controller: price,
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.number,
+                ),
                 const SizedBox(height: 10),
                 AppThemeShared.textFormField(
                   context: context,
@@ -93,9 +102,12 @@ class _AddProductsState extends ConsumerState<AddProducts> {
                       hint: const Text('Select Category'),
                       items: data.map((e) => e.name).toList(),
                       onChanged: (value) async {
-                        String categoryId = getIdFromName(data, value!);
-                        if (categoryId.isNotEmpty) {
-                          tags = await TagServices().getByCategory(categoryId);
+                        CategoryModel? category =
+                            getModelFromName(data, value!);
+                        if (category != null) {
+                          selectedCategory = category;
+                          tags =
+                              await TagServices().getByCategory(category.id!);
                           setState(() {});
                         }
                       },
@@ -138,7 +150,10 @@ class _AddProductsState extends ConsumerState<AddProducts> {
                   buttonText: "Add Product",
                   onTap: () {
                     final valid = key.currentState!.validate();
-                    if (valid) {}
+                    if (valid && croppedFiles.isNotEmpty) {
+                      DialogShared.loadingDialog(context, 'Adding Product');
+                      addProduct();
+                    }
                   },
                 )
               ],
@@ -149,11 +164,34 @@ class _AddProductsState extends ConsumerState<AddProducts> {
     );
   }
 
-  String getIdFromName(List<CategoryModel> tags, String name) {
-    for (CategoryModel category in tags) {
-      if (category.name == name) return category.id!;
+  addProduct() async {
+    List<String>? imageUrls = await Utility().uploadImages(croppedFiles);
+    if (imageUrls != null) {
+      bool added = await ProductServices().add(ProductModel(
+          imageUris: imageUrls,
+          name: name.text,
+          price: int.parse(price.text),
+          discount: int.parse(discount.text),
+          category: selectedCategory!,
+          tags: selected.isNotEmpty ? selected : [],
+          available: true));
+
+      if (added) {
+        Navigator.pop(context);
+        Fluttertoast.showToast(msg: "Product Added");
+      } else {
+        Utility().deleteImageFromRef(imageUrls);
+        Navigator.pop(context);
+        Fluttertoast.showToast(msg: "Product Not added");
+      }
     }
-    return '';
+  }
+
+  CategoryModel? getModelFromName(List<CategoryModel> categories, String name) {
+    for (CategoryModel category in categories) {
+      if (category.name == name) return category;
+    }
+    return null;
   }
 
   pickImage() async {
@@ -185,5 +223,6 @@ class _AddProductsState extends ConsumerState<AddProducts> {
         }
       }
     }
+    setState(() {});
   }
 }

@@ -7,16 +7,27 @@ import 'package:sfh_app/shared/constants.dart';
 
 class ProductServices {
   Future<bool> add(ProductModel product) async {
-    var response = await http.post(
-        Uri.parse("${Constants.baseUrl}/product/add"),
-        body: product.toJson());
+    try {
+      var response =
+          await http.post(Uri.parse("${Constants.baseUrl}/product/add"), body: {
+        "imageUris": jsonEncode(product.imageUris.toList()),
+        "name": product.name,
+        "price": jsonEncode(product.price),
+        "discount": jsonEncode(product.discount),
+        "category": product.category.id,
+        "tags": jsonEncode(product.tags!.map((e) => e.id).toList())
+      });
 
-    var data = jsonDecode(response.body);
-
-    if (response.statusCode == 201) {
-      return true;
-    } else if (response.statusCode == 500) {
-      Fluttertoast.showToast(msg: data["error"]);
+      if (response.statusCode == 201) {
+        return true;
+      } else if (response.statusCode == 500) {
+        var data = jsonDecode(response.body);
+        Fluttertoast.showToast(msg: data["error"]);
+        return false;
+      }
+    } catch (error) {
+      Fluttertoast.showToast(msg: error.toString());
+      print(error);
     }
     return false;
   }
