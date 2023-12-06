@@ -51,7 +51,7 @@ class _DashboardMainState extends ConsumerState<DashboardMain> {
             allCatgories.when(
               data: (data) {
                 return SizedBox(
-                  height: 175,
+                  height: 220,
                   child: ListView.builder(
                     shrinkWrap: true,
                     itemCount: data.length,
@@ -108,7 +108,7 @@ class _DashboardMainState extends ConsumerState<DashboardMain> {
             children: [
               category.imageUri != null
                   ? CachedNetworkImage(
-                      height: 120,
+                      height: 150,
                       width: 120,
                       imageUrl: category.imageUri!,
                       fit: BoxFit.fill,

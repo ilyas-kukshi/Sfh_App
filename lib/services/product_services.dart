@@ -32,6 +32,28 @@ class ProductServices {
     return false;
   }
 
+  Future<List<ProductModel>> getAll() async {
+    List<ProductModel> products = [];
+    try {
+      var response =
+          await http.get(Uri.parse("${Constants.baseUrl}/product/get"));
+      var data = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        for (var product in data["products"]) {
+          products.add(ProductModel.fromJson(product));
+        }
+        return products;
+      } else if (response.statusCode == 500) {
+        Fluttertoast.showToast(msg: data["error"]);
+      }
+    } catch (error) {
+      Fluttertoast.showToast(msg: error.toString());
+      print(error);
+    }
+    return products;
+  }
+
   Future<List<ProductModel>> getByCategory(String categoryId) async {
     List<ProductModel> products = [];
     try {
@@ -50,6 +72,30 @@ class ProductServices {
     } catch (error) {
       Fluttertoast.showToast(msg: error.toString());
       print(error);
+    }
+    return products;
+  }
+
+  Future<List<ProductModel>> getByCategoryAndTag(
+      String categoryId, List<String> tagIds) async {
+    List<ProductModel> products = [];
+    var tags = jsonEncode(tagIds);
+    try {
+      var response = await http.get(Uri.parse(
+          "${Constants.baseUrl}/product/get/category/tags?categoryId=$categoryId&tags=$tags"));
+      var data = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        for (var product in data["products"]) {
+          products.add(ProductModel.fromJson(product));
+        }
+        return products;
+      } else if (response.statusCode == 500) {
+        Fluttertoast.showToast(msg: data["error"]);
+      }
+    } catch (error) {
+      print(error);
+      Fluttertoast.showToast(msg: error.toString());
     }
     return products;
   }

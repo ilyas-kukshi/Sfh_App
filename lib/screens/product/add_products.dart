@@ -129,6 +129,8 @@ class _AddProductsState extends ConsumerState<AddProducts> {
                             children: tags
                                 .map((e) => TagSelection(
                                       tag: e,
+                                      selected:
+                                          selected.contains(e) ? true : false,
                                       clicked: (tag) {
                                         if (selected.contains(tag)) {
                                           selected.remove(tag);

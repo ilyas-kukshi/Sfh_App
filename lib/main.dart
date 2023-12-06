@@ -8,6 +8,7 @@ import 'package:sfh_app/screens/category/manage_categories.dart';
 import 'package:sfh_app/screens/dashboard/dashboard_main.dart';
 import 'package:sfh_app/screens/product/add_products.dart';
 import 'package:sfh_app/screens/product/display_products_by_category.dart';
+import 'package:sfh_app/screens/product/manage_products.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 
 void main() async {
@@ -49,6 +50,11 @@ class MyApp extends StatelessWidget {
       case '/addProducts':
         return PageTransition(
             child: const AddProducts(), type: PageTransitionType.leftToRight);
+      case '/manageProducts':
+        return PageTransition(
+            child: const ManageProducts(),
+            type: PageTransitionType.leftToRight);
+
       case '/displayProductsByCategory':
         return PageTransition(
             child: DisplayProductsByCategory(

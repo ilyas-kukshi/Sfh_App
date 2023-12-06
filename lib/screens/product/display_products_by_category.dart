@@ -23,6 +23,7 @@ class DisplayProductsByCategory extends StatefulWidget {
 
 class _DisplayProductsByCategoryState extends State<DisplayProductsByCategory> {
   List<TagModel> tags = [];
+  List<String> selectedTags = [];
   List<ProductModel> products = [];
   @override
   void initState() {
@@ -50,7 +51,17 @@ class _DisplayProductsByCategoryState extends State<DisplayProductsByCategory> {
                       children: tags
                           .map((e) => TagSelection(
                                 tag: e,
-                                clicked: (tag) {},
+                                selected:
+                                    selectedTags.contains(e.id) ? true : false,
+                                clicked: (tag) {
+                                  if (selectedTags.contains(tag.id)) {
+                                    selectedTags.remove(tag.id);
+                                  } else {
+                                    selectedTags.add(tag.id!);
+                                  }
+                                  
+                                  getProductsByTags(selectedTags);
+                                },
                               ))
                           .toList(),
                     );
@@ -73,7 +84,7 @@ class _DisplayProductsByCategoryState extends State<DisplayProductsByCategory> {
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
-                            mainAxisExtent: 380,
+                            mainAxisExtent: 350,
                             mainAxisSpacing: 0,
                             crossAxisSpacing: 0),
                     itemBuilder: (context, index) {
@@ -94,7 +105,7 @@ class _DisplayProductsByCategoryState extends State<DisplayProductsByCategory> {
         children: [
           CachedNetworkImage(
             imageUrl: product.imageUris.first,
-            height: 250,
+            height: 220,
             width: MediaQuery.of(context).size.width * 0.48,
             fit: BoxFit.fill,
           ),
@@ -152,6 +163,13 @@ class _DisplayProductsByCategoryState extends State<DisplayProductsByCategory> {
     products = await ProductServices().getByCategory(categoryId);
     // print("Products");
     // print(products);
+    setState(() {});
+  }
+
+  getProductsByTags(List<String> tags) async {
+    products.clear();
+    products =
+        await ProductServices().getByCategoryAndTag(widget.category.id!, tags);
     setState(() {});
   }
 
