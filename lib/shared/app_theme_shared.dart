@@ -25,7 +25,8 @@ class AppThemeShared {
       ),
       automaticallyImplyLeading: false,
       centerTitle: centerTitle,
-      leading: leading ?? (backButton
+      leading: leading ??
+          (backButton
               ? GestureDetector(
                   onTap: () => Navigator.pop(context),
                   child: const Icon(
@@ -79,6 +80,9 @@ class AppThemeShared {
       TextInputAction? textInputAction,
       TextInputType? keyboardType,
       AutovalidateMode? autovalidateMode,
+
+      //
+      EdgeInsetsGeometry contentPadding = const EdgeInsets.all(15),
 
       //
       String? Function(String?)? validator,
@@ -138,7 +142,7 @@ class AppThemeShared {
         style: const TextStyle(fontSize: 18),
         decoration: InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.always,
-          contentPadding: const EdgeInsets.all(20),
+          contentPadding: contentPadding,
           hintText: hintText,
           hintStyle:
               TextStyle(fontSize: 18, color: Colors.black.withOpacity(0.7)),

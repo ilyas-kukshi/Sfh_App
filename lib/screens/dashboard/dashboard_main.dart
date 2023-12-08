@@ -1,11 +1,16 @@
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sfh_app/models/category/category_model.dart';
+import 'package:sfh_app/models/products/product_model.dart';
 import 'package:sfh_app/screens/dashboard/bottom_nav.dart';
 import 'package:sfh_app/screens/dashboard/dashboard_drawer.dart';
 import 'package:sfh_app/services/category/category_services.dart';
+import 'package:sfh_app/services/product_services.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
+import 'package:sfh_app/shared/product_card.dart';
 
 class DashboardMain extends ConsumerStatefulWidget {
   const DashboardMain({super.key});
@@ -18,11 +23,12 @@ class _DashboardMainState extends ConsumerState<DashboardMain> {
   GlobalKey<ScaffoldState> globalKey = GlobalKey();
 
   List<CategoryModel> categories = [];
+  List<ProductModel> products = [];
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getCategories();
+    getProducts();
   }
 
   @override
@@ -45,50 +51,64 @@ class _DashboardMainState extends ConsumerState<DashboardMain> {
             ),
           )),
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            allCatgories.when(
-              data: (data) {
-                return SizedBox(
-                  height: 220,
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: data.length,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      return categoryCard(data[index]);
-                    },
-                  ),
-                );
-              },
-              error: (error, stackTrace) {
-                return Text(error.toString());
-              },
-              loading: () => const CircularProgressIndicator(),
-            ),
-            // FutureBuilder(
-            //   future: allCatgories,
-            //   builder: (context, snapshot) {
-            //     if (snapshot.connectionState == ConnectionState.done) {
-            //       if (snapshot.hasData) {
-
-            //       } else {
-            //         return const Text("No data");
-            //       }
-            //     } else {
-            //       return const CircularProgressIndicator();
-            //     }
-            //   },
-            // ),
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                "Latest",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  "Categories",
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                ),
               ),
-            )
-          ],
+              allCatgories.when(
+                data: (data) {
+                  return SizedBox(
+                    height: 200,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: data.length,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        return categoryCard(data[index]);
+                      },
+                    ),
+                  );
+                },
+                error: (error, stackTrace) {
+                  return Text(error.toString());
+                },
+                loading: () => const CircularProgressIndicator(),
+              ),
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  "Latest",
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                ),
+              ),
+              products.isNotEmpty
+                  ? GridView.builder(
+                      itemCount: products.length,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: EdgeInsets.only(
+                          left: MediaQuery.of(context).size.width * 0.01),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              mainAxisExtent: 350,
+                              mainAxisSpacing: 0,
+                              crossAxisSpacing: 0),
+                      itemBuilder: (context, index) {
+                        return ProductCard()
+                            .productCard(products[index], context);
+                      },
+                    )
+                  : const CircularProgressIndicator()
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: const BottomNav(),
@@ -108,7 +128,7 @@ class _DashboardMainState extends ConsumerState<DashboardMain> {
             children: [
               category.imageUri != null
                   ? CachedNetworkImage(
-                      height: 150,
+                      height: 130,
                       width: 120,
                       imageUrl: category.imageUri!,
                       fit: BoxFit.fill,
@@ -136,5 +156,10 @@ class _DashboardMainState extends ConsumerState<DashboardMain> {
   Future<List<CategoryModel>> getCategories() async {
     return await CategoryServices().getAll();
     // print(categories);
+  }
+
+  getProducts() async {
+    products = await ProductServices().getLatest();
+    setState(() {});
   }
 }

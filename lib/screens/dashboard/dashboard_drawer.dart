@@ -30,7 +30,7 @@ class _DashboardDrawerState extends State<DashboardDrawer> {
                     style: Theme.of(context).textTheme.titleMedium)),
             GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, '/addProducts');
+                  Navigator.pushNamed(context, '/addProduct');
                 },
                 child: Text("Add Product",
                     style: Theme.of(context).textTheme.titleMedium)),

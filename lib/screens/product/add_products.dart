@@ -52,7 +52,12 @@ class _AddProductsState extends ConsumerState<AddProducts> {
               children: [
                 const SizedBox(height: 10),
                 croppedFiles.isNotEmpty
-                    ? Carousel(files: croppedFiles)
+                    ? Carousel(
+                        height: 250,
+                        files: croppedFiles,
+                        isUrl: false,
+                        imageUrls: const [],
+                      )
                     : GestureDetector(
                         onTap: () => pickImage(),
                         child: Container(

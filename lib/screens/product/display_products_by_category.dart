@@ -9,6 +9,8 @@ import 'package:sfh_app/services/product_services.dart';
 import 'package:sfh_app/services/tags_services.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 import 'package:sfh_app/shared/constants.dart';
+import 'package:sfh_app/shared/dialogs.dart';
+import 'package:sfh_app/shared/product_card.dart';
 import 'package:sfh_app/shared/tag_selection.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -59,7 +61,7 @@ class _DisplayProductsByCategoryState extends State<DisplayProductsByCategory> {
                                   } else {
                                     selectedTags.add(tag.id!);
                                   }
-                                  
+
                                   getProductsByTags(selectedTags);
                                 },
                               ))
@@ -88,68 +90,13 @@ class _DisplayProductsByCategoryState extends State<DisplayProductsByCategory> {
                             mainAxisSpacing: 0,
                             crossAxisSpacing: 0),
                     itemBuilder: (context, index) {
-                      return productCard(products[index]);
+                      return ProductCard()
+                          .productCard(products[index], context);
                     },
                   )
                 : const CircularProgressIndicator()
           ],
         ),
-      ),
-    );
-  }
-
-  Widget productCard(ProductModel product) {
-    return Center(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CachedNetworkImage(
-            imageUrl: product.imageUris.first,
-            height: 220,
-            width: MediaQuery.of(context).size.width * 0.48,
-            fit: BoxFit.fill,
-          ),
-          Text(
-            product.name,
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          ),
-          Row(
-            children: [
-              Text(
-                "₹${product.price}",
-                style: const TextStyle(
-                    color: Colors.grey, decoration: TextDecoration.lineThrough),
-              ),
-              const SizedBox(width: 4),
-              Text(
-                "₹${product.price - product.discount}",
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(width: 4),
-              Text(
-                "₹${((product.discount / product.price) * 100).toInt()}% OFF",
-                style: const TextStyle(
-                    color: Colors.orange,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  fixedSize: Size(MediaQuery.of(context).size.width * 0.48, 40),
-                  shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.zero)),
-              onPressed: () {
-                enquireOnWhatsapp(product);
-              },
-              child: Text(
-                "Enquire",
-                style: TextStyle(color: AppThemeShared.primaryColor),
-              ))
-        ],
       ),
     );
   }
@@ -167,10 +114,12 @@ class _DisplayProductsByCategoryState extends State<DisplayProductsByCategory> {
   }
 
   getProductsByTags(List<String> tags) async {
+    DialogShared.loadingDialog(context, "Applying Filters");
     products.clear();
     products =
         await ProductServices().getByCategoryAndTag(widget.category.id!, tags);
     setState(() {});
+    Navigator.pop(context);
   }
 
   enquireOnWhatsapp(ProductModel product) async {
