@@ -7,8 +7,8 @@ import 'package:sfh_app/models/category/category_model.dart';
 import 'package:sfh_app/models/products/product_model.dart';
 import 'package:sfh_app/screens/category/add_category.dart';
 import 'package:sfh_app/screens/category/manage_categories.dart';
+import 'package:sfh_app/screens/dashboard/bottom_nav.dart';
 import 'package:sfh_app/screens/dashboard/dashboard_main.dart';
-import 'package:sfh_app/screens/login.dart';
 import 'package:sfh_app/screens/product/add_products.dart';
 import 'package:sfh_app/screens/product/display_products_by_category.dart';
 import 'package:sfh_app/screens/product/edit_product.dart';
@@ -20,7 +20,7 @@ import 'package:sfh_app/shared/app_theme_shared.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  MobileAds.instance.initialize();
+  await MobileAds.instance.initialize();
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                     fontSize: 22))),
         onGenerateRoute: _routing,
-        home: const DashboardMain());
+        home: const BottomNav());
   }
 
   Route _routing(RouteSettings settings) {

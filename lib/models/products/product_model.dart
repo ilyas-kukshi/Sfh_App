@@ -2,6 +2,8 @@
 //
 //     final productModel = productModelFromJson(jsonString);
 
+// ignore_for_file: invalid_annotation_target
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:sfh_app/models/category/category_model.dart';
 import 'dart:convert';

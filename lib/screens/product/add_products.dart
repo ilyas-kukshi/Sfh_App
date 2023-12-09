@@ -1,4 +1,4 @@
-import 'dart:io';
+// ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -142,7 +142,7 @@ class _AddProductsState extends ConsumerState<AddProducts> {
                                         } else {
                                           selected.add(tag);
                                         }
-                                        print(selected);
+                                        // print(selected);
                                       },
                                     ))
                                 .toList(),
