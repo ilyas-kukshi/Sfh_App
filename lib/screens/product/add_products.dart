@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:sfh_app/models/category/category_model.dart';
 import 'package:sfh_app/models/products/product_model.dart';
 import 'package:sfh_app/models/tags/tag_model.dart';
+import 'package:sfh_app/models/user/user_model.dart';
 import 'package:sfh_app/services/category/category_services.dart';
 import 'package:sfh_app/services/product_services.dart';
 import 'package:sfh_app/services/tags_services.dart';
@@ -175,6 +176,8 @@ class _AddProductsState extends ConsumerState<AddProducts> {
     List<String>? imageUrls = await Utility().uploadImages(croppedFiles);
     if (imageUrls != null) {
       bool added = await ProductServices().add(ProductModel(
+          seller: UserModel(
+              phoneNumber: "phoneNumber", role: "", productLimit: 200),
           imageUris: imageUrls,
           name: name.text,
           price: int.parse(price.text),

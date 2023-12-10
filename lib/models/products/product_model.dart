@@ -9,6 +9,7 @@ import 'package:sfh_app/models/category/category_model.dart';
 import 'dart:convert';
 
 import 'package:sfh_app/models/tags/tag_model.dart';
+import 'package:sfh_app/models/user/user_model.dart';
 
 part 'product_model.freezed.dart';
 part 'product_model.g.dart';
@@ -37,6 +38,7 @@ class ProductModel with _$ProductModel {
     required int discount,
     required CategoryModel category,
     required bool available,
+    required UserModel seller,
     List<TagModel>? tags,
     int? views,
     int? enquired,

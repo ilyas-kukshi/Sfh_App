@@ -26,6 +26,7 @@ mixin _$ProductModel {
   int get discount => throw _privateConstructorUsedError;
   CategoryModel get category => throw _privateConstructorUsedError;
   bool get available => throw _privateConstructorUsedError;
+  UserModel get seller => throw _privateConstructorUsedError;
   List<TagModel>? get tags => throw _privateConstructorUsedError;
   int? get views => throw _privateConstructorUsedError;
   int? get enquired => throw _privateConstructorUsedError;
@@ -55,6 +56,7 @@ abstract class $ProductModelCopyWith<$Res> {
       int discount,
       CategoryModel category,
       bool available,
+      UserModel seller,
       List<TagModel>? tags,
       int? views,
       int? enquired,
@@ -64,6 +66,7 @@ abstract class $ProductModelCopyWith<$Res> {
       @JsonKey(name: '__v') int? v});
 
   $CategoryModelCopyWith<$Res> get category;
+  $UserModelCopyWith<$Res> get seller;
 }
 
 /// @nodoc
@@ -85,6 +88,7 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
     Object? discount = null,
     Object? category = null,
     Object? available = null,
+    Object? seller = null,
     Object? tags = freezed,
     Object? views = freezed,
     Object? enquired = freezed,
@@ -118,6 +122,10 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
           ? _value.available
           : available // ignore: cast_nullable_to_non_nullable
               as bool,
+      seller: null == seller
+          ? _value.seller
+          : seller // ignore: cast_nullable_to_non_nullable
+              as UserModel,
       tags: freezed == tags
           ? _value.tags
           : tags // ignore: cast_nullable_to_non_nullable
@@ -156,6 +164,14 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
       return _then(_value.copyWith(category: value) as $Val);
     });
   }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $UserModelCopyWith<$Res> get seller {
+    return $UserModelCopyWith<$Res>(_value.seller, (value) {
+      return _then(_value.copyWith(seller: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -173,6 +189,7 @@ abstract class _$$_ProductModelCopyWith<$Res>
       int discount,
       CategoryModel category,
       bool available,
+      UserModel seller,
       List<TagModel>? tags,
       int? views,
       int? enquired,
@@ -183,6 +200,8 @@ abstract class _$$_ProductModelCopyWith<$Res>
 
   @override
   $CategoryModelCopyWith<$Res> get category;
+  @override
+  $UserModelCopyWith<$Res> get seller;
 }
 
 /// @nodoc
@@ -202,6 +221,7 @@ class __$$_ProductModelCopyWithImpl<$Res>
     Object? discount = null,
     Object? category = null,
     Object? available = null,
+    Object? seller = null,
     Object? tags = freezed,
     Object? views = freezed,
     Object? enquired = freezed,
@@ -235,6 +255,10 @@ class __$$_ProductModelCopyWithImpl<$Res>
           ? _value.available
           : available // ignore: cast_nullable_to_non_nullable
               as bool,
+      seller: null == seller
+          ? _value.seller
+          : seller // ignore: cast_nullable_to_non_nullable
+              as UserModel,
       tags: freezed == tags
           ? _value._tags
           : tags // ignore: cast_nullable_to_non_nullable
@@ -277,6 +301,7 @@ class _$_ProductModel implements _ProductModel {
       required this.discount,
       required this.category,
       required this.available,
+      required this.seller,
       final List<TagModel>? tags,
       this.views,
       this.enquired,
@@ -308,6 +333,8 @@ class _$_ProductModel implements _ProductModel {
   final CategoryModel category;
   @override
   final bool available;
+  @override
+  final UserModel seller;
   final List<TagModel>? _tags;
   @override
   List<TagModel>? get tags {
@@ -335,7 +362,7 @@ class _$_ProductModel implements _ProductModel {
 
   @override
   String toString() {
-    return 'ProductModel(imageUris: $imageUris, name: $name, price: $price, discount: $discount, category: $category, available: $available, tags: $tags, views: $views, enquired: $enquired, id: $id, createdAt: $createdAt, updatedAt: $updatedAt, v: $v)';
+    return 'ProductModel(imageUris: $imageUris, name: $name, price: $price, discount: $discount, category: $category, available: $available, seller: $seller, tags: $tags, views: $views, enquired: $enquired, id: $id, createdAt: $createdAt, updatedAt: $updatedAt, v: $v)';
   }
 
   @override
@@ -353,6 +380,7 @@ class _$_ProductModel implements _ProductModel {
                 other.category == category) &&
             (identical(other.available, available) ||
                 other.available == available) &&
+            (identical(other.seller, seller) || other.seller == seller) &&
             const DeepCollectionEquality().equals(other._tags, _tags) &&
             (identical(other.views, views) || other.views == views) &&
             (identical(other.enquired, enquired) ||
@@ -375,6 +403,7 @@ class _$_ProductModel implements _ProductModel {
       discount,
       category,
       available,
+      seller,
       const DeepCollectionEquality().hash(_tags),
       views,
       enquired,
@@ -405,6 +434,7 @@ abstract class _ProductModel implements ProductModel {
       required final int discount,
       required final CategoryModel category,
       required final bool available,
+      required final UserModel seller,
       final List<TagModel>? tags,
       final int? views,
       final int? enquired,
@@ -428,6 +458,8 @@ abstract class _ProductModel implements ProductModel {
   CategoryModel get category;
   @override
   bool get available;
+  @override
+  UserModel get seller;
   @override
   List<TagModel>? get tags;
   @override

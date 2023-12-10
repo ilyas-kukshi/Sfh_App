@@ -11,6 +11,7 @@ import 'package:sfh_app/models/category/category_model.dart';
 import 'package:sfh_app/services/category/category_services.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 import 'package:sfh_app/shared/dialogs.dart';
+import 'package:sfh_app/shared/utility.dart';
 
 class AddCategory extends StatefulWidget {
   CategoryModel? category;
@@ -142,21 +143,21 @@ class _AddCategoryState extends State<AddCategory> {
     );
   }
 
-  Future<String?> uploadPhoto() async {
-    var ref = FirebaseStorage.instance.ref(name.text);
+  // Future<String?> uploadPhoto() async {
+  //   var ref = FirebaseStorage.instance.ref(name.text);
 
-    try {
-      await ref.putFile(File(croppedFile!.path));
-    } catch (error) {
-      Fluttertoast.showToast(msg: error.toString());
-      return null;
-    }
+  //   try {
+  //     await ref.putFile(File(croppedFile!.path));
+  //   } catch (error) {
+  //     Fluttertoast.showToast(msg: error.toString());
+  //     return null;
+  //   }
 
-    return await ref.getDownloadURL();
-  }
+  //   return await ref.getDownloadURL();
+  // }
 
   addCategory() async {
-    String? imageUrl = await uploadPhoto();
+    String? imageUrl = await Utility().uploadImage(croppedFile!);
 
     if (imageUrl != null) {
       bool added = await CategoryServices().addCategory(
@@ -177,6 +178,9 @@ class _AddCategoryState extends State<AddCategory> {
         Fluttertoast.showToast(msg: "Category Not Added");
         Navigator.pop(context);
       }
+    } else {
+      Fluttertoast.showToast(msg: "Category Not Added");
+      Navigator.pop(context);
     }
   }
 

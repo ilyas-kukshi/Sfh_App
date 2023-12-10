@@ -76,6 +76,7 @@ class AppThemeShared {
       String hintText = '',
       String? initialValue,
       String prefixText = '',
+      String? suffixText,
       TextEditingController? controller,
       TextInputAction? textInputAction,
       TextInputType? keyboardType,
@@ -111,6 +112,7 @@ class AppThemeShared {
       Color focusedBorderColor = const Color(0xff439A97),
 
       //
+      Widget? suffix,
       Widget? suffixIcon,
       Widget? prefixIcon,
       bool widthPixel = false,
@@ -149,8 +151,11 @@ class AppThemeShared {
           labelText: labelText,
           labelStyle:
               TextStyle(fontSize: 16, color: AppThemeShared.primaryColor),
+          suffix: suffix,
+          suffixText: suffixText,
           suffixIcon: suffixIcon,
           isDense: true,
+          prefixText: prefixText,
           prefixIcon: prefixIcon,
           prefixIconConstraints:
               const BoxConstraints(minWidth: 0, minHeight: 0),

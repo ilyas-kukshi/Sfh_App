@@ -23,9 +23,24 @@ class ProductCard {
               width: MediaQuery.of(context).size.width * 0.48,
               fit: BoxFit.fill,
             ),
-            Text(
-              product.name,
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  product.name,
+                  style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      overflow: TextOverflow.ellipsis),
+                ),
+                // IconButton(
+                //   icon: Icon(
+                //     Icons.favorite,
+                //     color: Colors.grey,
+                //   ),
+                //   onPressed: () {},
+                // )
+              ],
             ),
             Row(
               children: [
@@ -70,6 +85,8 @@ class ProductCard {
       ),
     );
   }
+
+  imageViewed(ProductModel product) async {}
 
   enquireOnWhatsapp(ProductModel product) async {
     try {

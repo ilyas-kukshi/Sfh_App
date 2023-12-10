@@ -31,18 +31,19 @@ class _DashboardMainState extends ConsumerState<DashboardMain> {
     super.initState();
     getCategories();
     getProducts();
-    createBannerAd();
+    // createBannerAd();
   }
 
   @override
   Widget build(BuildContext context) {
     final allCatgories = ref.watch(allCategoriesProvider);
     return SafeArea(
-      child: Scaffold(
+        top: false,
+        child: Scaffold(
           key: globalKey,
           drawer: const DashboardDrawer(),
           appBar: AppThemeShared.appBar(
-              title: "",
+              title: "Sakina Fashion House",
               context: context,
               backButton: false,
               leading: GestureDetector(
@@ -117,17 +118,7 @@ class _DashboardMainState extends ConsumerState<DashboardMain> {
               ),
             ),
           ),
-          bottomNavigationBar: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // if (banner != null)
-              //   SizedBox(height: 55, child: AdWidget(ad: banner!)),
-              banner != null
-                  ? SizedBox(height: 55, child: AdWidget(ad: banner!))
-                  : const Offstage(),
-            ],
-          )),
-    );
+        ));
   }
 
   Widget categoryCard(CategoryModel category) {
@@ -178,12 +169,5 @@ class _DashboardMainState extends ConsumerState<DashboardMain> {
     setState(() {});
   }
 
-  createBannerAd() async {
-    banner = BannerAd(
-        size: AdSize.fullBanner,
-        adUnitId: Constants.bannerAddUnitId,
-        listener: Constants.bannerListener,
-        request: const AdRequest())
-      ..load();
-  }
+  
 }

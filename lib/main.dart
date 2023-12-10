@@ -5,6 +5,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:sfh_app/models/category/category_model.dart';
 import 'package:sfh_app/models/products/product_model.dart';
+import 'package:sfh_app/screens/add_seller.dart';
 import 'package:sfh_app/screens/category/add_category.dart';
 import 'package:sfh_app/screens/category/manage_categories.dart';
 import 'package:sfh_app/screens/dashboard/bottom_nav.dart';
@@ -86,6 +87,9 @@ class MyApp extends StatelessWidget {
               category: settings.arguments as CategoryModel,
             ),
             type: PageTransitionType.leftToRight);
+      case '/addSeller':
+        return PageTransition(
+            child: const AddSeller(), type: PageTransitionType.leftToRight);
       default:
         return PageTransition(
             child: AddCategory(

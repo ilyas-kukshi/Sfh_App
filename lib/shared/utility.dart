@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:uuid/data.dart';
@@ -88,6 +89,30 @@ class Utility {
     return null;
   }
 
+  Future<XFile?> testCompressAndGetFile(
+      CroppedFile file, String targetPath) async {
+    try {
+      XFile? result = await FlutterImageCompress.compressAndGetFile(
+        file.path,
+        targetPath + "compressed.jpg",
+        quality: 88,
+        // rotate: 180,
+      );
+
+      if (result != null) {
+        print(File(result.path).lengthSync());
+        return result;
+      }
+    } catch (error) {
+      Fluttertoast.showToast(msg: error.toString());
+      print(error);
+    }
+
+    // print(result!.lengthSync());
+
+    return null;
+  }
+
   Future<List<String>?> uploadImages(List<CroppedFile> images) async {
     List<String> imageUrls = [];
 
@@ -107,14 +132,18 @@ class Utility {
 
   Future<String?> uploadImage(CroppedFile image) async {
     var ref = FirebaseStorage.instance.ref(getUniqueId());
+    XFile? compressed = await testCompressAndGetFile(image, image.path);
 
-    try {
-      await ref.putFile(File(image.path));
-    } on FirebaseException catch (error) {
-      Fluttertoast.showToast(msg: error.toString());
-      print(error);
-      return null;
+    if (compressed != null) {
+      try {
+        await ref.putFile(File(compressed!.path));
+      } on FirebaseException catch (error) {
+        Fluttertoast.showToast(msg: error.toString());
+        print(error);
+        return null;
+      }
     }
+
     return await ref.getDownloadURL();
   }
 

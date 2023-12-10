@@ -1,10 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:sfh_app/models/category/category_model.dart';
 import 'package:sfh_app/models/products/product_model.dart';
 import 'package:sfh_app/models/tags/tag_model.dart';
 import 'package:sfh_app/screens/product/add_products.dart';
+import 'package:sfh_app/services/admob_service.dart';
 import 'package:sfh_app/services/product_services.dart';
 import 'package:sfh_app/services/tags_services.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
@@ -27,76 +29,86 @@ class _DisplayProductsByCategoryState extends State<DisplayProductsByCategory> {
   List<TagModel> tags = [];
   List<String> selectedTags = [];
   List<ProductModel> products = [];
+
+  BannerAd? banner;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getProducts(widget.category.id!);
+    createBannerAd();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar:
-          AppThemeShared.appBar(title: widget.category.name, context: context),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            FutureBuilder(
-              future: getTags(widget.category.id!),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (snapshot.hasData) {
-                    tags = snapshot.data as List<TagModel>;
-                    return Wrap(
-                      alignment: WrapAlignment.center,
-                      children: tags
-                          .map((e) => TagSelection(
-                                tag: e,
-                                selected:
-                                    selectedTags.contains(e.id) ? true : false,
-                                clicked: (tag) {
-                                  if (selectedTags.contains(tag.id)) {
-                                    selectedTags.remove(tag.id);
-                                  } else {
-                                    selectedTags.add(tag.id!);
-                                  }
+    return SafeArea(
+      top: false,
+      child: Scaffold(
+        appBar: AppThemeShared.appBar(
+            title: widget.category.name, context: context),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              FutureBuilder(
+                future: getTags(widget.category.id!),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    if (snapshot.hasData) {
+                      tags = snapshot.data as List<TagModel>;
+                      return Wrap(
+                        alignment: WrapAlignment.center,
+                        children: tags
+                            .map((e) => TagSelection(
+                                  tag: e,
+                                  selected: selectedTags.contains(e.id)
+                                      ? true
+                                      : false,
+                                  clicked: (tag) {
+                                    if (selectedTags.contains(tag.id)) {
+                                      selectedTags.remove(tag.id);
+                                    } else {
+                                      selectedTags.add(tag.id!);
+                                    }
 
-                                  getProductsByTags(selectedTags);
-                                },
-                              ))
-                          .toList(),
-                    );
+                                    getProductsByTags(selectedTags);
+                                  },
+                                ))
+                            .toList(),
+                      );
+                    } else {
+                      return const Offstage();
+                    }
                   } else {
-                    return const Offstage();
+                    return const CircularProgressIndicator();
                   }
-                } else {
-                  return const CircularProgressIndicator();
-                }
-              },
-            ),
-            const SizedBox(height: 10),
-            products.isNotEmpty
-                ? GridView.builder(
-                    itemCount: products.length,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    padding: EdgeInsets.only(
-                        left: MediaQuery.of(context).size.width * 0.01),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            mainAxisExtent: 350,
-                            mainAxisSpacing: 0,
-                            crossAxisSpacing: 0),
-                    itemBuilder: (context, index) {
-                      return ProductCard()
-                          .productCard(products[index], context);
-                    },
-                  )
-                : const CircularProgressIndicator()
-          ],
+                },
+              ),
+              const SizedBox(height: 10),
+              products.isNotEmpty
+                  ? GridView.builder(
+                      itemCount: products.length,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: EdgeInsets.only(
+                          left: MediaQuery.of(context).size.width * 0.01),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              mainAxisExtent: 350,
+                              mainAxisSpacing: 0,
+                              crossAxisSpacing: 0),
+                      itemBuilder: (context, index) {
+                        return ProductCard()
+                            .productCard(products[index], context);
+                      },
+                    )
+                  : const CircularProgressIndicator()
+            ],
+          ),
         ),
+        bottomNavigationBar: banner != null
+            ? SizedBox(height: 50, child: AdWidget(ad: banner!))
+            : const Offstage(),
       ),
     );
   }
@@ -134,5 +146,9 @@ class _DisplayProductsByCategoryState extends State<DisplayProductsByCategory> {
       print(error);
       Fluttertoast.showToast(msg: error.toString());
     }
+  }
+
+  void createBannerAd() {
+    banner = AdmobService().createBannerAd();
   }
 }
