@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class DashboardDrawer extends StatefulWidget {
+class DashboardDrawer extends ConsumerStatefulWidget {
   const DashboardDrawer({super.key});
 
   @override
-  State<DashboardDrawer> createState() => _DashboardDrawerState();
+  ConsumerState<DashboardDrawer> createState() => _DashboardDrawerState();
 }
 
-class _DashboardDrawerState extends State<DashboardDrawer> {
+class _DashboardDrawerState extends ConsumerState<DashboardDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(

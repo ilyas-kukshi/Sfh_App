@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:sfh_app/auth/seller_login.dart';
 import 'package:sfh_app/models/category/category_model.dart';
 import 'package:sfh_app/models/products/product_model.dart';
 import 'package:sfh_app/screens/add_seller.dart';
@@ -47,6 +48,12 @@ class MyApp extends StatelessWidget {
 
   Route _routing(RouteSettings settings) {
     switch (settings.name) {
+      case '/bottomNav':
+        return PageTransition(
+            child: const BottomNav(), type: PageTransitionType.leftToRight);
+      case '/dashboardMain':
+        return PageTransition(
+            child: const DashboardMain(), type: PageTransitionType.leftToRight);
       case '/addCategory':
         return PageTransition(
             child: AddCategory(category: settings.arguments as CategoryModel?),
@@ -87,6 +94,9 @@ class MyApp extends StatelessWidget {
               category: settings.arguments as CategoryModel,
             ),
             type: PageTransitionType.leftToRight);
+      case '/sellerLogin':
+        return PageTransition(
+            child: const SellerLogin(), type: PageTransitionType.leftToRight);
       case '/addSeller':
         return PageTransition(
             child: const AddSeller(), type: PageTransitionType.leftToRight);

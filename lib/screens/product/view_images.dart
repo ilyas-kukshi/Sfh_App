@@ -37,6 +37,13 @@ class _ViewImagesState extends State<ViewImages> {
               return CachedNetworkImage(
                 imageUrl: widget.imageUris[index],
                 fit: BoxFit.contain,
+                placeholder: (context, url) => const Center(
+                  child: SizedBox(
+                      height: 50,
+                      width: 50,
+                      child: CircularProgressIndicator()),
+                ),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
               );
             },
           ),

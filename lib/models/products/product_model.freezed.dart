@@ -26,6 +26,7 @@ mixin _$ProductModel {
   int get discount => throw _privateConstructorUsedError;
   CategoryModel get category => throw _privateConstructorUsedError;
   bool get available => throw _privateConstructorUsedError;
+  bool get freeShipping => throw _privateConstructorUsedError;
   UserModel get seller => throw _privateConstructorUsedError;
   List<TagModel>? get tags => throw _privateConstructorUsedError;
   int? get views => throw _privateConstructorUsedError;
@@ -56,6 +57,7 @@ abstract class $ProductModelCopyWith<$Res> {
       int discount,
       CategoryModel category,
       bool available,
+      bool freeShipping,
       UserModel seller,
       List<TagModel>? tags,
       int? views,
@@ -88,6 +90,7 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
     Object? discount = null,
     Object? category = null,
     Object? available = null,
+    Object? freeShipping = null,
     Object? seller = null,
     Object? tags = freezed,
     Object? views = freezed,
@@ -121,6 +124,10 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
       available: null == available
           ? _value.available
           : available // ignore: cast_nullable_to_non_nullable
+              as bool,
+      freeShipping: null == freeShipping
+          ? _value.freeShipping
+          : freeShipping // ignore: cast_nullable_to_non_nullable
               as bool,
       seller: null == seller
           ? _value.seller
@@ -189,6 +196,7 @@ abstract class _$$_ProductModelCopyWith<$Res>
       int discount,
       CategoryModel category,
       bool available,
+      bool freeShipping,
       UserModel seller,
       List<TagModel>? tags,
       int? views,
@@ -221,6 +229,7 @@ class __$$_ProductModelCopyWithImpl<$Res>
     Object? discount = null,
     Object? category = null,
     Object? available = null,
+    Object? freeShipping = null,
     Object? seller = null,
     Object? tags = freezed,
     Object? views = freezed,
@@ -254,6 +263,10 @@ class __$$_ProductModelCopyWithImpl<$Res>
       available: null == available
           ? _value.available
           : available // ignore: cast_nullable_to_non_nullable
+              as bool,
+      freeShipping: null == freeShipping
+          ? _value.freeShipping
+          : freeShipping // ignore: cast_nullable_to_non_nullable
               as bool,
       seller: null == seller
           ? _value.seller
@@ -301,6 +314,7 @@ class _$_ProductModel implements _ProductModel {
       required this.discount,
       required this.category,
       required this.available,
+      required this.freeShipping,
       required this.seller,
       final List<TagModel>? tags,
       this.views,
@@ -334,6 +348,8 @@ class _$_ProductModel implements _ProductModel {
   @override
   final bool available;
   @override
+  final bool freeShipping;
+  @override
   final UserModel seller;
   final List<TagModel>? _tags;
   @override
@@ -362,7 +378,7 @@ class _$_ProductModel implements _ProductModel {
 
   @override
   String toString() {
-    return 'ProductModel(imageUris: $imageUris, name: $name, price: $price, discount: $discount, category: $category, available: $available, seller: $seller, tags: $tags, views: $views, enquired: $enquired, id: $id, createdAt: $createdAt, updatedAt: $updatedAt, v: $v)';
+    return 'ProductModel(imageUris: $imageUris, name: $name, price: $price, discount: $discount, category: $category, available: $available, freeShipping: $freeShipping, seller: $seller, tags: $tags, views: $views, enquired: $enquired, id: $id, createdAt: $createdAt, updatedAt: $updatedAt, v: $v)';
   }
 
   @override
@@ -380,6 +396,8 @@ class _$_ProductModel implements _ProductModel {
                 other.category == category) &&
             (identical(other.available, available) ||
                 other.available == available) &&
+            (identical(other.freeShipping, freeShipping) ||
+                other.freeShipping == freeShipping) &&
             (identical(other.seller, seller) || other.seller == seller) &&
             const DeepCollectionEquality().equals(other._tags, _tags) &&
             (identical(other.views, views) || other.views == views) &&
@@ -403,6 +421,7 @@ class _$_ProductModel implements _ProductModel {
       discount,
       category,
       available,
+      freeShipping,
       seller,
       const DeepCollectionEquality().hash(_tags),
       views,
@@ -434,6 +453,7 @@ abstract class _ProductModel implements ProductModel {
       required final int discount,
       required final CategoryModel category,
       required final bool available,
+      required final bool freeShipping,
       required final UserModel seller,
       final List<TagModel>? tags,
       final int? views,
@@ -458,6 +478,8 @@ abstract class _ProductModel implements ProductModel {
   CategoryModel get category;
   @override
   bool get available;
+  @override
+  bool get freeShipping;
   @override
   UserModel get seller;
   @override

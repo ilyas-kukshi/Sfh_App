@@ -23,11 +23,11 @@ mixin _$AuthModel {
   String get phoneNumber => throw _privateConstructorUsedError;
   String get password => throw _privateConstructorUsedError;
   @JsonKey(name: '_id')
-  String get id => throw _privateConstructorUsedError;
+  String? get id => throw _privateConstructorUsedError;
   DateTime? get createdAt => throw _privateConstructorUsedError;
   DateTime? get updatedAt => throw _privateConstructorUsedError;
   @JsonKey(name: '__v')
-  int get v => throw _privateConstructorUsedError;
+  int? get v => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -43,10 +43,10 @@ abstract class $AuthModelCopyWith<$Res> {
   $Res call(
       {String phoneNumber,
       String password,
-      @JsonKey(name: '_id') String id,
+      @JsonKey(name: '_id') String? id,
       DateTime? createdAt,
       DateTime? updatedAt,
-      @JsonKey(name: '__v') int v});
+      @JsonKey(name: '__v') int? v});
 }
 
 /// @nodoc
@@ -64,10 +64,10 @@ class _$AuthModelCopyWithImpl<$Res, $Val extends AuthModel>
   $Res call({
     Object? phoneNumber = null,
     Object? password = null,
-    Object? id = null,
+    Object? id = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
-    Object? v = null,
+    Object? v = freezed,
   }) {
     return _then(_value.copyWith(
       phoneNumber: null == phoneNumber
@@ -78,10 +78,10 @@ class _$AuthModelCopyWithImpl<$Res, $Val extends AuthModel>
           ? _value.password
           : password // ignore: cast_nullable_to_non_nullable
               as String,
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -90,10 +90,10 @@ class _$AuthModelCopyWithImpl<$Res, $Val extends AuthModel>
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      v: null == v
+      v: freezed == v
           ? _value.v
           : v // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
     ) as $Val);
   }
 }
@@ -108,10 +108,10 @@ abstract class _$$_AuthModelCopyWith<$Res> implements $AuthModelCopyWith<$Res> {
   $Res call(
       {String phoneNumber,
       String password,
-      @JsonKey(name: '_id') String id,
+      @JsonKey(name: '_id') String? id,
       DateTime? createdAt,
       DateTime? updatedAt,
-      @JsonKey(name: '__v') int v});
+      @JsonKey(name: '__v') int? v});
 }
 
 /// @nodoc
@@ -127,10 +127,10 @@ class __$$_AuthModelCopyWithImpl<$Res>
   $Res call({
     Object? phoneNumber = null,
     Object? password = null,
-    Object? id = null,
+    Object? id = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
-    Object? v = null,
+    Object? v = freezed,
   }) {
     return _then(_$_AuthModel(
       phoneNumber: null == phoneNumber
@@ -141,10 +141,10 @@ class __$$_AuthModelCopyWithImpl<$Res>
           ? _value.password
           : password // ignore: cast_nullable_to_non_nullable
               as String,
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -153,10 +153,10 @@ class __$$_AuthModelCopyWithImpl<$Res>
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      v: null == v
+      v: freezed == v
           ? _value.v
           : v // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
     ));
   }
 }
@@ -167,10 +167,10 @@ class _$_AuthModel implements _AuthModel {
   const _$_AuthModel(
       {required this.phoneNumber,
       required this.password,
-      @JsonKey(name: '_id') required this.id,
+      @JsonKey(name: '_id') this.id,
       this.createdAt,
       this.updatedAt,
-      @JsonKey(name: '__v') required this.v});
+      @JsonKey(name: '__v') this.v});
 
   factory _$_AuthModel.fromJson(Map<String, dynamic> json) =>
       _$$_AuthModelFromJson(json);
@@ -181,14 +181,14 @@ class _$_AuthModel implements _AuthModel {
   final String password;
   @override
   @JsonKey(name: '_id')
-  final String id;
+  final String? id;
   @override
   final DateTime? createdAt;
   @override
   final DateTime? updatedAt;
   @override
   @JsonKey(name: '__v')
-  final int v;
+  final int? v;
 
   @override
   String toString() {
@@ -235,10 +235,10 @@ abstract class _AuthModel implements AuthModel {
   const factory _AuthModel(
       {required final String phoneNumber,
       required final String password,
-      @JsonKey(name: '_id') required final String id,
+      @JsonKey(name: '_id') final String? id,
       final DateTime? createdAt,
       final DateTime? updatedAt,
-      @JsonKey(name: '__v') required final int v}) = _$_AuthModel;
+      @JsonKey(name: '__v') final int? v}) = _$_AuthModel;
 
   factory _AuthModel.fromJson(Map<String, dynamic> json) =
       _$_AuthModel.fromJson;
@@ -249,14 +249,14 @@ abstract class _AuthModel implements AuthModel {
   String get password;
   @override
   @JsonKey(name: '_id')
-  String get id;
+  String? get id;
   @override
   DateTime? get createdAt;
   @override
   DateTime? get updatedAt;
   @override
   @JsonKey(name: '__v')
-  int get v;
+  int? get v;
   @override
   @JsonKey(ignore: true)
   _$$_AuthModelCopyWith<_$_AuthModel> get copyWith =>

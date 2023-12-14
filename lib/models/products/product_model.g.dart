@@ -16,6 +16,7 @@ _$_ProductModel _$$_ProductModelFromJson(Map<String, dynamic> json) =>
       category:
           CategoryModel.fromJson(json['category'] as Map<String, dynamic>),
       available: json['available'] as bool,
+      freeShipping: json['freeShipping'] as bool,
       seller: UserModel.fromJson(json['seller'] as Map<String, dynamic>),
       tags: (json['tags'] as List<dynamic>?)
           ?.map((e) => TagModel.fromJson(e as Map<String, dynamic>))
@@ -40,6 +41,7 @@ Map<String, dynamic> _$$_ProductModelToJson(_$_ProductModel instance) =>
       'discount': instance.discount,
       'category': instance.category,
       'available': instance.available,
+      'freeShipping': instance.freeShipping,
       'seller': instance.seller,
       'tags': instance.tags,
       'views': instance.views,

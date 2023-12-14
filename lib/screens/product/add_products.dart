@@ -9,6 +9,7 @@ import 'package:sfh_app/models/category/category_model.dart';
 import 'package:sfh_app/models/products/product_model.dart';
 import 'package:sfh_app/models/tags/tag_model.dart';
 import 'package:sfh_app/models/user/user_model.dart';
+import 'package:sfh_app/services/auth/auth_service.dart';
 import 'package:sfh_app/services/category/category_services.dart';
 import 'package:sfh_app/services/product_services.dart';
 import 'package:sfh_app/services/tags_services.dart';
@@ -26,6 +27,8 @@ class AddProducts extends ConsumerStatefulWidget {
 }
 
 class _AddProductsState extends ConsumerState<AddProducts> {
+  String? phoneNumber;
+
   List<TagModel> tags = [];
 
   ImagePicker picker = ImagePicker();
@@ -39,6 +42,14 @@ class _AddProductsState extends ConsumerState<AddProducts> {
   CategoryModel? selectedCategory;
   String categoryName = '';
   List<TagModel> selected = [];
+  bool isFreeShipping = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getPhoneNumber();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +111,24 @@ class _AddProductsState extends ConsumerState<AddProducts> {
                   textInputAction: TextInputAction.done,
                   keyboardType: TextInputType.number,
                 ),
-                const SizedBox(height: 10),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.85,
+                  child: Row(
+                    children: [
+                      Checkbox(
+                        value: isFreeShipping,
+                        activeColor: AppThemeShared.primaryColor,
+                        onChanged: (value) => setState(() {
+                          isFreeShipping = !isFreeShipping;
+                        }),
+                      ),
+                      const Text(
+                        "Free Shipping",
+                        style: TextStyle(fontSize: 18),
+                      )
+                    ],
+                  ),
+                ),
                 allCategories.when(
                   data: (data) {
                     return AppThemeShared.sharedDropDown(
@@ -159,8 +187,11 @@ class _AddProductsState extends ConsumerState<AddProducts> {
                   onTap: () {
                     final valid = key.currentState!.validate();
                     if (valid && croppedFiles.isNotEmpty) {
+                      final userProfile =
+                          ref.watch(getUserByNumberProvider(phoneNumber!));
+
                       DialogShared.loadingDialog(context, 'Adding Product');
-                      addProduct();
+                      addProduct(userProfile.value!);
                     }
                   },
                 )
@@ -172,17 +203,21 @@ class _AddProductsState extends ConsumerState<AddProducts> {
     );
   }
 
-  addProduct() async {
+  addProduct(UserModel user) async {
     List<String>? imageUrls = await Utility().uploadImages(croppedFiles);
     if (imageUrls != null) {
       bool added = await ProductServices().add(ProductModel(
           seller: UserModel(
-              phoneNumber: "phoneNumber", role: "", productLimit: 200),
+              id: user.id,
+              phoneNumber: user.phoneNumber,
+              role: user.role,
+              productLimit: user.productLimit),
           imageUris: imageUrls,
           name: name.text,
           price: int.parse(price.text),
           discount: int.parse(discount.text),
           category: selectedCategory!,
+          freeShipping: isFreeShipping,
           tags: selected.isNotEmpty ? selected : [],
           available: true));
 
@@ -234,5 +269,10 @@ class _AddProductsState extends ConsumerState<AddProducts> {
       }
     }
     setState(() {});
+  }
+
+  getPhoneNumber() async {
+    phoneNumber = await Utility().getPhoneNumberSF();
+    print(phoneNumber);
   }
 }

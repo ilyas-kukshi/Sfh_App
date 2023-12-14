@@ -11,11 +11,15 @@ class ProductServices {
       var response =
           await http.post(Uri.parse("${Constants.baseUrl}/product/add"), body: {
         "imageUris": jsonEncode(product.imageUris.toList()),
+        "seller": product.seller.id,
         "name": product.name,
         "price": jsonEncode(product.price),
         "discount": jsonEncode(product.discount),
         "category": product.category.id,
-        "tags": jsonEncode(product.tags!.map((e) => e.id).toList())
+        "freeShipping": jsonEncode(product.freeShipping),
+        "tags": product.tags != null
+            ? jsonEncode(product.tags!.map((e) => e.id).toList())
+            : []
       });
 
       if (response.statusCode == 201) {

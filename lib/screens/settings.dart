@@ -17,8 +17,11 @@ class _SettingsState extends State<Settings> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            tile(Icons.person, "Login to Seller Account", () {}),
-            divider()
+            tile(Icons.person, "Login to Seller Account",
+                () => Navigator.pushNamed(context, '/sellerLogin')),
+            divider(),
+            // tile(Icons.favorite, "Favourites", () => null),
+            // divider(),
           ],
         ),
       ),

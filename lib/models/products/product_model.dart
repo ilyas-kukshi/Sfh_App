@@ -19,16 +19,6 @@ ProductModel productModelFromJson(String str) =>
 
 String productModelToJson(ProductModel data) => json.encode(data.toJson());
 
-// @freezed
-// class ProductModel with _$ProductModel {
-//   const factory ProductModel({
-//     required Product product,
-//   }) = _ProductModel;
-
-//   factory ProductModel.fromJson(Map<String, dynamic> json) =>
-//       _$ProductModelFromJson(json);
-// }
-
 @freezed
 class ProductModel with _$ProductModel {
   const factory ProductModel({
@@ -38,6 +28,7 @@ class ProductModel with _$ProductModel {
     required int discount,
     required CategoryModel category,
     required bool available,
+    required bool freeShipping,
     required UserModel seller,
     List<TagModel>? tags,
     int? views,

@@ -4,6 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/data.dart';
 import 'package:uuid/uuid.dart';
 
@@ -89,30 +90,6 @@ class Utility {
     return null;
   }
 
-  Future<XFile?> testCompressAndGetFile(
-      CroppedFile file, String targetPath) async {
-    try {
-      XFile? result = await FlutterImageCompress.compressAndGetFile(
-        file.path,
-        targetPath + "compressed.jpg",
-        quality: 88,
-        // rotate: 180,
-      );
-
-      if (result != null) {
-        print(File(result.path).lengthSync());
-        return result;
-      }
-    } catch (error) {
-      Fluttertoast.showToast(msg: error.toString());
-      print(error);
-    }
-
-    // print(result!.lengthSync());
-
-    return null;
-  }
-
   Future<List<String>?> uploadImages(List<CroppedFile> images) async {
     List<String> imageUrls = [];
 
@@ -147,6 +124,30 @@ class Utility {
     return await ref.getDownloadURL();
   }
 
+  Future<XFile?> testCompressAndGetFile(
+      CroppedFile file, String targetPath) async {
+    try {
+      XFile? result = await FlutterImageCompress.compressAndGetFile(
+        file.path,
+        "${targetPath}compressed.jpg",
+        quality: 50,
+        // rotate: 180,
+      );
+
+      if (result != null) {
+        print(File(result.path).lengthSync());
+        return result;
+      }
+    } catch (error) {
+      Fluttertoast.showToast(msg: error.toString());
+      print(error);
+    }
+
+    // print(result!.lengthSync());
+
+    return null;
+  }
+
   deleteImageFromRef(List<String> imageUrls) async {
     for (String imageUrl in imageUrls) {
       await FirebaseStorage.instance.refFromURL(imageUrl).delete();
@@ -156,5 +157,17 @@ class Utility {
   String getUniqueId() {
     var uuid = const Uuid();
     return uuid.v1();
+  }
+
+  Future<String?> getPhoneNumberSF() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      print(prefs.getString("phoneNumber"));
+      return prefs.getString("phoneNumber");
+    } catch (error) {
+      Fluttertoast.showToast(msg: error.toString());
+      print(error);
+    }
+    return null;
   }
 }

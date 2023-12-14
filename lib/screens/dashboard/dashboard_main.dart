@@ -4,39 +4,43 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:sfh_app/models/category/category_model.dart';
 import 'package:sfh_app/models/products/product_model.dart';
-import 'package:sfh_app/screens/dashboard/bottom_nav.dart';
 import 'package:sfh_app/screens/dashboard/dashboard_drawer.dart';
+import 'package:sfh_app/services/auth/auth_service.dart';
 import 'package:sfh_app/services/category/category_services.dart';
 import 'package:sfh_app/services/product_services.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 import 'package:sfh_app/shared/constants.dart';
 import 'package:sfh_app/shared/product_card.dart';
+import 'package:sfh_app/shared/utility.dart';
 
-class DashboardMain extends ConsumerStatefulWidget {
+class DashboardMain extends StatefulWidget {
   const DashboardMain({super.key});
 
   @override
-  ConsumerState<DashboardMain> createState() => _DashboardMainState();
+  State<DashboardMain> createState() => _DashboardMainState();
 }
 
-class _DashboardMainState extends ConsumerState<DashboardMain> {
+class _DashboardMainState extends State<DashboardMain> {
   BannerAd? banner;
 
   GlobalKey<ScaffoldState> globalKey = GlobalKey();
 
   List<CategoryModel> categories = [];
   List<ProductModel> products = [];
+
+  String? phoneNumber;
+
   @override
   void initState() {
     super.initState();
-    getCategories();
+
     getProducts();
+    getPhoneNumber();
     // createBannerAd();
   }
 
   @override
   Widget build(BuildContext context) {
-    final allCatgories = ref.watch(allCategoriesProvider);
     return SafeArea(
         top: false,
         child: Scaffold(
@@ -46,14 +50,29 @@ class _DashboardMainState extends ConsumerState<DashboardMain> {
               title: "Sakina Fashion House",
               context: context,
               backButton: false,
-              leading: GestureDetector(
-                onTap: () {
-                  globalKey.currentState!.openDrawer();
+              leading: Consumer(
+                builder: (context, ref, child) {
+                  if (phoneNumber != null) {
+                    final user =
+                        ref.watch(getUserByNumberProvider(phoneNumber!));
+                    return user.value != null
+                        ? user.value!.role == Constants.seller ||
+                                user.value!.role == Constants.admin
+                            ? GestureDetector(
+                                onTap: () {
+                                  globalKey.currentState!.openDrawer();
+                                },
+                                child: const Icon(
+                                  Icons.menu,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : const Offstage()
+                        : const Offstage();
+                  } else {
+                    return const Offstage();
+                  }
                 },
-                child: const Icon(
-                  Icons.menu,
-                  color: Colors.white,
-                ),
               )),
           body: SafeArea(
             child: SingleChildScrollView(
@@ -68,24 +87,24 @@ class _DashboardMainState extends ConsumerState<DashboardMain> {
                           TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  allCatgories.when(
-                    data: (data) {
-                      return SizedBox(
-                        height: 200,
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: data.length,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, index) {
-                            return categoryCard(data[index]);
-                          },
-                        ),
-                      );
+                  Consumer(
+                    builder: (context, ref, child) {
+                      final allCatgories = ref.watch(allCategoriesProvider);
+                      return allCatgories.value != null
+                          ? SizedBox(
+                              height: 180,
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: allCatgories.value!.length,
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (context, index) {
+                                  return categoryCard(
+                                      allCatgories.value![index]);
+                                },
+                              ),
+                            )
+                          : const Text("No Data");
                     },
-                    error: (error, stackTrace) {
-                      return Text(error.toString());
-                    },
-                    loading: () => const CircularProgressIndicator(),
                   ),
                   const Padding(
                     padding: EdgeInsets.all(8.0),
@@ -129,39 +148,36 @@ class _DashboardMainState extends ConsumerState<DashboardMain> {
       },
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Card(
-          child: Column(
-            children: [
-              category.imageUri != null
-                  ? CachedNetworkImage(
-                      height: 130,
-                      width: 120,
-                      imageUrl: category.imageUri!,
-                      fit: BoxFit.fill,
-                      // imageBuilder: (context, imageProvider) => Container(
-                      //   decoration: BoxDecoration(
-                      //       shape: BoxShape.circle,
-                      //       image: DecorationImage(
-                      //           image: imageProvider, fit: BoxFit.cover)),
-                      // ),
-                      placeholder: (context, url) =>
-                          const CircularProgressIndicator(),
-                      errorWidget: (context, url, error) =>
-                          const Icon(Icons.error),
-                    )
-                  : const Offstage(),
-              const SizedBox(height: 10),
-              Center(child: Text(category.name))
-            ],
-          ),
+        child: Column(
+          children: [
+            category.imageUri != null
+                ? CachedNetworkImage(
+                    height: 130,
+                    width: 120,
+                    imageUrl: category.imageUri!,
+                    fit: BoxFit.fill,
+                    imageBuilder: (context, imageProvider) => Container(
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                              image: imageProvider, fit: BoxFit.cover)),
+                    ),
+                    placeholder: (context, url) =>
+                        const CircularProgressIndicator(),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
+                  )
+                : const Offstage(),
+            // const SizedBox(height: 2),
+            Center(
+                child: Text(
+              category.name,
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+            ))
+          ],
         ),
       ),
     );
-  }
-
-  Future<List<CategoryModel>> getCategories() async {
-    return await CategoryServices().getAll();
-    // print(categories);
   }
 
   getProducts() async {
@@ -169,5 +185,7 @@ class _DashboardMainState extends ConsumerState<DashboardMain> {
     setState(() {});
   }
 
-  
+  getPhoneNumber() async {
+    phoneNumber = await Utility().getPhoneNumberSF();
+  }
 }

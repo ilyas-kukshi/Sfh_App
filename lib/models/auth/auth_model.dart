@@ -17,10 +17,10 @@ class AuthModel with _$AuthModel {
   const factory AuthModel({
     required String phoneNumber,
     required String password,
-    @JsonKey(name: '_id') required String id,
+    @JsonKey(name: '_id') String? id,
     DateTime? createdAt,
     DateTime? updatedAt,
-    @JsonKey(name: '__v') required int v,
+    @JsonKey(name: '__v') int? v,
   }) = _AuthModel;
 
   factory AuthModel.fromJson(Map<String, dynamic> json) =>

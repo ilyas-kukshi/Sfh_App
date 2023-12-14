@@ -66,7 +66,21 @@ class ProductCard {
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            // const SizedBox(height: 8),
+            Row(
+              children: [
+                product.freeShipping ? const Offstage() : Icon(Icons.add),
+                Icon(
+                  Icons.local_shipping,
+                  color: AppThemeShared.primaryColor,
+                ),
+                const SizedBox(width: 6),
+                product.freeShipping
+                    ? Text("Free Shipping")
+                    : Text("Shipping Charges"),
+              ],
+            ),
+            // : const Offstage(),
             ElevatedButton(
                 style: ElevatedButton.styleFrom(
                     fixedSize:
