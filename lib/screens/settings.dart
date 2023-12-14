@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
+import 'package:sfh_app/shared/constants.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -17,11 +19,12 @@ class _SettingsState extends State<Settings> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            tile(Icons.person, "Login to Seller Account",
+            tile(Icons.person, "Switch to Seller Account",
                 () => Navigator.pushNamed(context, '/sellerLogin')),
             divider(),
-            // tile(Icons.favorite, "Favourites", () => null),
-            // divider(),
+            tile(Icons.forum, "Feedback & Suggestions",
+                () => launchUrl(Uri.parse(Constants.feedbackUrl))),
+            divider(),
           ],
         ),
       ),

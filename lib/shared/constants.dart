@@ -11,6 +11,8 @@ class Constants {
   static String seller = "Seller";
   static String user = "User";
 
+  static String feedbackUrl = "https://forms.gle/TfaHhierhcxoRDwH6";
+
   static String get bannerAddUnitId {
     return Platform.isAndroid
         ? 'ca-app-pub-7757893055810132/6375347834'

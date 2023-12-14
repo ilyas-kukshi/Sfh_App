@@ -27,13 +27,19 @@ class _SellerLoginState extends ConsumerState<SellerLogin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppThemeShared.appBar(title: "Seller Login", context: context),
+      appBar: AppThemeShared.appBar(title: "Seller Area", context: context),
       body: SingleChildScrollView(
         child: Center(
           child: Form(
             key: key,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const SizedBox(height: 10),
+                Text(
+                  "Login",
+                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 10),
                 AppThemeShared.textFormField(
                   context: context,
@@ -61,6 +67,31 @@ class _SellerLoginState extends ConsumerState<SellerLogin> {
                       login();
                     }
                   },
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  "Not a seller?",
+                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                ),
+                const Text(
+                    "Register to become one and we will get back to you"),
+                const SizedBox(height: 20),
+                GestureDetector(
+                  onTap: () => Navigator.pushNamed(context, "/sellerRegister"),
+                  child: Container(
+                    height: 50,
+                    width: MediaQuery.of(context).size.width * 0.85,
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                            color: AppThemeShared.primaryColor, width: 3)),
+                    child: const Center(
+                      child: Text(
+                        "Register",
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
                 )
               ],
             ),
@@ -88,6 +119,5 @@ class _SellerLoginState extends ConsumerState<SellerLogin> {
             context, '/bottomNav', (route) => false);
       }
     });
-    
   }
 }

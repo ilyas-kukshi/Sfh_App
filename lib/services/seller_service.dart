@@ -2,11 +2,40 @@ import 'dart:convert';
 
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sfh_app/models/auth/auth_model.dart';
+import 'package:sfh_app/models/seller_register/seller_register_model.dart';
 import 'package:sfh_app/models/user/user_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:sfh_app/screens/seller/seller_register.dart';
 import 'package:sfh_app/shared/constants.dart';
 
 class SellerService {
+  Future<bool> register(SellerRegisterModel sellerRegister) async {
+    try {
+      final response = await http
+          .post(Uri.parse("${Constants.baseUrl}/seller/register"), body: {
+        "name": sellerRegister.name,
+        "businessName": sellerRegister.businessName,
+        "phoneNumber": sellerRegister.phoneNumber,
+        "businessDescription": sellerRegister.businessDescription,
+        "productTypes": sellerRegister.productTypes
+      });
+      var data = jsonDecode(response.body);
+      if (response.statusCode == 201) {
+        return true;
+      } else if (response.statusCode == 400) {
+        return false;
+      } else if (response.statusCode == 500) {
+        Fluttertoast.showToast(msg: data["error"]);
+        return false;
+      }
+    } catch (error) {
+      Fluttertoast.showToast(msg: error.toString());
+      print(error);
+      return false;
+    }
+    return false;
+  }
+
   Future<bool> add(UserModel seller) async {
     try {
       var response =

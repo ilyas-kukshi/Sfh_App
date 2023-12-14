@@ -78,13 +78,15 @@ class DialogShared {
     );
   }
 
-  static singleButtonDialog(
-    BuildContext context,
-    String text,
-    String buttonText,
+  static singleButtonDialog({
+    required BuildContext context,
+    required String text,
+    required String buttonText,
     void Function()? onClicked,
-  ) {
+    bool barrierDismissible = true,
+  }) {
     showDialog(
+      barrierDismissible: barrierDismissible,
       context: context,
       builder: (context) {
         return AlertDialog(
@@ -105,7 +107,7 @@ class DialogShared {
                   borderRadius: 12,
                   width: MediaQuery.of(context).size.width * 0.3,
                   color: AppThemeShared.primaryColor,
-                  buttonText: "Ohk",
+                  buttonText: buttonText,
                   onPressed: onClicked),
             ],
           ),
