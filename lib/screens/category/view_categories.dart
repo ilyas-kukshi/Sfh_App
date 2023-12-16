@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sfh_app/models/category/category_model.dart';
 import 'package:sfh_app/services/category/category_services.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ViewCategories extends ConsumerStatefulWidget {
   const ViewCategories({super.key});
@@ -30,7 +31,36 @@ class _ViewCategoriesState extends ConsumerState<ViewCategories> {
                 crossAxisCount: 3, mainAxisExtent: 200),
           ),
           error: (error, stackTrace) => Text(error.toString()),
-          loading: () => const CircularProgressIndicator(),
+          loading: () => GridView.builder(
+            shrinkWrap: true,
+            itemCount: 15,
+            itemBuilder: (context, index) => categoryShimmerCard(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3, mainAxisExtent: 200),
+          ),
+        ));
+  }
+
+  Widget categoryShimmerCard() {
+    return Shimmer.fromColors(
+        baseColor: Colors.grey.shade300,
+        highlightColor: Colors.grey.shade100,
+        enabled: true,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Container(
+                height: 130,
+                color: Colors.grey,
+              ),
+              const SizedBox(height: 8),
+              Container(
+                height: 20,
+                color: Colors.grey,
+              )
+            ],
+          ),
         ));
   }
 

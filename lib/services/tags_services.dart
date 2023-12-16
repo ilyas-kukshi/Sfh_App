@@ -13,7 +13,7 @@ class TagServices {
     var data = jsonDecode(response.body);
 
     if (response.statusCode == 200) {
-      print(data);
+      // print(data);
       for (var tag in data["tags"]) {
         tags.add(TagModel.fromJson(tag));
       }

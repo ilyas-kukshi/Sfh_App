@@ -15,7 +15,6 @@ class _ManageCategoriesState extends State<ManageCategories> {
   List<CategoryModel> categories = [];
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 

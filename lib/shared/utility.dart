@@ -5,7 +5,6 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:uuid/data.dart';
 import 'package:uuid/uuid.dart';
 
 class Utility {
@@ -113,10 +112,10 @@ class Utility {
 
     if (compressed != null) {
       try {
-        await ref.putFile(File(compressed!.path));
+        await ref.putFile(File(compressed.path));
       } on FirebaseException catch (error) {
         Fluttertoast.showToast(msg: error.toString());
-        print(error);
+        // print(error);
         return null;
       }
     }
@@ -135,12 +134,12 @@ class Utility {
       );
 
       if (result != null) {
-        print(File(result.path).lengthSync());
+        // print(File(result.path).lengthSync());
         return result;
       }
     } catch (error) {
       Fluttertoast.showToast(msg: error.toString());
-      print(error);
+      // print(error);
     }
 
     // print(result!.lengthSync());
@@ -162,11 +161,11 @@ class Utility {
   Future<String?> getPhoneNumberSF() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      print(prefs.getString("phoneNumber"));
+      // print(prefs.getString("phoneNumber"));
       return prefs.getString("phoneNumber");
     } catch (error) {
       Fluttertoast.showToast(msg: error.toString());
-      print(error);
+      // print(error);
     }
     return null;
   }

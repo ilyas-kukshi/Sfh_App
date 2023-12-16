@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sfh_app/models/products/product_model.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 import 'package:sfh_app/shared/constants.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ProductCard {
@@ -26,12 +27,18 @@ class ProductCard {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  product.name,
-                  style: const TextStyle(
-                      fontSize: 22,
+                SizedBox(
+                  height: 30,
+                  width: MediaQuery.of(context).size.width * 0.48,
+                  child: Text(
+                    product.name,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      overflow: TextOverflow.ellipsis),
+                      overflow: TextOverflow.clip,
+                    ),
+                  ),
                 ),
                 // IconButton(
                 //   icon: Icon(
@@ -69,15 +76,15 @@ class ProductCard {
             // const SizedBox(height: 8),
             Row(
               children: [
-                product.freeShipping ? const Offstage() : Icon(Icons.add),
+                product.freeShipping ? const Offstage() : const Icon(Icons.add),
                 Icon(
                   Icons.local_shipping,
                   color: AppThemeShared.primaryColor,
                 ),
                 const SizedBox(width: 6),
                 product.freeShipping
-                    ? Text("Free Shipping")
-                    : Text("Shipping Charges"),
+                    ? const Text("Free Shipping")
+                    : const Text("Shipping Charges"),
               ],
             ),
             // : const Offstage(),
@@ -100,6 +107,71 @@ class ProductCard {
     );
   }
 
+  Widget productShimmerCard(BuildContext context) {
+    // await Future.delayed(Duration(minutes: 5));
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade100,
+      enabled: true,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Container(
+              height: 220,
+              width: MediaQuery.of(context).size.width * 0.48,
+              color: Colors.grey,
+            ),
+            const SizedBox(height: 2),
+            Container(
+              height: 20,
+              width: MediaQuery.of(context).size.width * 0.48,
+              color: Colors.grey,
+            ),
+            const SizedBox(height: 2),
+            // Container(
+            //   height: 20,
+            //   width: MediaQuery.of(context).size.width * 0.48,
+            //   color: Colors.grey,
+            // ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Container(
+                  height: 20,
+                  width: MediaQuery.of(context).size.width * 0.14,
+                  color: Colors.grey,
+                ),
+                Container(
+                  height: 20,
+                  width: MediaQuery.of(context).size.width * 0.14,
+                  color: Colors.grey,
+                ),
+                Container(
+                  height: 20,
+                  width: MediaQuery.of(context).size.width * 0.14,
+                  color: Colors.grey,
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Container(
+              height: 20,
+              width: MediaQuery.of(context).size.width * 0.48,
+              color: Colors.grey,
+            ),
+            const SizedBox(height: 4),
+            Container(
+              height: 40,
+              width: MediaQuery.of(context).size.width * 0.48,
+              color: Colors.grey,
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
   imageViewed(ProductModel product) async {}
 
   enquireOnWhatsapp(ProductModel product) async {
@@ -111,7 +183,7 @@ class ProductCard {
         await launchUrl(Uri.parse(whatsappUrl));
       }
     } catch (error) {
-      print(error);
+      // print(error);
       Fluttertoast.showToast(msg: error.toString());
     }
   }

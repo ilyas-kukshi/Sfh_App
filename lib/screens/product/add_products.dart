@@ -46,7 +46,7 @@ class _AddProductsState extends ConsumerState<AddProducts> {
 
   @override
   void initState() {
-    // TODO: implement initState
+    // 
     super.initState();
     getPhoneNumber();
   }
@@ -273,6 +273,6 @@ class _AddProductsState extends ConsumerState<AddProducts> {
 
   getPhoneNumber() async {
     phoneNumber = await Utility().getPhoneNumberSF();
-    print(phoneNumber);
+    // print(phoneNumber);
   }
 }

@@ -5,9 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sfh_app/models/auth/auth_model.dart';
-import 'package:sfh_app/models/user/user_model.dart';
 import 'package:sfh_app/services/auth/auth_service.dart';
-import 'package:sfh_app/services/seller_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 import 'package:sfh_app/shared/utility.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -36,7 +34,7 @@ class _SellerLoginState extends ConsumerState<SellerLogin> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 10),
-                Text(
+                const Text(
                   "Login",
                   style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                 ),
@@ -74,7 +72,9 @@ class _SellerLoginState extends ConsumerState<SellerLogin> {
                   style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                 ),
                 const Text(
-                    "Register to become one and we will get back to you"),
+                  "Register to become one!",
+                  style: TextStyle(fontSize: 14),
+                ),
                 const SizedBox(height: 20),
                 GestureDetector(
                   onTap: () => Navigator.pushNamed(context, "/sellerRegister"),
@@ -88,7 +88,7 @@ class _SellerLoginState extends ConsumerState<SellerLogin> {
                       child: Text(
                         "Register",
                         style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
+                            fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),

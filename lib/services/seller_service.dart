@@ -1,11 +1,10 @@
 import 'dart:convert';
 
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
 import 'package:sfh_app/models/auth/auth_model.dart';
 import 'package:sfh_app/models/seller_register/seller_register_model.dart';
 import 'package:sfh_app/models/user/user_model.dart';
-import 'package:http/http.dart' as http;
-import 'package:sfh_app/screens/seller/seller_register.dart';
 import 'package:sfh_app/shared/constants.dart';
 
 class SellerService {
@@ -30,7 +29,7 @@ class SellerService {
       }
     } catch (error) {
       Fluttertoast.showToast(msg: error.toString());
-      print(error);
+      // print(error);
       return false;
     }
     return false;
@@ -62,7 +61,7 @@ class SellerService {
       }
     } catch (error) {
       Fluttertoast.showToast(msg: error.toString());
-      print(error);
+      // print(error);
       return false;
     }
   }
@@ -90,7 +89,7 @@ class SellerService {
       }
     } catch (error) {
       Fluttertoast.showToast(msg: error.toString());
-      print(error);
+      // print(error);
       return null;
     }
     return null;

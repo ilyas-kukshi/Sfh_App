@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
 import 'package:sfh_app/models/category/category_model.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';

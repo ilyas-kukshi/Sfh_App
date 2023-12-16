@@ -17,11 +17,10 @@ class _BottomNavState extends State<BottomNav> {
   BannerAd? banner;
   int selected = 0;
 
-  List<Widget> screens = [DashboardMain(), ViewCategories(), Settings()];
+  List<Widget> screens = [const DashboardMain(), const ViewCategories(), const Settings()];
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     createBannerAd();
   }

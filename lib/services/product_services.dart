@@ -31,7 +31,7 @@ class ProductServices {
       }
     } catch (error) {
       Fluttertoast.showToast(msg: error.toString());
-      print(error);
+      // print(error);
     }
     return false;
   }
@@ -53,7 +53,7 @@ class ProductServices {
       }
     } catch (error) {
       Fluttertoast.showToast(msg: error.toString());
-      print(error);
+      // print(error);
     }
     return products;
   }
@@ -75,7 +75,7 @@ class ProductServices {
       }
     } catch (error) {
       Fluttertoast.showToast(msg: error.toString());
-      print(error);
+      // print(error);
     }
     return products;
   }
@@ -97,7 +97,7 @@ class ProductServices {
       }
     } catch (error) {
       Fluttertoast.showToast(msg: error.toString());
-      print(error);
+      // print(error);
     }
     return products;
   }
@@ -120,7 +120,7 @@ class ProductServices {
         Fluttertoast.showToast(msg: data["error"]);
       }
     } catch (error) {
-      print(error);
+      // print(error);
       Fluttertoast.showToast(msg: error.toString());
     }
     return products;
@@ -148,7 +148,7 @@ class ProductServices {
         Fluttertoast.showToast(msg: data["error"]);
       }
     } catch (error) {
-      print(error);
+      // print(error);
       Fluttertoast.showToast(msg: error.toString());
     }
     return false;

@@ -35,7 +35,7 @@ Future<bool> signIn(SignInRef signInRef, AuthModel auth) async {
     }
   } catch (error) {
     Fluttertoast.showToast(msg: error.toString());
-    print(error);
+    // print(error);
     return false;
   }
   return false;
@@ -59,7 +59,7 @@ Future<UserModel?> getUserByNumber(
     }
   } catch (error) {
     Fluttertoast.showToast(msg: error.toString());
-    print(error);
+    // print(error);
     return null;
   }
   return null;

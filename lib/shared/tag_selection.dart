@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
 import 'package:sfh_app/models/tags/tag_model.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
@@ -25,13 +27,13 @@ class _TagSelectionState extends State<TagSelection> {
       child: GestureDetector(
         onTap: () {
           setState(() {
-            widget.selected = !widget.selected!;
+            widget.selected = !widget.selected;
             widget.clicked(widget.tag);
           });
         },
         child: Container(
           decoration: BoxDecoration(
-              color: widget.selected!
+              color: widget.selected
                   ? AppThemeShared.primaryColor
                   : Colors.transparent,
               border: Border.all(color: AppThemeShared.primaryColor, width: 2)),
@@ -41,7 +43,7 @@ class _TagSelectionState extends State<TagSelection> {
               widget.tag.name,
               style: TextStyle(
                   fontSize: 18,
-                  color: widget.selected!
+                  color: widget.selected
                       ? Colors.white
                       : AppThemeShared.primaryColor),
             ),

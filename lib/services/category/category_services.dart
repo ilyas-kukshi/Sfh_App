@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sfh_app/models/category/category_model.dart';
 import 'package:http/http.dart' as http;
@@ -20,11 +21,12 @@ class CategoryServices {
       if (response.statusCode == 201) {
         return true;
       } else {
-        print(response.body);
+        // print(response.body);
         return false;
       }
     } catch (error) {
-      print(error);
+      Fluttertoast.showToast(msg: error.toString());
+      // print(error);
     }
     return false;
   }
@@ -42,7 +44,7 @@ class CategoryServices {
         return categories;
       }
     } catch (error) {
-      print(error);
+      // print(error);
       return [];
     }
     return [];
@@ -63,7 +65,7 @@ Future<List<CategoryModel>> allCategories(AllCategoriesRef ref) async {
       return categories;
     }
   } catch (error) {
-    print(error);
+    // print(error);
     return [];
   }
   return [];

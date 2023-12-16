@@ -1,9 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:http/http.dart';
-import 'package:sfh_app/models/category/category_model.dart';
 import 'package:sfh_app/models/products/product_model.dart';
 import 'package:sfh_app/services/category/category_services.dart';
 import 'package:sfh_app/services/product_services.dart';
@@ -24,7 +24,6 @@ class _ManageProductsState extends ConsumerState<ManageProducts> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getProducts();
   }
@@ -35,41 +34,44 @@ class _ManageProductsState extends ConsumerState<ManageProducts> {
 
     return Scaffold(
       appBar: AppThemeShared.appBar(title: "Manage Products", context: context),
-      body: Column(
-        children: [
-          allCatgories.when(
-              data: (data) {
-                return Wrap(
-                  children: data
-                      .map((e) => CategorySelection(
-                            category: e,
-                            clicked: (category) {},
-                          ))
-                      .toList(),
-                );
-              },
-              error: (error, stackTrace) {
-                return Text(error.toString());
-              },
-              loading: () => const CircularProgressIndicator()),
-          products.isNotEmpty
-              ? GridView.builder(
-                  itemCount: products.length,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  padding: EdgeInsets.only(
-                      left: MediaQuery.of(context).size.width * 0.01),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisExtent: 380,
-                      mainAxisSpacing: 0,
-                      crossAxisSpacing: 0),
-                  itemBuilder: (context, index) {
-                    return productCard(products[index], index);
-                  },
-                )
-              : const CircularProgressIndicator()
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            allCatgories.when(
+                data: (data) {
+                  return Wrap(
+                    children: data
+                        .map((e) => CategorySelection(
+                              category: e,
+                              clicked: (category) {},
+                            ))
+                        .toList(),
+                  );
+                },
+                error: (error, stackTrace) {
+                  return Text(error.toString());
+                },
+                loading: () => const CircularProgressIndicator()),
+            products.isNotEmpty
+                ? GridView.builder(
+                    itemCount: products.length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding: EdgeInsets.only(
+                        left: MediaQuery.of(context).size.width * 0.01),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisExtent: 380,
+                            mainAxisSpacing: 0,
+                            crossAxisSpacing: 0),
+                    itemBuilder: (context, index) {
+                      return productCard(products[index], index);
+                    },
+                  )
+                : const CircularProgressIndicator()
+          ],
+        ),
       ),
     );
   }
@@ -93,9 +95,18 @@ class _ManageProductsState extends ConsumerState<ManageProducts> {
             width: MediaQuery.of(context).size.width * 0.48,
             fit: BoxFit.fill,
           ),
-          Text(
-            product.name,
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          SizedBox(
+            height: 30,
+            width: MediaQuery.of(context).size.width * 0.48,
+            child: Text(
+              product.name,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                overflow: TextOverflow.clip,
+              ),
+            ),
           ),
           Row(
             children: [

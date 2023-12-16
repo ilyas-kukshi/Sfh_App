@@ -1,9 +1,10 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 
 class Carousel extends StatefulWidget {
@@ -28,7 +29,6 @@ class _CarouselState extends State<Carousel> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 

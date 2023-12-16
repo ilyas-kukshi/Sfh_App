@@ -12,6 +12,7 @@ import 'package:sfh_app/shared/app_theme_shared.dart';
 import 'package:sfh_app/shared/constants.dart';
 import 'package:sfh_app/shared/product_card.dart';
 import 'package:sfh_app/shared/utility.dart';
+import 'package:shimmer/shimmer.dart';
 
 class DashboardMain extends StatefulWidget {
   const DashboardMain({super.key});
@@ -90,20 +91,32 @@ class _DashboardMainState extends State<DashboardMain> {
                   Consumer(
                     builder: (context, ref, child) {
                       final allCatgories = ref.watch(allCategoriesProvider);
-                      return allCatgories.value != null
-                          ? SizedBox(
-                              height: 180,
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: allCatgories.value!.length,
-                                scrollDirection: Axis.horizontal,
-                                itemBuilder: (context, index) {
-                                  return categoryCard(
-                                      allCatgories.value![index]);
-                                },
-                              ),
-                            )
-                          : const Text("No Data");
+                      return allCatgories.when(
+                        data: (data) => SizedBox(
+                          height: 180,
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: allCatgories.value!.length,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, index) {
+                              return categoryCard(allCatgories.value![index]);
+                            },
+                          ),
+                        ),
+                        error: (error, stackTrace) =>
+                            Center(child: Text(error.toString())),
+                        loading: () => SizedBox(
+                          height: 180,
+                          child: ListView.builder(
+                            itemCount:
+                                10, // You can set the number of shimmer items
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, index) {
+                              return categoryShimmerCard();
+                            },
+                          ),
+                        ),
+                      );
                     },
                   ),
                   const Padding(
@@ -132,7 +145,22 @@ class _DashboardMainState extends State<DashboardMain> {
                                 .productCard(products[index], context);
                           },
                         )
-                      : const CircularProgressIndicator()
+                      : GridView.builder(
+                          itemCount: 20,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          padding: EdgeInsets.only(
+                              left: MediaQuery.of(context).size.width * 0.01),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  mainAxisExtent: 350,
+                                  mainAxisSpacing: 0,
+                                  crossAxisSpacing: 0),
+                          itemBuilder: (context, index) {
+                            return ProductCard().productShimmerCard(context);
+                          },
+                        )
                 ],
               ),
             ),
@@ -162,8 +190,7 @@ class _DashboardMainState extends State<DashboardMain> {
                           image: DecorationImage(
                               image: imageProvider, fit: BoxFit.cover)),
                     ),
-                    placeholder: (context, url) =>
-                        const CircularProgressIndicator(),
+                    placeholder: (context, url) => const Offstage(),
                     errorWidget: (context, url, error) =>
                         const Icon(Icons.error),
                   )
@@ -174,6 +201,31 @@ class _DashboardMainState extends State<DashboardMain> {
               category.name,
               style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
             ))
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget categoryShimmerCard() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade100,
+      enabled: true,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            const CircleAvatar(
+              radius: 60,
+              backgroundColor: Colors.grey,
+            ),
+            const SizedBox(height: 8),
+            Container(
+              width: 100,
+              height: 20,
+              color: Colors.grey,
+            )
           ],
         ),
       ),

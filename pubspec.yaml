@@ -54,6 +54,8 @@ dependencies:
   google_mobile_ads: ^4.0.0
   shared_preferences: ^2.2.2
   firebase_messaging: ^14.7.8
+  shimmer: ^3.0.0
+  upgrader: ^8.4.0
 
 
 dev_dependencies:

@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,7 +11,6 @@ import 'package:sfh_app/models/tags/tag_model.dart';
 import 'package:sfh_app/services/category/category_services.dart';
 import 'package:sfh_app/services/tags_services.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
-import 'package:sfh_app/shared/dialogs.dart';
 import 'package:sfh_app/shared/tag_selection.dart';
 import 'package:sfh_app/shared/utility.dart';
 
@@ -42,7 +43,6 @@ class _EditProductState extends ConsumerState<EditProduct> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     name.text = widget.product.name;
     price = widget.product.price;
@@ -183,7 +183,7 @@ class _EditProductState extends ConsumerState<EditProduct> {
                                       } else {
                                         selected.add(tag);
                                       }
-                                      print(selected);
+                                      // print(selected);
                                     },
                                   ))
                               .toList(),

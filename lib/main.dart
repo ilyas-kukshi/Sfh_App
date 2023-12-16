@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:sfh_app/screens/seller/seller_login.dart';
 import 'package:sfh_app/models/category/category_model.dart';
 import 'package:sfh_app/models/products/product_model.dart';
-import 'package:sfh_app/screens/seller/add_seller.dart';
 import 'package:sfh_app/screens/category/add_category.dart';
 import 'package:sfh_app/screens/category/manage_categories.dart';
 import 'package:sfh_app/screens/dashboard/bottom_nav.dart';
@@ -17,6 +15,8 @@ import 'package:sfh_app/screens/product/edit_product.dart';
 import 'package:sfh_app/screens/product/manage_products.dart';
 import 'package:sfh_app/screens/product/view_images.dart';
 import 'package:sfh_app/screens/product/view_product.dart';
+import 'package:sfh_app/screens/seller/add_seller.dart';
+import 'package:sfh_app/screens/seller/seller_login.dart';
 import 'package:sfh_app/screens/seller/seller_register.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 
@@ -83,18 +83,19 @@ class MyApp extends StatelessWidget {
             child: ViewImages(
               imageUris: settings.arguments as List<String>,
             ),
-            type: PageTransitionType.leftToRight);
+            type: PageTransitionType.scale,
+            alignment: Alignment.center);
       case '/manageProducts':
         return PageTransition(
             child: const ManageProducts(),
             type: PageTransitionType.leftToRight);
-
       case '/displayProductsByCategory':
         return PageTransition(
             child: DisplayProductsByCategory(
               category: settings.arguments as CategoryModel,
             ),
-            type: PageTransitionType.leftToRight);
+            type: PageTransitionType.scale,
+            alignment: Alignment.center);
       case '/sellerLogin':
         return PageTransition(
             child: const SellerLogin(), type: PageTransitionType.leftToRight);

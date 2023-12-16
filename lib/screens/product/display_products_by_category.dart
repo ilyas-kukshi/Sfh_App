@@ -1,11 +1,11 @@
-import 'package:cached_network_image/cached_network_image.dart';
+// ignore_for_file: must_be_immutable, use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:sfh_app/models/category/category_model.dart';
 import 'package:sfh_app/models/products/product_model.dart';
 import 'package:sfh_app/models/tags/tag_model.dart';
-import 'package:sfh_app/screens/product/add_products.dart';
 import 'package:sfh_app/services/admob_service.dart';
 import 'package:sfh_app/services/product_services.dart';
 import 'package:sfh_app/services/tags_services.dart';
@@ -14,6 +14,7 @@ import 'package:sfh_app/shared/constants.dart';
 import 'package:sfh_app/shared/dialogs.dart';
 import 'package:sfh_app/shared/product_card.dart';
 import 'package:sfh_app/shared/tag_selection.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DisplayProductsByCategory extends StatefulWidget {
@@ -33,7 +34,7 @@ class _DisplayProductsByCategoryState extends State<DisplayProductsByCategory> {
   BannerAd? banner;
   @override
   void initState() {
-    // TODO: implement initState
+    
     super.initState();
     getProducts(widget.category.id!);
     createBannerAd();
@@ -79,7 +80,27 @@ class _DisplayProductsByCategoryState extends State<DisplayProductsByCategory> {
                       return const Offstage();
                     }
                   } else {
-                    return const CircularProgressIndicator();
+                    return Wrap(
+                      runSpacing: 0,
+                      spacing: 0,
+                      crossAxisAlignment: WrapCrossAlignment.start,
+                      children: List.generate(
+                          6,
+                          (index) => Shimmer.fromColors(
+                                baseColor: Colors.grey.shade300,
+                                highlightColor: Colors.grey.shade100,
+                                enabled: true,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Container(
+                                    height: 20,
+                                    width: MediaQuery.of(context).size.width *
+                                        0.25,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              )),
+                    );
                   }
                 },
               ),
@@ -102,7 +123,22 @@ class _DisplayProductsByCategoryState extends State<DisplayProductsByCategory> {
                             .productCard(products[index], context);
                       },
                     )
-                  : const CircularProgressIndicator()
+                  : GridView.builder(
+                      itemCount: 20,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: EdgeInsets.only(
+                          left: MediaQuery.of(context).size.width * 0.01),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              mainAxisExtent: 350,
+                              mainAxisSpacing: 0,
+                              crossAxisSpacing: 0),
+                      itemBuilder: (context, index) {
+                        return ProductCard().productShimmerCard(context);
+                      },
+                    )
             ],
           ),
         ),
@@ -143,7 +179,7 @@ class _DisplayProductsByCategoryState extends State<DisplayProductsByCategory> {
         await launchUrl(Uri.parse(whatsappUrl));
       }
     } catch (error) {
-      print(error);
+      // print(error);
       Fluttertoast.showToast(msg: error.toString());
     }
   }
