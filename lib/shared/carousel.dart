@@ -6,6 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
+import 'package:widget_zoom/widget_zoom.dart';
 
 class Carousel extends StatefulWidget {
   double height;
@@ -61,26 +62,27 @@ class _CarouselState extends State<Carousel> {
                     child: Column(
                       children: [
                         widget.isUrl
-                            ? CachedNetworkImage(
-                                imageUrl: widget.imageUrls![index],
-                                height: widget.height,
-                                // width: MediaQuery.of(context).size.width,
-                                fit: BoxFit.fill,
+                            ? WidgetZoom(
+                                heroAnimationTag: 't',
+                                zoomWidget: CachedNetworkImage(
+                                  imageUrl: widget.imageUrls![index],
+                                  height: widget.height,
+                                  // width: MediaQuery.of(context).size.width,
+                                  fit: BoxFit.fill,
 
-                                // color: Colors.grey.withOpacity(0.2),
-                                // color: Colors.pink,
-                                // imageBuilder: (context, imageProvider) {
-                                //   return Container(
-                                //     color: Colors.pink,
-                                //     width: MediaQuery.of(context).size.width,
-                                //     child: Image(image: imageProvider),
-                                //   );
-                                // },
-                              )
+                                  // color: Colors.grey.withOpacity(0.2),
+                                  // color: Colors.pink,
+                                  // imageBuilder: (context, imageProvider) {
+                                  //   return Container(
+                                  //     color: Colors.pink,
+                                  //     width: MediaQuery.of(context).size.width,
+                                  //     child: Image(image: imageProvider),
+                                  //   );
+                                  // },
+                                ))
                             : Image.file(
                                 File(widget.files![index].path),
                                 height: 250,
-
                                 // color: Colors.pink,
                                 fit: BoxFit.cover,
                               )

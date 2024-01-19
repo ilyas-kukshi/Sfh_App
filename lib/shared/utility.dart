@@ -130,7 +130,7 @@ class Utility {
     try {
       XFile? result = await FlutterImageCompress.compressAndGetFile(
           file.path, "${targetPath}compressed.png",
-          quality: 50, format: CompressFormat.png
+          quality: 70, format: CompressFormat.png
           // rotate: 180,
           );
 
