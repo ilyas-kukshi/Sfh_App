@@ -12,18 +12,33 @@ class ProductCard {
     return Center(
       child: GestureDetector(
         onTap: () {
-          Navigator.pushNamed(context, '/viewImages',
-              arguments: product.imageUris);
+          Navigator.pushNamed(context, '/viewProduct', arguments: product);
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CachedNetworkImage(
-              imageUrl: product.imageUris.first,
+            SizedBox(
               height: 220,
               width: MediaQuery.of(context).size.width * 0.48,
-              fit: BoxFit.fill,
+              child: Stack(
+                children: [
+                  Center(
+                    child: CachedNetworkImage(
+                        width: MediaQuery.of(context).size.width,
+                        fit: BoxFit.fill,
+                        imageUrl:
+                            "https://img.freepik.com/free-photo/clear-empty-photographer-studio-background-abstract-background-texture-beauty-dark-light-clear-blue-cold-gray-snowy-white-gradient-flat-wall-floor-empty-spacious-room-winter-interior_1258-53070.jpg?size=626&ext=jpg&ga=GA1.1.834066242.1705652128&semt=ais"),
+                  ),
+                  CachedNetworkImage(
+                    imageUrl: product.imageUris.first,
+                    height: 220,
+                    width: MediaQuery.of(context).size.width * 0.48,
+                    fit: BoxFit.fill,
+                  ),
+                ],
+              ),
             ),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

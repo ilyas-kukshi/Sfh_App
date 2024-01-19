@@ -118,6 +118,8 @@ class Utility {
         // print(error);
         return null;
       }
+    } else {
+      return null;
     }
 
     return await ref.getDownloadURL();
@@ -127,11 +129,10 @@ class Utility {
       CroppedFile file, String targetPath) async {
     try {
       XFile? result = await FlutterImageCompress.compressAndGetFile(
-        file.path,
-        "${targetPath}compressed.jpg",
-        quality: 50,
-        // rotate: 180,
-      );
+          file.path, "${targetPath}compressed.png",
+          quality: 50, format: CompressFormat.png
+          // rotate: 180,
+          );
 
       if (result != null) {
         // print(File(result.path).lengthSync());
@@ -139,7 +140,7 @@ class Utility {
       }
     } catch (error) {
       Fluttertoast.showToast(msg: error.toString());
-      // print(error);
+      print(error);
     }
 
     // print(result!.lengthSync());

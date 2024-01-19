@@ -6,7 +6,7 @@ part of 'auth_service.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$signInHash() => r'c17c6a2aca43d8741d593718d5332ef25d872b91';
+String _$signInHash() => r'a689f91e4cdcd4e5038abe7b442f165b3bce2c29';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -154,7 +154,7 @@ class _SignInProviderElement extends AutoDisposeFutureProviderElement<bool>
   AuthModel get auth => (origin as SignInProvider).auth;
 }
 
-String _$getUserByNumberHash() => r'ac93b89bc47117226986b159bb3bbc240e4ba365';
+String _$getUserByNumberHash() => r'5fcc3a2126db048835e80a8eaa1ba653c2c8fce6';
 
 /// See also [getUserByNumber].
 @ProviderFor(getUserByNumber)

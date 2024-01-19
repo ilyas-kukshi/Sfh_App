@@ -31,6 +31,7 @@ class ProductModel with _$ProductModel {
     required bool freeShipping,
     required UserModel seller,
     List<TagModel>? tags,
+    List<String>? colors,
     int? views,
     int? enquired,
     @JsonKey(name: '_id') String? id,

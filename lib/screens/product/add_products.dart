@@ -15,6 +15,8 @@ import 'package:sfh_app/services/product_services.dart';
 import 'package:sfh_app/services/tags_services.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 import 'package:sfh_app/shared/carousel.dart';
+import 'package:sfh_app/shared/color_selection.dart';
+import 'package:sfh_app/shared/constants.dart';
 import 'package:sfh_app/shared/dialogs.dart';
 import 'package:sfh_app/shared/tag_selection.dart';
 import 'package:sfh_app/shared/utility.dart';
@@ -41,12 +43,14 @@ class _AddProductsState extends ConsumerState<AddProducts> {
   TextEditingController discount = TextEditingController();
   CategoryModel? selectedCategory;
   String categoryName = '';
-  List<TagModel> selected = [];
+  List<TagModel> selectedTags = [];
+  List<String> selectedColors = [];
   bool isFreeShipping = false;
+  bool multipleColors = false;
 
   @override
   void initState() {
-    // 
+    //
     super.initState();
     getPhoneNumber();
   }
@@ -54,150 +58,195 @@ class _AddProductsState extends ConsumerState<AddProducts> {
   @override
   Widget build(BuildContext context) {
     final allCategories = ref.watch(allCategoriesProvider);
-    return Scaffold(
-      appBar: AppThemeShared.appBar(title: "Add Products", context: context),
-      body: SingleChildScrollView(
-        child: Form(
-          key: key,
-          child: Center(
-            child: Column(
-              children: [
-                const SizedBox(height: 10),
-                croppedFiles.isNotEmpty
-                    ? Carousel(
-                        height: 250,
-                        files: croppedFiles,
-                        isUrl: false,
-                        imageUrls: const [],
-                      )
-                    : GestureDetector(
-                        onTap: () => pickImage(),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                  color: AppThemeShared.primaryColor,
-                                  width: 3)),
-                          child: Padding(
-                            padding: const EdgeInsets.all(48.0),
-                            child: Icon(
-                              Icons.photo_library,
-                              size: 40,
-                              color: AppThemeShared.primaryColor,
+    return SafeArea(
+      top: false,
+      child: Scaffold(
+        appBar: AppThemeShared.appBar(title: "Add Products", context: context),
+        body: SingleChildScrollView(
+          child: Form(
+            key: key,
+            child: Center(
+              child: Column(
+                children: [
+                  // const SizedBox(height: 10),
+                  croppedFiles.isNotEmpty
+                      ? Carousel(
+                          height: 250,
+                          files: croppedFiles,
+                          isUrl: false,
+                          imageUrls: const [],
+                        )
+                      : GestureDetector(
+                          onTap: () => pickImage(),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                    color: AppThemeShared.primaryColor,
+                                    width: 3)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(48.0),
+                              child: Icon(
+                                Icons.photo_library,
+                                size: 40,
+                                color: AppThemeShared.primaryColor,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                const SizedBox(height: 10),
-                AppThemeShared.textFormField(
-                    context: context,
-                    hintText: "Enter name of product",
-                    controller: name,
-                    textInputAction: TextInputAction.next,
-                    validator: Utility.nameValidator),
-                const SizedBox(height: 10),
-                AppThemeShared.textFormField(
-                  hintText: "Enter price",
-                  context: context,
-                  controller: price,
-                  textInputAction: TextInputAction.next,
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 10),
-                AppThemeShared.textFormField(
-                  context: context,
-                  hintText: "Enter discount",
-                  controller: discount,
-                  textInputAction: TextInputAction.done,
-                  keyboardType: TextInputType.number,
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.85,
-                  child: Row(
-                    children: [
-                      Checkbox(
-                        value: isFreeShipping,
-                        activeColor: AppThemeShared.primaryColor,
-                        onChanged: (value) => setState(() {
-                          isFreeShipping = !isFreeShipping;
-                        }),
-                      ),
-                      const Text(
-                        "Free Shipping",
-                        style: TextStyle(fontSize: 18),
-                      )
-                    ],
-                  ),
-                ),
-                allCategories.when(
-                  data: (data) {
-                    return AppThemeShared.sharedDropDown(
-                      context: context,
-                      hint: const Text('Select Category'),
-                      items: data.map((e) => e.name).toList(),
-                      onChanged: (value) async {
-                        CategoryModel? category =
-                            getModelFromName(data, value!);
-                        if (category != null) {
-                          selectedCategory = category;
-                          tags =
-                              await TagServices().getByCategory(category.id!);
-                          setState(() {});
-                        }
-                      },
-                    );
-                  },
-                  error: (error, stackTrace) => Text(error.toString()),
-                  loading: () => const CircularProgressIndicator(),
-                ),
-                const SizedBox(height: 10),
-                tags.isNotEmpty
-                    ? Column(
+                  const SizedBox(height: 10),
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            "Select Tags",
-                            style: Theme.of(context).textTheme.titleMedium,
+                          const SizedBox(height: 8),
+                          const Text(
+                            "Product Details",
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w600),
+                          ),
+                          AppThemeShared.textFormField(
+                              context: context,
+                              hintText: "Enter name of product",
+                              controller: name,
+                              textInputAction: TextInputAction.next,
+                              validator: Utility.nameValidator),
+                          const SizedBox(height: 10),
+                          AppThemeShared.textFormField(
+                            hintText: "Enter price",
+                            context: context,
+                            controller: price,
+                            textInputAction: TextInputAction.next,
+                            keyboardType: TextInputType.number,
                           ),
                           const SizedBox(height: 10),
-                          Wrap(
-                            children: tags
-                                .map((e) => TagSelection(
-                                      tag: e,
-                                      selected:
-                                          selected.contains(e) ? true : false,
-                                      clicked: (tag) {
-                                        if (selected.contains(tag)) {
-                                          selected.remove(tag);
-                                        } else {
-                                          selected.add(tag);
-                                        }
-                                        // print(selected);
-                                      },
-                                    ))
-                                .toList(),
+                          AppThemeShared.textFormField(
+                            context: context,
+                            hintText: "Enter discount",
+                            controller: discount,
+                            textInputAction: TextInputAction.done,
+                            keyboardType: TextInputType.number,
+                          ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.85,
+                            child: Row(
+                              children: [
+                                Checkbox(
+                                  value: isFreeShipping,
+                                  activeColor: AppThemeShared.primaryColor,
+                                  onChanged: (value) => setState(() {
+                                    isFreeShipping = !isFreeShipping;
+                                  }),
+                                ),
+                                const Text(
+                                  "Free Shipping",
+                                  style: TextStyle(fontSize: 18),
+                                )
+                              ],
+                            ),
                           ),
                         ],
-                      )
-                    : const Offstage(),
-                const SizedBox(height: 10),
-                AppThemeShared.sharedButton(
-                  context: context,
-                  width: MediaQuery.of(context).size.width * 0.85,
-                  buttonText: "Add Product",
-                  onTap: () {
-                    final valid = key.currentState!.validate();
-                    if (valid && croppedFiles.isNotEmpty) {
-                      final userProfile =
-                          ref.watch(getUserByNumberProvider(phoneNumber!));
-
-                      DialogShared.loadingDialog(context, 'Adding Product');
-                      addProduct(userProfile.value!);
-                    }
-                  },
-                )
-              ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 8),
+                          const Text(
+                            "Category And Tags",
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w600),
+                          ),
+                          allCategories.when(
+                            data: (data) {
+                              return AppThemeShared.sharedDropDown(
+                                context: context,
+                                hint: const Text('Select Category'),
+                                items: data.map((e) => e.name).toList(),
+                                onChanged: (value) async {
+                                  CategoryModel? category =
+                                      getModelFromName(data, value!);
+                                  if (category != null) {
+                                    selectedCategory = category;
+                                    tags = await TagServices()
+                                        .getByCategory(category.id!);
+                                    setState(() {});
+                                  }
+                                },
+                              );
+                            },
+                            error: (error, stackTrace) =>
+                                Text(error.toString()),
+                            loading: () => const CircularProgressIndicator(),
+                          ),
+                          const SizedBox(height: 10),
+                          tags.isNotEmpty
+                              ? Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      "Select Tags",
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Wrap(
+                                      children: tags
+                                          .map((e) => TagSelection(
+                                                tag: e,
+                                                selected:
+                                                    selectedTags.contains(e)
+                                                        ? true
+                                                        : false,
+                                                clicked: (tag) {
+                                                  if (selectedTags
+                                                      .contains(tag)) {
+                                                    selectedTags.remove(tag);
+                                                  } else {
+                                                    selectedTags.add(tag);
+                                                  }
+                                                  // print(selectedTags);
+                                                },
+                                              ))
+                                          .toList(),
+                                    ),
+                                  ],
+                                )
+                              : const Offstage(),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  multipleColorsSection(),
+                  const SizedBox(height: 10),
+                ],
+              ),
             ),
           ),
+        ),
+        bottomNavigationBar: AppThemeShared.sharedButton(
+          context: context,
+          width: MediaQuery.of(context).size.width * 0.85,
+          buttonText: "Add Product",
+          onTap: () {
+            final valid = key.currentState!.validate();
+            if (valid && croppedFiles.isNotEmpty) {
+              final userProfile =
+                  ref.watch(getUserByNumberProvider(phoneNumber!));
+
+              DialogShared.loadingDialog(context, 'Adding Product');
+              addProduct(userProfile.value!);
+            }
+          },
         ),
       ),
     );
@@ -218,7 +267,8 @@ class _AddProductsState extends ConsumerState<AddProducts> {
           discount: int.parse(discount.text),
           category: selectedCategory!,
           freeShipping: isFreeShipping,
-          tags: selected.isNotEmpty ? selected : [],
+          tags: selectedTags.isNotEmpty ? selectedTags : [],
+          colors: selectedColors.isNotEmpty ? selectedColors : [],
           available: true));
 
       if (added) {
@@ -246,18 +296,17 @@ class _AddProductsState extends ConsumerState<AddProducts> {
       for (var file in files) {
         CroppedFile? curr = await ImageCropper().cropImage(
           sourcePath: file.path,
-          aspectRatioPresets: [
-            CropAspectRatioPreset.ratio7x5,
-            CropAspectRatioPreset.ratio16x9,
-            CropAspectRatioPreset.ratio4x3
-          ],
+          aspectRatioPresets: [CropAspectRatioPreset.original],
+          compressFormat: ImageCompressFormat.png,
           uiSettings: [
             AndroidUiSettings(
+                cropFrameColor: Colors.transparent,
                 toolbarTitle: 'Cropper',
                 toolbarColor: Colors.deepOrange,
                 toolbarWidgetColor: Colors.white,
                 initAspectRatio: CropAspectRatioPreset.original,
-                lockAspectRatio: false),
+                lockAspectRatio: false,
+                backgroundColor: Colors.transparent),
             IOSUiSettings(
               title: 'Cropper',
             ),
@@ -274,5 +323,69 @@ class _AddProductsState extends ConsumerState<AddProducts> {
   getPhoneNumber() async {
     phoneNumber = await Utility().getPhoneNumberSF();
     // print(phoneNumber);
+  }
+
+  Widget multipleColorsSection() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.85,
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Checkbox(
+                    value: multipleColors,
+                    activeColor: AppThemeShared.primaryColor,
+                    onChanged: (value) => setState(() {
+                      if (value != null) {
+                        multipleColors = value;
+                        selectedColors.clear();
+                      }
+                    }),
+                  ),
+                  const Text(
+                    "Multiple Clors Available?",
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ],
+              ),
+              multipleColors
+                  ? Column(
+                      children: [
+                        const Text(
+                          "Select Colors",
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        Wrap(
+                          children: Constants.colors.entries
+                              .map((e) => Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: ColorSelection(
+                                    name: e.key,
+                                    colorCode: e.value,
+                                    onTap: (colorCode) {
+                                      if (selectedColors.contains(colorCode)) {
+                                        selectedColors.remove(colorCode);
+                                      } else {
+                                        selectedColors.add(colorCode);
+                                      }
+                                    },
+                                  )))
+                              .toList(),
+
+                          //  map((key, value) => Container(
+                          //   width: 30, height: 20, color: Color(int.tryParse("0xff$value", radix: 16),),
+                          // )),
+                        )
+                      ],
+                    )
+                  : const Offstage()
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

@@ -88,24 +88,30 @@ class _DashboardMainState extends State<DashboardMain> {
                           TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  Consumer(
-                    builder: (context, ref, child) {
-                      final allCatgories = ref.watch(allCategoriesProvider);
-                      return allCatgories.when(
-                        data: (data) => SizedBox(
-                          height: 180,
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: allCatgories.value!.length,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, index) {
-                              return categoryCard(allCatgories.value![index]);
-                            },
-                          ),
-                        ),
-                        error: (error, stackTrace) =>
-                            Center(child: Text(error.toString())),
-                        loading: () => SizedBox(
+                  products.isNotEmpty
+                      ? Consumer(
+                          builder: (context, ref, child) {
+                            final allCatgories =
+                                ref.watch(allCategoriesProvider);
+                            return allCatgories.when(
+                                data: (data) => SizedBox(
+                                      height: 155,
+                                      child: ListView.builder(
+                                        shrinkWrap: true,
+                                        itemCount: allCatgories.value!.length,
+                                        scrollDirection: Axis.horizontal,
+                                        itemBuilder: (context, index) {
+                                          return categoryCard(
+                                              allCatgories.value![index]);
+                                        },
+                                      ),
+                                    ),
+                                error: (error, stackTrace) =>
+                                    Center(child: Text(error.toString())),
+                                loading: () => const Offstage());
+                          },
+                        )
+                      : SizedBox(
                           height: 180,
                           child: ListView.builder(
                             itemCount:
@@ -116,9 +122,6 @@ class _DashboardMainState extends State<DashboardMain> {
                             },
                           ),
                         ),
-                      );
-                    },
-                  ),
                   const Padding(
                     padding: EdgeInsets.all(8.0),
                     child: Text(
@@ -180,8 +183,8 @@ class _DashboardMainState extends State<DashboardMain> {
           children: [
             category.imageUri != null
                 ? CachedNetworkImage(
-                    height: 130,
-                    width: 120,
+                    height: 110,
+                    width: 100,
                     imageUrl: category.imageUri!,
                     fit: BoxFit.fill,
                     imageBuilder: (context, imageProvider) => Container(

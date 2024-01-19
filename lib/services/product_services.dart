@@ -19,7 +19,8 @@ class ProductServices {
         "freeShipping": jsonEncode(product.freeShipping),
         "tags": product.tags != null
             ? jsonEncode(product.tags!.map((e) => e.id).toList())
-            : []
+            : [],
+        "colors": product.colors != null ? jsonEncode(product.colors) : []
       });
 
       if (response.statusCode == 201) {
@@ -132,12 +133,16 @@ class ProductServices {
           Uri.parse("${Constants.baseUrl}/product/update?id=${product.id}"),
           body: {
             "imageUris": jsonEncode(product.imageUris.toList()),
+            "seller": product.seller.id,
             "name": product.name,
             "price": jsonEncode(product.price),
             "discount": jsonEncode(product.discount),
             "category": product.category.id,
-            "available": jsonEncode(product.available),
-            "tags": jsonEncode(product.tags!.map((e) => e.id).toList())
+            "freeShipping": jsonEncode(product.freeShipping),
+            "tags": product.tags != null
+                ? jsonEncode(product.tags!.map((e) => e.id).toList())
+                : [],
+            "colors": product.colors != null ? jsonEncode(product.colors) : []
           });
       if (response.statusCode == 200) {
         return true;

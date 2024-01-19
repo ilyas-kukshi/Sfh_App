@@ -29,6 +29,7 @@ mixin _$ProductModel {
   bool get freeShipping => throw _privateConstructorUsedError;
   UserModel get seller => throw _privateConstructorUsedError;
   List<TagModel>? get tags => throw _privateConstructorUsedError;
+  List<String>? get colors => throw _privateConstructorUsedError;
   int? get views => throw _privateConstructorUsedError;
   int? get enquired => throw _privateConstructorUsedError;
   @JsonKey(name: '_id')
@@ -60,6 +61,7 @@ abstract class $ProductModelCopyWith<$Res> {
       bool freeShipping,
       UserModel seller,
       List<TagModel>? tags,
+      List<String>? colors,
       int? views,
       int? enquired,
       @JsonKey(name: '_id') String? id,
@@ -93,6 +95,7 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
     Object? freeShipping = null,
     Object? seller = null,
     Object? tags = freezed,
+    Object? colors = freezed,
     Object? views = freezed,
     Object? enquired = freezed,
     Object? id = freezed,
@@ -137,6 +140,10 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
           ? _value.tags
           : tags // ignore: cast_nullable_to_non_nullable
               as List<TagModel>?,
+      colors: freezed == colors
+          ? _value.colors
+          : colors // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
       views: freezed == views
           ? _value.views
           : views // ignore: cast_nullable_to_non_nullable
@@ -199,6 +206,7 @@ abstract class _$$_ProductModelCopyWith<$Res>
       bool freeShipping,
       UserModel seller,
       List<TagModel>? tags,
+      List<String>? colors,
       int? views,
       int? enquired,
       @JsonKey(name: '_id') String? id,
@@ -232,6 +240,7 @@ class __$$_ProductModelCopyWithImpl<$Res>
     Object? freeShipping = null,
     Object? seller = null,
     Object? tags = freezed,
+    Object? colors = freezed,
     Object? views = freezed,
     Object? enquired = freezed,
     Object? id = freezed,
@@ -276,6 +285,10 @@ class __$$_ProductModelCopyWithImpl<$Res>
           ? _value._tags
           : tags // ignore: cast_nullable_to_non_nullable
               as List<TagModel>?,
+      colors: freezed == colors
+          ? _value._colors
+          : colors // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
       views: freezed == views
           ? _value.views
           : views // ignore: cast_nullable_to_non_nullable
@@ -317,6 +330,7 @@ class _$_ProductModel implements _ProductModel {
       required this.freeShipping,
       required this.seller,
       final List<TagModel>? tags,
+      final List<String>? colors,
       this.views,
       this.enquired,
       @JsonKey(name: '_id') this.id,
@@ -324,7 +338,8 @@ class _$_ProductModel implements _ProductModel {
       this.updatedAt,
       @JsonKey(name: '__v') this.v})
       : _imageUris = imageUris,
-        _tags = tags;
+        _tags = tags,
+        _colors = colors;
 
   factory _$_ProductModel.fromJson(Map<String, dynamic> json) =>
       _$$_ProductModelFromJson(json);
@@ -361,6 +376,16 @@ class _$_ProductModel implements _ProductModel {
     return EqualUnmodifiableListView(value);
   }
 
+  final List<String>? _colors;
+  @override
+  List<String>? get colors {
+    final value = _colors;
+    if (value == null) return null;
+    if (_colors is EqualUnmodifiableListView) return _colors;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   final int? views;
   @override
@@ -378,7 +403,7 @@ class _$_ProductModel implements _ProductModel {
 
   @override
   String toString() {
-    return 'ProductModel(imageUris: $imageUris, name: $name, price: $price, discount: $discount, category: $category, available: $available, freeShipping: $freeShipping, seller: $seller, tags: $tags, views: $views, enquired: $enquired, id: $id, createdAt: $createdAt, updatedAt: $updatedAt, v: $v)';
+    return 'ProductModel(imageUris: $imageUris, name: $name, price: $price, discount: $discount, category: $category, available: $available, freeShipping: $freeShipping, seller: $seller, tags: $tags, colors: $colors, views: $views, enquired: $enquired, id: $id, createdAt: $createdAt, updatedAt: $updatedAt, v: $v)';
   }
 
   @override
@@ -400,6 +425,7 @@ class _$_ProductModel implements _ProductModel {
                 other.freeShipping == freeShipping) &&
             (identical(other.seller, seller) || other.seller == seller) &&
             const DeepCollectionEquality().equals(other._tags, _tags) &&
+            const DeepCollectionEquality().equals(other._colors, _colors) &&
             (identical(other.views, views) || other.views == views) &&
             (identical(other.enquired, enquired) ||
                 other.enquired == enquired) &&
@@ -424,6 +450,7 @@ class _$_ProductModel implements _ProductModel {
       freeShipping,
       seller,
       const DeepCollectionEquality().hash(_tags),
+      const DeepCollectionEquality().hash(_colors),
       views,
       enquired,
       id,
@@ -456,6 +483,7 @@ abstract class _ProductModel implements ProductModel {
       required final bool freeShipping,
       required final UserModel seller,
       final List<TagModel>? tags,
+      final List<String>? colors,
       final int? views,
       final int? enquired,
       @JsonKey(name: '_id') final String? id,
@@ -484,6 +512,8 @@ abstract class _ProductModel implements ProductModel {
   UserModel get seller;
   @override
   List<TagModel>? get tags;
+  @override
+  List<String>? get colors;
   @override
   int? get views;
   @override

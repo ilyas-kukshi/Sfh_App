@@ -5,7 +5,9 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class Constants {
   // static String baseUrl = "https://sfh-api-zlkq.onrender.com";
-  static String baseUrl = 'http://192.168.1.101:8080';
+  static String baseUrl = 'http://192.168.1.102:8080';
+  // static String baseUrl = 'http://192.168.125.186:8080'; // phone hotspot
+
   static String whatsappNumber = "919987655052";
 
   static String admin = "Admin";
@@ -13,6 +15,19 @@ class Constants {
   static String user = "User";
 
   static String feedbackUrl = "https://forms.gle/TfaHhierhcxoRDwH6";
+
+  static Map<String, String> colors = {
+    "Black": "000000",
+    "White": "FFFFFF",
+    "Red": "FF0000",
+    "Blue": "0000FF",
+    "Green": "00FF00",
+    "Yellow": "FFFF00",
+    "Purple": "800080",
+    "Pink": "FFC0CB",
+    "Gray": "808080",
+    "Brown": "A52A2A",
+  };
 
   static const shimmerGradient = LinearGradient(
     colors: [

@@ -21,7 +21,11 @@ class AppThemeShared {
     return AppBar(
       title: Text(
         title,
-        style: TextStyle(color: textColor, fontWeight: fontWeight),
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          color: textColor,
+          fontWeight: fontWeight,
+        ),
       ),
       automaticallyImplyLeading: false,
       centerTitle: centerTitle,
