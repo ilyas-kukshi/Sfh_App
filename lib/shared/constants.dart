@@ -16,6 +16,9 @@ class Constants {
 
   static String feedbackUrl = "https://forms.gle/TfaHhierhcxoRDwH6";
 
+  static String notificationServerKey =
+      "AAAAA8mMFpg:APA91bHvZy_5ZO_J3tF4tOCOueHZSf9zrkTih1nEtsM7bj8O36vVaZ6aJfvjZizyNOHcVW1qsDzCV6oPmxRNRNQG4Sa6gAXY2szKr5KZbkgKU6QvztveJifqPS_uNibKyEoN0aZbOZUa";
+
   static Map<String, String> colors = {
     "Black": "000000",
     "White": "FFFFFF",

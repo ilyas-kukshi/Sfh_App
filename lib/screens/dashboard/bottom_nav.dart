@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:sfh_app/screens/category/view_categories.dart';
 import 'package:sfh_app/screens/dashboard/dashboard_main.dart';
@@ -17,7 +18,11 @@ class _BottomNavState extends State<BottomNav> {
   BannerAd? banner;
   int selected = 0;
 
-  List<Widget> screens = [const DashboardMain(), const ViewCategories(), const Settings()];
+  List<Widget> screens = [
+    const DashboardMain(),
+    const ViewCategories(),
+    const Settings()
+  ];
 
   @override
   void initState() {
@@ -54,7 +59,12 @@ class _BottomNavState extends State<BottomNav> {
   }
 
   createBannerAd() {
-    banner = AdmobService().createBannerAd();
-    setState(() {});
+    try {
+      banner = AdmobService().createBannerAd();
+      setState(() {});
+    } catch (e) {
+      print(e);
+      Fluttertoast.showToast(msg: e.toString());
+    }
   }
 }

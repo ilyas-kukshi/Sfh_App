@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -7,6 +8,7 @@ import 'package:sfh_app/models/products/product_model.dart';
 import 'package:sfh_app/screens/dashboard/dashboard_drawer.dart';
 import 'package:sfh_app/services/auth/auth_service.dart';
 import 'package:sfh_app/services/category/category_services.dart';
+import 'package:sfh_app/services/notification_service.dart';
 import 'package:sfh_app/services/product_services.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 import 'package:sfh_app/shared/constants.dart';
@@ -34,10 +36,13 @@ class _DashboardMainState extends State<DashboardMain> {
   @override
   void initState() {
     super.initState();
-
     getProducts();
     getPhoneNumber();
     // createBannerAd();
+    
+    NotificationService().requestPermission();
+    NotificationService().getDeviceToken();
+    NotificationService().isTokenRefresh();
   }
 
   @override
@@ -88,31 +93,25 @@ class _DashboardMainState extends State<DashboardMain> {
                           TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  products.isNotEmpty
-                      ? Consumer(
-                          builder: (context, ref, child) {
-                            final allCatgories =
-                                ref.watch(allCategoriesProvider);
-                            return allCatgories.when(
-                                data: (data) => SizedBox(
-                                      height: 155,
-                                      child: ListView.builder(
-                                        shrinkWrap: true,
-                                        itemCount: allCatgories.value!.length,
-                                        scrollDirection: Axis.horizontal,
-                                        itemBuilder: (context, index) {
-                                          return categoryCard(
-                                              allCatgories.value![index]);
-                                        },
-                                      ),
-                                    ),
-                                error: (error, stackTrace) =>
-                                    Center(child: Text(error.toString())),
-                                loading: () => const Offstage());
-                          },
-                        )
-                      : SizedBox(
-                          height: 180,
+                  Consumer(
+                    builder: (context, ref, child) {
+                      final allCatgories = ref.watch(allCategoriesProvider);
+                      return allCatgories.when(
+                        data: (data) => SizedBox(
+                          height: 172,
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: allCatgories.value!.length,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, index) {
+                              return categoryCard(allCatgories.value![index]);
+                            },
+                          ),
+                        ),
+                        error: (error, stackTrace) =>
+                            Center(child: Text(error.toString())),
+                        loading: () => SizedBox(
+                          height: 200,
                           child: ListView.builder(
                             itemCount:
                                 10, // You can set the number of shimmer items
@@ -122,8 +121,11 @@ class _DashboardMainState extends State<DashboardMain> {
                             },
                           ),
                         ),
+                      );
+                    },
+                  ),
                   const Padding(
-                    padding: EdgeInsets.all(8.0),
+                    padding: EdgeInsets.only(left: 8.0),
                     child: Text(
                       "Latest",
                       style:
@@ -173,29 +175,42 @@ class _DashboardMainState extends State<DashboardMain> {
 
   Widget categoryCard(CategoryModel category) {
     return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(context, '/displayProductsByCategory',
-            arguments: category);
-      },
+      // onTap: () {
+      //   Navigator.pushNamed(context, '/displayProductsByCategory',
+      //       arguments: category);
+      // },
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
+          // mainAxisAlignment: MainAxisAlignment.center,
+          // crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             category.imageUri != null
-                ? CachedNetworkImage(
-                    height: 110,
-                    width: 100,
-                    imageUrl: category.imageUri!,
-                    fit: BoxFit.fill,
-                    imageBuilder: (context, imageProvider) => Container(
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                              image: imageProvider, fit: BoxFit.cover)),
-                    ),
-                    placeholder: (context, url) => const Offstage(),
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
+                ? Stack(
+                    clipBehavior: Clip.none,
+                    alignment: AlignmentDirectional.bottomCenter,
+                    children: [
+                      Positioned(
+                        top: 15,
+                        child: CircleAvatar(
+                          radius: 60,
+                          backgroundColor: Colors.green.withOpacity(0.4),
+                        ),
+                      ),
+                      Positioned(
+                        // top: 10,
+                        // bottom: 40,
+                        child: CachedNetworkImage(
+                          height: 130,
+                          width: 120,
+                          imageUrl: category.imageUri!,
+                          fit: BoxFit.fill,
+                          placeholder: (context, url) => const Offstage(),
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.error),
+                        ),
+                      ),
+                    ],
                   )
                 : const Offstage(),
             // const SizedBox(height: 2),

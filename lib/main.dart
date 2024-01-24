@@ -1,5 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:page_transition/page_transition.dart';
@@ -18,12 +20,43 @@ import 'package:sfh_app/screens/product/view_product.dart';
 import 'package:sfh_app/screens/seller/add_seller.dart';
 import 'package:sfh_app/screens/seller/seller_login.dart';
 import 'package:sfh_app/screens/seller/seller_register.dart';
+import 'package:sfh_app/services/notification_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+// initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
+const AndroidInitializationSettings initializationSettingsAndroid =
+    AndroidInitializationSettings('@mipmap/ic_launcher');
+final DarwinInitializationSettings initializationSettingsDarwin =
+    DarwinInitializationSettings(
+  onDidReceiveLocalNotification: (id, title, body, payload) {
+    print("Darwin: $title");
+  },
+);
+final InitializationSettings initializationSettings = InitializationSettings(
+  android: initializationSettingsAndroid,
+  iOS: initializationSettingsDarwin,
+);
+
+//when notification is tapped while app is in background
+@pragma('vm:entry-point')
+void notificationTapBackground(NotificationResponse message) async {}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await MobileAds.instance.initialize();
+
+  // FirebaseMessaging.onBackgroundMessage((message) => notificationTa)
+
+  //When a new notification message is received
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    // Handle foreground notifications
+    NotificationService().displayForegroundNotification(message);
+  });
+
   runApp(const ProviderScope(child: MyApp()));
 }
 

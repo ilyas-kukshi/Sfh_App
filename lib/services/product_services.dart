@@ -76,7 +76,7 @@ class ProductServices {
       }
     } catch (error) {
       Fluttertoast.showToast(msg: error.toString());
-      // print(error);
+      print(error);
     }
     return products;
   }

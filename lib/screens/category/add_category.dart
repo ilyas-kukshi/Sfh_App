@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -37,28 +38,40 @@ class _AddCategoryState extends State<AddCategory> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const SizedBox(height: 10),
+            const SizedBox(height: 50),
             GestureDetector(
               onTap: () {
                 pickImage();
               },
               child: CircleAvatar(
-                radius: 60,
-                child: Center(
-                    child: croppedFile == null
+                radius: 65,
+                backgroundColor: Colors.green.withOpacity(0.4),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  alignment: AlignmentDirectional.center,
+                  children: [
+                    croppedFile == null
                         ? const Text(
                             "Click to pick image",
                             overflow: TextOverflow.ellipsis,
                           )
-                        : Container(
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(color: Colors.green)),
-                            child: Image.file(
-                              File(croppedFile!.path),
-                              fit: BoxFit.fill,
+                        : Positioned(
+                            bottom: 10,
+                            // left: -20,
+                            child: Center(
+                              child: SizedBox(
+                                height: 150,
+                                child: Image.file(
+                                  File(
+                                    croppedFile!.path,
+                                  ),
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
                             ),
-                          )),
+                          ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 10),
@@ -194,6 +207,7 @@ class _AddCategoryState extends State<AddCategory> {
         aspectRatioPresets: [
           CropAspectRatioPreset.square,
         ],
+        compressFormat: ImageCompressFormat.png,
         uiSettings: [
           AndroidUiSettings(
               toolbarTitle: 'Cropper',

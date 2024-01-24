@@ -1,5 +1,7 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sfh_app/services/notification_service.dart';
 
 class DashboardDrawer extends ConsumerStatefulWidget {
   const DashboardDrawer({super.key});
@@ -9,6 +11,12 @@ class DashboardDrawer extends ConsumerStatefulWidget {
 }
 
 class _DashboardDrawerState extends ConsumerState<DashboardDrawer> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -46,6 +54,13 @@ class _DashboardDrawerState extends ConsumerState<DashboardDrawer> {
                   Navigator.pushNamed(context, '/addSeller');
                 },
                 child: Text("Add Seller",
+                    style: Theme.of(context).textTheme.titleMedium)),
+            GestureDetector(
+                onTap: () {
+                  // Navigator.pushNamed(context, '/addSeller');
+                  NotificationService().sendToAll();
+                },
+                child: Text("Send Notification",
                     style: Theme.of(context).textTheme.titleMedium)),
           ],
         ),
