@@ -15,11 +15,13 @@ import 'package:sfh_app/screens/product/add_products.dart';
 import 'package:sfh_app/screens/product/display_products_by_category.dart';
 import 'package:sfh_app/screens/product/edit_product.dart';
 import 'package:sfh_app/screens/product/manage_products.dart';
+import 'package:sfh_app/screens/product/story_view.dart';
 import 'package:sfh_app/screens/product/view_images.dart';
 import 'package:sfh_app/screens/product/view_product.dart';
 import 'package:sfh_app/screens/seller/add_seller.dart';
 import 'package:sfh_app/screens/seller/seller_login.dart';
 import 'package:sfh_app/screens/seller/seller_register.dart';
+import 'package:sfh_app/services/admob_service.dart';
 import 'package:sfh_app/services/notification_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 
@@ -32,7 +34,7 @@ const AndroidInitializationSettings initializationSettingsAndroid =
 final DarwinInitializationSettings initializationSettingsDarwin =
     DarwinInitializationSettings(
   onDidReceiveLocalNotification: (id, title, body, payload) {
-    print("Darwin: $title");
+    // print("Darwin: $title");
   },
 );
 final InitializationSettings initializationSettings = InitializationSettings(
@@ -49,6 +51,7 @@ void main() async {
   await Firebase.initializeApp();
   await MobileAds.instance.initialize();
 
+  // AdmobService().createInterstitialAd();
   // FirebaseMessaging.onBackgroundMessage((message) => notificationTa)
 
   //When a new notification message is received
@@ -87,7 +90,7 @@ class MyApp extends StatelessWidget {
             child: const BottomNav(), type: PageTransitionType.leftToRight);
       case '/dashboardMain':
         return PageTransition(
-            child: const DashboardMain(), type: PageTransitionType.leftToRight);
+            child: DashboardMain(), type: PageTransitionType.leftToRight);
       case '/addCategory':
         return PageTransition(
             child: AddCategory(category: settings.arguments as CategoryModel?),
@@ -111,6 +114,13 @@ class MyApp extends StatelessWidget {
               product: settings.arguments as ProductModel,
             ),
             type: PageTransitionType.leftToRight);
+      case '/viewStory':
+        return PageTransition(
+            child: StoryPage(
+              data: settings.arguments as Map<String, dynamic>,
+            ),
+            type: PageTransitionType.scale,
+            alignment: Alignment.center);
       case '/viewImages':
         return PageTransition(
             child: ViewImages(

@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -39,7 +38,7 @@ class _DashboardMainState extends State<DashboardMain> {
     getProducts();
     getPhoneNumber();
     // createBannerAd();
-    
+
     NotificationService().requestPermission();
     NotificationService().getDeviceToken();
     NotificationService().isTokenRefresh();
@@ -56,31 +55,53 @@ class _DashboardMainState extends State<DashboardMain> {
               title: "Sakina Fashion House",
               context: context,
               backButton: false,
-              leading: Consumer(
-                builder: (context, ref, child) {
-                  if (phoneNumber != null) {
-                    final user =
-                        ref.watch(getUserByNumberProvider(phoneNumber!));
-                    return user.value != null
-                        ? user.value!.role == Constants.seller ||
-                                user.value!.role == Constants.admin
-                            ? GestureDetector(
-                                onTap: () {
-                                  globalKey.currentState!.openDrawer();
-                                },
-                                child: const Icon(
-                                  Icons.menu,
-                                  color: Colors.white,
-                                ),
-                              )
-                            : const Offstage()
-                        : const Offstage();
-                  } else {
-                    return const Offstage();
-                  }
-                },
-              )),
-          body: SafeArea(
+              leading: FutureBuilder(
+                  future: getPhoneNumber(),
+                  builder: (context, snapshot) {
+                    return Consumer(
+                      builder: (context, ref, child) {
+                        if (phoneNumber != null) {
+                          final user =
+                              ref.watch(getUserByNumberProvider(phoneNumber!));
+                          return user.when(
+                            data: (data) {
+                              return user.value != null
+                                  ? user.value!.role == Constants.seller ||
+                                          user.value!.role == Constants.admin
+                                      ? GestureDetector(
+                                          onTap: () {
+                                            globalKey.currentState!
+                                                .openDrawer();
+                                          },
+                                          child: const Icon(
+                                            Icons.menu,
+                                            color: Colors.white,
+                                          ),
+                                        )
+                                      : const Offstage()
+                                  : const Offstage();
+                            },
+                            error: (error, stackTrace) => const Offstage(),
+                            loading: () => const Offstage(),
+                          );
+                        } else {
+                          return const Offstage();
+                        }
+                      },
+                    );
+                  })),
+          body: RefreshIndicator(
+            displacement: 100,
+            backgroundColor: AppThemeShared.primaryColor,
+            // color: Colors.red,
+            strokeWidth: 3,
+            triggerMode: RefreshIndicatorTriggerMode.onEdge,
+            onRefresh: () async {
+              setState(() {
+                getProducts();
+              });
+              return;
+            },
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,7 +109,7 @@ class _DashboardMainState extends State<DashboardMain> {
                   const Padding(
                     padding: EdgeInsets.all(8.0),
                     child: Text(
-                      "Categories",
+                      "Random Picks",
                       style:
                           TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                     ),
@@ -104,7 +125,9 @@ class _DashboardMainState extends State<DashboardMain> {
                             itemCount: allCatgories.value!.length,
                             scrollDirection: Axis.horizontal,
                             itemBuilder: (context, index) {
-                              return categoryCard(allCatgories.value![index]);
+                              categories = allCatgories.value!;
+                              return categoryCard(
+                                  allCatgories.value![index], index);
                             },
                           ),
                         ),
@@ -132,40 +155,52 @@ class _DashboardMainState extends State<DashboardMain> {
                           TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  products.isNotEmpty
-                      ? GridView.builder(
-                          itemCount: products.length,
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          padding: EdgeInsets.only(
-                              left: MediaQuery.of(context).size.width * 0.01),
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  mainAxisExtent: 350,
-                                  mainAxisSpacing: 0,
-                                  crossAxisSpacing: 0),
-                          itemBuilder: (context, index) {
-                            return ProductCard()
-                                .productCard(products[index], context);
-                          },
-                        )
-                      : GridView.builder(
-                          itemCount: 20,
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          padding: EdgeInsets.only(
-                              left: MediaQuery.of(context).size.width * 0.01),
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  mainAxisExtent: 350,
-                                  mainAxisSpacing: 0,
-                                  crossAxisSpacing: 0),
-                          itemBuilder: (context, index) {
-                            return ProductCard().productShimmerCard(context);
-                          },
-                        )
+                  FutureBuilder<List<ProductModel>>(
+                    future: getProducts(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        if (snapshot.hasError) {
+                          return Text(snapshot.error.toString());
+                        } else {
+                          if (snapshot.hasData) {
+                            products = snapshot.data!;
+                            return products.isNotEmpty
+                                ? GridView.builder(
+                                    itemCount: products.length,
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    padding: EdgeInsets.only(
+                                        left:
+                                            MediaQuery.of(context).size.width *
+                                                0.01),
+                                    gridDelegate:
+                                        const SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 2,
+                                            mainAxisExtent: 350,
+                                            mainAxisSpacing: 0,
+                                            crossAxisSpacing: 0),
+                                    itemBuilder: (context, index) {
+                                      return ProductCard().productCard(
+                                          products[index], context);
+                                    },
+                                  )
+                                : const Center(
+                                    child: Text(
+                                        "We will bring some products in this category soon!"),
+                                  );
+                          } else {
+                            return const Center(
+                              child: Text(
+                                  "We will bring some products in this category soon!"),
+                            );
+                          }
+                        }
+                      } else {
+                        return productGridShimmer(context);
+                      }
+                    },
+                  )
                 ],
               ),
             ),
@@ -173,12 +208,12 @@ class _DashboardMainState extends State<DashboardMain> {
         ));
   }
 
-  Widget categoryCard(CategoryModel category) {
+  Widget categoryCard(CategoryModel category, int index) {
     return GestureDetector(
-      // onTap: () {
-      //   Navigator.pushNamed(context, '/displayProductsByCategory',
-      //       arguments: category);
-      // },
+      onTap: () {
+        Navigator.pushNamed(context, '/viewStory',
+            arguments: {"categories": categories, "currCategoryIndex": index});
+      },
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -191,18 +226,25 @@ class _DashboardMainState extends State<DashboardMain> {
                     alignment: AlignmentDirectional.bottomCenter,
                     children: [
                       Positioned(
-                        top: 15,
-                        child: CircleAvatar(
-                          radius: 60,
-                          backgroundColor: Colors.green.withOpacity(0.4),
+                        // top: 15,
+                        child: Container(
+                          padding: const EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border:
+                                  Border.all(color: Colors.green, width: 2.5)),
+                          child: CircleAvatar(
+                            radius: 50,
+                            backgroundColor: Colors.green.withOpacity(0.4),
+                          ),
                         ),
                       ),
                       Positioned(
                         // top: 10,
                         // bottom: 40,
                         child: CachedNetworkImage(
-                          height: 130,
-                          width: 120,
+                          height: 110,
+                          width: 100,
                           imageUrl: category.imageUri!,
                           fit: BoxFit.fill,
                           placeholder: (context, url) => const Offstage(),
@@ -250,12 +292,31 @@ class _DashboardMainState extends State<DashboardMain> {
     );
   }
 
-  getProducts() async {
+  Future<List<ProductModel>> getProducts() async {
+    products.clear();
     products = await ProductServices().getLatest();
-    setState(() {});
+    // setState(() {});
+    return products;
   }
 
   getPhoneNumber() async {
     phoneNumber = await Utility().getPhoneNumberSF();
   }
+}
+
+Widget productGridShimmer(BuildContext context) {
+  return GridView.builder(
+    itemCount: 20,
+    shrinkWrap: true,
+    physics: const NeverScrollableScrollPhysics(),
+    padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.01),
+    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisExtent: 350,
+        mainAxisSpacing: 0,
+        crossAxisSpacing: 0),
+    itemBuilder: (context, index) {
+      return ProductCard().productShimmerCard(context);
+    },
+  );
 }

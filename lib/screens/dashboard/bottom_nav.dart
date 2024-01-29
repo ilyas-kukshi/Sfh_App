@@ -63,7 +63,7 @@ class _BottomNavState extends State<BottomNav> {
       banner = AdmobService().createBannerAd();
       setState(() {});
     } catch (e) {
-      print(e);
+      // print(e);
       Fluttertoast.showToast(msg: e.toString());
     }
   }

@@ -21,6 +21,7 @@ class ManageProducts extends ConsumerStatefulWidget {
 class _ManageProductsState extends ConsumerState<ManageProducts> {
   List<ProductModel> products = [];
   List<String> selectedCategoryId = [];
+  List<String> selectedProductIds = [];
 
   @override
   void initState() {
@@ -33,7 +34,28 @@ class _ManageProductsState extends ConsumerState<ManageProducts> {
     final allCatgories = ref.watch(allCategoriesProvider);
 
     return Scaffold(
-      appBar: AppThemeShared.appBar(title: "Manage Products", context: context),
+      appBar: AppThemeShared.appBar(
+          title: "Manage Products",
+          context: context,
+          actions: [
+            selectedProductIds.isNotEmpty
+                ? Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: GestureDetector(
+                      onTap: () => DialogShared.doubleButtonDialog(
+                          context,
+                          "Are you sure you want to delete selected products",
+                          () => deleteProduct(), () {
+                        Navigator.pop(context);
+                      }),
+                      child: Icon(
+                        Icons.delete,
+                        color: Colors.white,
+                      ),
+                    ),
+                  )
+                : const Offstage()
+          ]),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -66,7 +88,23 @@ class _ManageProductsState extends ConsumerState<ManageProducts> {
                             mainAxisSpacing: 0,
                             crossAxisSpacing: 0),
                     itemBuilder: (context, index) {
-                      return productCard(products[index], index);
+                      return ManageProductCard(
+                        product: products[index],
+                        available: products[index].available,
+                        selection: (selected, product) {
+                          if (selected) {
+                            selectedProductIds.add(product.id!);
+                          } else {
+                            selectedProductIds.remove(product.id!);
+                          }
+                          setState(() {});
+                        },
+                        availability: (available, product) {
+                          products[index] =
+                              product.copyWith(available: available);
+                          setState(() {});
+                        },
+                      );
                     },
                   )
                 : const CircularProgressIndicator()
@@ -84,82 +122,163 @@ class _ManageProductsState extends ConsumerState<ManageProducts> {
     setState(() {});
   }
 
-  Widget productCard(ProductModel product, int index) {
+  void refreshScreen() {
+    setState(() {});
+  }
+
+  deleteProduct() async {
+    bool deleted = await ProductServices().delete(selectedProductIds);
+    if (deleted) {
+      Navigator.pop(context);
+      Fluttertoast.showToast(msg: "Products Deleted");
+    } else {
+      Fluttertoast.showToast(msg: "Not deleted");
+    }
+  }
+}
+
+class ManageProductCard extends StatefulWidget {
+  ProductModel product;
+  bool available;
+  // bool selected;
+  Function(bool, ProductModel) availability;
+  Function(bool, ProductModel) selection;
+  ManageProductCard(
+      {super.key,
+      required this.product,
+      required this.available,
+      // required this.selected,
+      required this.availability,
+      required this.selection});
+
+  @override
+  State<ManageProductCard> createState() => _ManageProductCardState();
+}
+
+class _ManageProductCardState extends State<ManageProductCard> {
+  bool selected = false;
+  late bool available;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    available = widget.available;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
         children: [
-          CachedNetworkImage(
-            imageUrl: product.imageUris.first,
-            height: 220,
-            width: MediaQuery.of(context).size.width * 0.48,
-            fit: BoxFit.fill,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CachedNetworkImage(
+                imageUrl: widget.product.imageUris.first,
+                height: 220,
+                width: MediaQuery.of(context).size.width * 0.48,
+                fit: BoxFit.fill,
+              ),
+              SizedBox(
+                height: 30,
+                width: MediaQuery.of(context).size.width * 0.48,
+                child: Text(
+                  widget.product.name,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    overflow: TextOverflow.clip,
+                  ),
+                ),
+              ),
+              Row(
+                children: [
+                  Text(
+                    "₹${widget.product.price}",
+                    style: const TextStyle(
+                        color: Colors.grey,
+                        decoration: TextDecoration.lineThrough),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    "₹${widget.product.price - widget.product.discount}",
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    "₹${((widget.product.discount / widget.product.price) * 100).toInt()}% OFF",
+                    style: const TextStyle(
+                        color: Colors.orange,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  const Text("Available:"),
+                  const SizedBox(width: 8),
+                  Switch(
+                    activeColor: AppThemeShared.primaryColor,
+                    value: available,
+                    onChanged: (value) {
+                      available = value;
+                      // widget.products[index] = widget.product.copyWith(available: value);
+                      updateProduct(widget.product.copyWith(available: value));
+                      widget.availability(value, widget.product);
+                      setState(() {});
+                    },
+                  )
+                ],
+              ),
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      fixedSize:
+                          Size(MediaQuery.of(context).size.width * 0.48, 40),
+                      shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.zero)),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/editProduct',
+                        arguments: widget.product);
+                  },
+                  child: Text(
+                    "Edit",
+                    style: TextStyle(color: AppThemeShared.primaryColor),
+                  ))
+            ],
           ),
-          SizedBox(
-            height: 30,
-            width: MediaQuery.of(context).size.width * 0.48,
-            child: Text(
-              product.name,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                overflow: TextOverflow.clip,
+          Align(
+            alignment: Alignment.topRight,
+            child: Container(
+              // padding: const EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.5),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.1),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Checkbox(
+                value: selected,
+                side: BorderSide(width: 3, color: AppThemeShared.primaryColor),
+                activeColor: AppThemeShared.primaryColor,
+                onChanged: (value) {
+                  setState(() {
+                    selected = value!;
+                    widget.selection(value, widget.product);
+                  });
+                },
               ),
             ),
-          ),
-          Row(
-            children: [
-              Text(
-                "₹${product.price}",
-                style: const TextStyle(
-                    color: Colors.grey, decoration: TextDecoration.lineThrough),
-              ),
-              const SizedBox(width: 4),
-              Text(
-                "₹${product.price - product.discount}",
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(width: 4),
-              Text(
-                "₹${((product.discount / product.price) * 100).toInt()}% OFF",
-                style: const TextStyle(
-                    color: Colors.orange,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              const Text("Available:"),
-              const SizedBox(width: 8),
-              Switch(
-                activeColor: AppThemeShared.primaryColor,
-                value: product.available,
-                onChanged: (value) {
-                  products[index] = product.copyWith(available: value);
-                  updateProduct(product.copyWith(available: value));
-                  setState(() {});
-                },
-              )
-            ],
-          ),
-          ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  fixedSize: Size(MediaQuery.of(context).size.width * 0.48, 40),
-                  shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.zero)),
-              onPressed: () {
-                Navigator.pushNamed(context, '/editProduct',
-                    arguments: product);
-              },
-              child: Text(
-                "Edit",
-                style: TextStyle(color: AppThemeShared.primaryColor),
-              ))
+          )
         ],
       ),
     );

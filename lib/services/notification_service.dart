@@ -50,7 +50,7 @@ class NotificationService {
   }
 
   void notificationTapBackground(NotificationResponse message) async {
-    print("myBackgroundMessageHandler message: $message");
+    // print("myBackgroundMessageHandler message: $message");
     // int msgId = int.tryParse(message["data"]["msgId"].toString()) ?? 0;
     // print("msgId $msgId");
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
@@ -83,13 +83,13 @@ class NotificationService {
 
       if (response.statusCode == 200) {
         Fluttertoast.showToast(msg: "Notification Sent");
-        print(response);
+        // print(response);
       } else {
         Fluttertoast.showToast(msg: response.toString());
       }
     } catch (error) {
-      Fluttertoast.showToast(msg: "Notification" + error.toString());
-      print(error);
+      Fluttertoast.showToast(msg: "Notification:$error");
+      // print(error);
     }
   }
 }

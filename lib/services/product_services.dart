@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:sfh_app/shared/constants.dart';
 
 class ProductServices {
-  Future<bool> add(ProductModel product) async {
+  Future<bool> add(ProductModel product, bool asVariants) async {
     try {
       var response =
           await http.post(Uri.parse("${Constants.baseUrl}/product/add"), body: {
@@ -17,6 +17,7 @@ class ProductServices {
         "discount": jsonEncode(product.discount),
         "category": product.category.id,
         "freeShipping": jsonEncode(product.freeShipping),
+        "asVariants": jsonEncode(asVariants),
         "tags": product.tags != null
             ? jsonEncode(product.tags!.map((e) => e.id).toList())
             : [],
@@ -64,6 +65,28 @@ class ProductServices {
     try {
       var response =
           await http.get(Uri.parse("${Constants.baseUrl}/product/get/latest"));
+      var data = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        for (var product in data["products"]) {
+          products.add(ProductModel.fromJson(product));
+        }
+        return products;
+      } else if (response.statusCode == 500) {
+        Fluttertoast.showToast(msg: data["error"]);
+      }
+    } catch (error) {
+      Fluttertoast.showToast(msg: error.toString());
+      // print(error);
+    }
+    return products;
+  }
+
+  Future<List<ProductModel>> getForStories(String categoryId) async {
+    List<ProductModel> products = [];
+    try {
+      var response = await http.get(Uri.parse(
+          "${Constants.baseUrl}/product/get/stories?categoryId=$categoryId"));
       var data = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
@@ -138,6 +161,7 @@ class ProductServices {
             "price": jsonEncode(product.price),
             "discount": jsonEncode(product.discount),
             "category": product.category.id,
+            "available": jsonEncode(product.available),
             "freeShipping": jsonEncode(product.freeShipping),
             "tags": product.tags != null
                 ? jsonEncode(product.tags!.map((e) => e.id).toList())
@@ -154,6 +178,26 @@ class ProductServices {
       }
     } catch (error) {
       // print(error);
+      Fluttertoast.showToast(msg: error.toString());
+    }
+    return false;
+  }
+
+  Future<bool> delete(List<String> productIds) async {
+    try {
+      var response = await http.delete(
+          Uri.parse("${Constants.baseUrl}/product/delete"),
+          body: {"productIds": jsonEncode(productIds)});
+      if (response.statusCode == 200) {
+        return true;
+      } else if (response.statusCode == 400) {
+        Fluttertoast.showToast(msg: "Request Error");
+      } else {
+        var data = jsonDecode(response.body);
+        Fluttertoast.showToast(msg: data["error"]);
+      }
+    } catch (error) {
+      print(error);
       Fluttertoast.showToast(msg: error.toString());
     }
     return false;

@@ -140,7 +140,7 @@ class Utility {
       }
     } catch (error) {
       Fluttertoast.showToast(msg: error.toString());
-      print(error);
+      // print(error);
     }
 
     // print(result!.lengthSync());

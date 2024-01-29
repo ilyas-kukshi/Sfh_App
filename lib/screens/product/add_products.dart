@@ -47,6 +47,7 @@ class _AddProductsState extends ConsumerState<AddProducts> {
   List<String> selectedColors = [];
   bool isFreeShipping = false;
   bool multipleColors = false;
+  bool postAsVariants = false;
 
   @override
   void initState() {
@@ -120,6 +121,8 @@ class _AddProductsState extends ConsumerState<AddProducts> {
                             controller: price,
                             textInputAction: TextInputAction.next,
                             keyboardType: TextInputType.number,
+                            onEditingComplete: () => setState(() {}),
+                            onChanged: (p0) => setState(() {}),
                           ),
                           const SizedBox(height: 10),
                           AppThemeShared.textFormField(
@@ -128,7 +131,36 @@ class _AddProductsState extends ConsumerState<AddProducts> {
                             controller: discount,
                             textInputAction: TextInputAction.done,
                             keyboardType: TextInputType.number,
+                            onEditingComplete: () => setState(() {}),
+                            onChanged: (p0) => setState(() {}),
                           ),
+                          const SizedBox(height: 10),
+                          discount.text.isNotEmpty && price.text.isNotEmpty
+                              ? SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.85,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "Final Price: ₹${int.parse(getPrice())}",
+                                        style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      // const SizedBox(width: 4),
+                                      Text(
+                                        "Final Discount: ${getDiscount()}% OFF",
+                                        style: const TextStyle(
+                                            // color: Colors.orange,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : const Offstage(),
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.85,
                             child: Row(
@@ -142,6 +174,24 @@ class _AddProductsState extends ConsumerState<AddProducts> {
                                 ),
                                 const Text(
                                   "Free Shipping",
+                                  style: TextStyle(fontSize: 18),
+                                )
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.85,
+                            child: Row(
+                              children: [
+                                Checkbox(
+                                  value: postAsVariants,
+                                  activeColor: AppThemeShared.primaryColor,
+                                  onChanged: (value) => setState(() {
+                                    postAsVariants = !postAsVariants;
+                                  }),
+                                ),
+                                const Text(
+                                  "Post as variants",
                                   style: TextStyle(fontSize: 18),
                                 )
                               ],
@@ -239,7 +289,7 @@ class _AddProductsState extends ConsumerState<AddProducts> {
           buttonText: "Add Product",
           onTap: () {
             final valid = key.currentState!.validate();
-            if (valid && croppedFiles.isNotEmpty) {
+            if (valid && croppedFiles.isNotEmpty && selectedCategory != null) {
               final userProfile =
                   ref.watch(getUserByNumberProvider(phoneNumber!));
 
@@ -255,21 +305,23 @@ class _AddProductsState extends ConsumerState<AddProducts> {
   addProduct(UserModel user) async {
     List<String>? imageUrls = await Utility().uploadImages(croppedFiles);
     if (imageUrls != null) {
-      bool added = await ProductServices().add(ProductModel(
-          seller: UserModel(
-              id: user.id,
-              phoneNumber: user.phoneNumber,
-              role: user.role,
-              productLimit: user.productLimit),
-          imageUris: imageUrls,
-          name: name.text,
-          price: int.parse(price.text),
-          discount: int.parse(discount.text),
-          category: selectedCategory!,
-          freeShipping: isFreeShipping,
-          tags: selectedTags.isNotEmpty ? selectedTags : [],
-          colors: selectedColors.isNotEmpty ? selectedColors : [],
-          available: true));
+      bool added = await ProductServices().add(
+          ProductModel(
+              seller: UserModel(
+                  id: user.id,
+                  phoneNumber: user.phoneNumber,
+                  role: user.role,
+                  productLimit: user.productLimit),
+              imageUris: imageUrls,
+              name: name.text,
+              price: int.parse(price.text),
+              discount: int.parse(discount.text),
+              category: selectedCategory!,
+              freeShipping: isFreeShipping,
+              tags: selectedTags.isNotEmpty ? selectedTags : [],
+              colors: selectedColors.isNotEmpty ? selectedColors : [],
+              available: true),
+          postAsVariants);
 
       if (added) {
         Navigator.pop(context);
@@ -387,5 +439,17 @@ class _AddProductsState extends ConsumerState<AddProducts> {
         ),
       ),
     );
+  }
+
+  String getDiscount() {
+    double discountPercent =
+        (int.parse(discount.text) / int.parse(price.text)) * 100;
+    //to remove decimal point toInt is used
+    return "${discountPercent.toInt()}";
+  }
+
+  String getPrice() {
+    int finalPrice = int.parse(price.text) - int.parse(discount.text);
+    return "$finalPrice";
   }
 }

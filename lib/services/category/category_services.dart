@@ -65,7 +65,7 @@ Future<List<CategoryModel>> allCategories(AllCategoriesRef ref) async {
       return categories;
     }
   } catch (error) {
-    // print(error);
+// print(error);        
     return [];
   }
   return [];

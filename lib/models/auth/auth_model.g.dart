@@ -1,12 +1,14 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
+// ignore_for_file: non_constant_identifier_names
+
 part of 'auth_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_AuthModel _$$_AuthModelFromJson(Map<String, dynamic> json) => _$_AuthModel(
+  _$_AuthModel _$$_AuthModelFromJson(Map<String, dynamic> json) => _$_AuthModel(
       phoneNumber: json['phoneNumber'] as String,
       password: json['password'] as String,
       id: json['_id'] as String?,
