@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sfh_app/models/products/product_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:sfh_app/shared/constants.dart';
+import 'package:sfh_app/shared/utility.dart';
 
 class ProductServices {
   Future<bool> add(ProductModel product, bool asVariants) async {
@@ -41,8 +42,9 @@ class ProductServices {
   Future<List<ProductModel>> getAll() async {
     List<ProductModel> products = [];
     try {
-      var response =
-          await http.get(Uri.parse("${Constants.baseUrl}/product/get"));
+      var response = await http.get(
+        Uri.parse("${Constants.baseUrl}/product/get"),
+      );
       var data = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
@@ -60,11 +62,11 @@ class ProductServices {
     return products;
   }
 
-  Future<List<ProductModel>> getLatest() async {
+  Future<List<ProductModel>> getLatest(int page) async {
     List<ProductModel> products = [];
     try {
-      var response =
-          await http.get(Uri.parse("${Constants.baseUrl}/product/get/latest"));
+      var response = await http.get(Uri.parse(
+          "${Constants.baseUrl}/product/get/latest?page=$page&pageSize=10"));
       var data = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
@@ -188,12 +190,17 @@ class ProductServices {
       var response = await http.delete(
           Uri.parse("${Constants.baseUrl}/product/delete"),
           body: {"productIds": jsonEncode(productIds)});
+      var data = jsonDecode(response.body);
+
       if (response.statusCode == 200) {
+        List<dynamic> products = data["deletedProducts"];
+        for (var product in products) {
+          Utility().deleteImageFromRef(product["imageUris"]);
+        }
         return true;
       } else if (response.statusCode == 400) {
         Fluttertoast.showToast(msg: "Request Error");
       } else {
-        var data = jsonDecode(response.body);
         Fluttertoast.showToast(msg: data["error"]);
       }
     } catch (error) {

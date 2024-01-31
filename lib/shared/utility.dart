@@ -129,8 +129,14 @@ class Utility {
       CroppedFile file, String targetPath) async {
     try {
       XFile? result = await FlutterImageCompress.compressAndGetFile(
-          file.path, "${targetPath}compressed.png",
-          quality: 70, format: CompressFormat.png
+          file.path,
+          targetPath.endsWith("png")
+              ? "${targetPath}compressed.png"
+              : "${targetPath}compressed.jpeg",
+          quality: 70,
+          format: targetPath.endsWith("png")
+              ? CompressFormat.png
+              : CompressFormat.jpeg
           // rotate: 180,
           );
 
@@ -162,7 +168,7 @@ class Utility {
   Future<String?> getPhoneNumberSF() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      // print(prefs.getString("phoneNumber"));
+      print(prefs.getString("phoneNumber"));
       return prefs.getString("phoneNumber");
     } catch (error) {
       Fluttertoast.showToast(msg: error.toString());

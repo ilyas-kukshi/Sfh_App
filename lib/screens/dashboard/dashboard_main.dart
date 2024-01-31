@@ -14,6 +14,7 @@ import 'package:sfh_app/shared/constants.dart';
 import 'package:sfh_app/shared/product_card.dart';
 import 'package:sfh_app/shared/utility.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class DashboardMain extends StatefulWidget {
   const DashboardMain({super.key});
@@ -32,11 +33,17 @@ class _DashboardMainState extends State<DashboardMain> {
 
   String? phoneNumber;
 
+  bool isLoading = false;
+  int currentPage = 0;
+  ScrollController scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
     getProducts();
     getPhoneNumber();
+    scrollController = ScrollController();
+    scrollController.addListener(onScroll);
     // createBannerAd();
 
     NotificationService().requestPermission();
@@ -97,9 +104,12 @@ class _DashboardMainState extends State<DashboardMain> {
             strokeWidth: 3,
             triggerMode: RefreshIndicatorTriggerMode.onEdge,
             onRefresh: () async {
-              setState(() {
-                getProducts();
-              });
+              // setState(() {
+              //   products.clear();
+
+              //   currentPage = 1;
+              //   getProducts();
+              // });
               return;
             },
             child: SingleChildScrollView(
@@ -119,11 +129,12 @@ class _DashboardMainState extends State<DashboardMain> {
                       final allCatgories = ref.watch(allCategoriesProvider);
                       return allCatgories.when(
                         data: (data) => SizedBox(
-                          height: 172,
+                          height: 160,
                           child: ListView.builder(
                             shrinkWrap: true,
                             itemCount: allCatgories.value!.length,
                             scrollDirection: Axis.horizontal,
+                            padding: const EdgeInsets.all(0),
                             itemBuilder: (context, index) {
                               categories = allCatgories.value!;
                               return categoryCard(
@@ -134,7 +145,7 @@ class _DashboardMainState extends State<DashboardMain> {
                         error: (error, stackTrace) =>
                             Center(child: Text(error.toString())),
                         loading: () => SizedBox(
-                          height: 200,
+                          height: 170,
                           child: ListView.builder(
                             itemCount:
                                 10, // You can set the number of shimmer items
@@ -155,57 +166,62 @@ class _DashboardMainState extends State<DashboardMain> {
                           TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  FutureBuilder<List<ProductModel>>(
-                    future: getProducts(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done) {
-                        if (snapshot.hasError) {
-                          return Text(snapshot.error.toString());
-                        } else {
-                          if (snapshot.hasData) {
-                            products = snapshot.data!;
-                            return products.isNotEmpty
-                                ? GridView.builder(
-                                    itemCount: products.length,
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    padding: EdgeInsets.only(
-                                        left:
-                                            MediaQuery.of(context).size.width *
-                                                0.01),
-                                    gridDelegate:
-                                        const SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: 2,
-                                            mainAxisExtent: 350,
-                                            mainAxisSpacing: 0,
-                                            crossAxisSpacing: 0),
-                                    itemBuilder: (context, index) {
-                                      return ProductCard().productCard(
-                                          products[index], context);
-                                    },
-                                  )
-                                : const Center(
-                                    child: Text(
-                                        "We will bring some products in this category soon!"),
-                                  );
-                          } else {
-                            return const Center(
-                              child: Text(
-                                  "We will bring some products in this category soon!"),
-                            );
-                          }
-                        }
-                      } else {
-                        return productGridShimmer(context);
-                      }
-                    },
-                  )
+                  products.isNotEmpty
+                      ? GridView.builder(
+                          controller: scrollController,
+                          itemCount: products.length + 1,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          padding: EdgeInsets.only(
+                              left: MediaQuery.of(context).size.width * 0.01),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  mainAxisExtent: 350,
+                                  mainAxisSpacing: 0,
+                                  crossAxisSpacing: 0),
+                          itemBuilder: (context, index) {
+                            if (index == products.length) {
+                              return VisibilityDetector(
+                                key: const Key("pagination"),
+                                onVisibilityChanged: (info) async {
+                                  if (info.visibleFraction > 0.0) {
+                                    print("visible now");
+                                    await getProducts();
+                                  }
+                                },
+                                child: const SizedBox(
+                                    height: 10,
+                                    child: Center(
+                                        child: CircularProgressIndicator())),
+                              );
+                            } else {
+                              return ProductCard()
+                                  .productCard(products[index], context);
+                            }
+                          },
+                        )
+                      : productGridShimmer(context)
+
+                  // const Center(
+                  //     child: Text(
+                  //         "We will bring some products in this category soon!"),
+                  //   )
                 ],
               ),
             ),
           ),
         ));
+  }
+
+  onScroll() async {
+    if (scrollController.position.pixels >=
+        scrollController.position.maxScrollExtent - 1200) {
+      currentPage++;
+      await getProducts().then((value) {
+        setState(() {});
+      });
+    }
   }
 
   Widget categoryCard(CategoryModel category, int index) {
@@ -293,9 +309,19 @@ class _DashboardMainState extends State<DashboardMain> {
   }
 
   Future<List<ProductModel>> getProducts() async {
-    products.clear();
-    products = await ProductServices().getLatest();
-    // setState(() {});
+    if (isLoading) {
+      return [];
+    }
+    isLoading = true;
+    currentPage++;
+    List<ProductModel> newProducts =
+        await ProductServices().getLatest(currentPage);
+    products.addAll(newProducts);
+    isLoading = false;
+    // setState(() {
+    //   products.addAll(newProducts);
+    // });
+    setState(() {});
     return products;
   }
 

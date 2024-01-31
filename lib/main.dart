@@ -7,6 +7,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:sfh_app/models/category/category_model.dart';
 import 'package:sfh_app/models/products/product_model.dart';
+import 'package:sfh_app/screens/auth/login.dart';
 import 'package:sfh_app/screens/category/add_category.dart';
 import 'package:sfh_app/screens/category/manage_categories.dart';
 import 'package:sfh_app/screens/dashboard/bottom_nav.dart';
@@ -21,7 +22,6 @@ import 'package:sfh_app/screens/product/view_product.dart';
 import 'package:sfh_app/screens/seller/add_seller.dart';
 import 'package:sfh_app/screens/seller/seller_login.dart';
 import 'package:sfh_app/screens/seller/seller_register.dart';
-import 'package:sfh_app/services/admob_service.dart';
 import 'package:sfh_app/services/notification_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 
@@ -80,7 +80,7 @@ class MyApp extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                     fontSize: 22))),
         onGenerateRoute: _routing,
-        home: const BottomNav());
+        home: const Login());
   }
 
   Route _routing(RouteSettings settings) {

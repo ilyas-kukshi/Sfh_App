@@ -54,14 +54,16 @@ class AppThemeShared {
       double borderRadius = 0.0,
       double textSize = 16,
       Color textColor = Colors.white,
-      FontWeight fontWeight = FontWeight.w600}) {
+      FontWeight fontWeight = FontWeight.w600,
+      Color borderColor = Colors.transparent}) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
           fixedSize: Size(width, height),
           backgroundColor: color,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadius),
-          )),
+          ),
+          side: BorderSide(color: borderColor)),
       onPressed: onTap,
       child: Text(
         buttonText,

@@ -39,30 +39,33 @@ class ProductCard {
               ),
             ),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                SizedBox(
-                  height: 30,
-                  width: MediaQuery.of(context).size.width * 0.48,
-                  child: Text(
-                    product.name,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      overflow: TextOverflow.clip,
+            SizedBox(
+              height: 30,
+              width: MediaQuery.of(context).size.width * 0.48,
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.4,
+                    child: Text(
+                      product.name,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ),
-                ),
-                // IconButton(
-                //   icon: Icon(
-                //     Icons.favorite,
-                //     color: Colors.grey,
-                //   ),
-                //   onPressed: () {},
-                // )
-              ],
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: Icon(
+                      Icons.favorite,
+                      size: 23,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
             ),
             Row(
               children: [

@@ -95,6 +95,21 @@ class _ProductDetailsState extends State<ViewProduct> {
                         ),
                       ],
                     ),
+                    Row(
+                      children: [
+                        widget.product.freeShipping
+                            ? const Offstage()
+                            : const Icon(Icons.add),
+                        Icon(
+                          Icons.local_shipping,
+                          color: AppThemeShared.primaryColor,
+                        ),
+                        const SizedBox(width: 6),
+                        widget.product.freeShipping
+                            ? const Text("Free Shipping")
+                            : const Text("Shipping Charges"),
+                      ],
+                    ),
                     widget.product.colors != null &&
                             widget.product.colors!.isNotEmpty
                         ? Row(
@@ -125,16 +140,39 @@ class _ProductDetailsState extends State<ViewProduct> {
                 ),
               ),
               // const SizedBox(height: 10),
-              Center(
-                child: AppThemeShared.sharedButton(
-                  context: context,
-                  height: 50,
-                  width: MediaQuery.of(context).size.width * 0.95,
-                  buttonText: "Enquire",
-                  onTap: () {
-                    ProductCard().enquireOnWhatsapp(widget.product);
-                  },
-                ),
+              Row(
+                children: [
+                  AppThemeShared.sharedButton(
+                    context: context,
+                    height: 50,
+                    width: MediaQuery.of(context).size.width * 0.5,
+                    buttonText: "Enquire",
+                    color: AppThemeShared.secondaryColor,
+                    onTap: () {
+                      ProductCard().enquireOnWhatsapp(widget.product);
+                    },
+                  ),
+                  AppThemeShared.sharedButton(
+                    context: context,
+                    height: 50,
+                    width: MediaQuery.of(context).size.width * 0.5,
+                    buttonText: "Add To Cart",
+                    onTap: () {
+                      ProductCard().enquireOnWhatsapp(widget.product);
+                    },
+                  ),
+                ],
+              ),
+              // const SizedBox(height: 4),
+              AppThemeShared.sharedButton(
+                context: context,
+                height: 50,
+                width: MediaQuery.of(context).size.width,
+                buttonText: "Buy Now",
+                borderColor: AppThemeShared.primaryColor,
+                onTap: () {
+                  ProductCard().enquireOnWhatsapp(widget.product);
+                },
               ),
               // const SizedBox(height: 10),
               const Padding(
