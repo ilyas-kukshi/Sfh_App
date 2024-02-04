@@ -1,7 +1,6 @@
 // ignore_for_file: must_be_immutable, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:sfh_app/models/category/category_model.dart';
 import 'package:sfh_app/models/products/product_model.dart';
@@ -10,12 +9,10 @@ import 'package:sfh_app/services/admob_service.dart';
 import 'package:sfh_app/services/product_services.dart';
 import 'package:sfh_app/services/tags_services.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
-import 'package:sfh_app/shared/constants.dart';
 import 'package:sfh_app/shared/dialogs.dart';
 import 'package:sfh_app/shared/product_card.dart';
 import 'package:sfh_app/shared/tag_selection.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class DisplayProductsByCategory extends StatefulWidget {
   CategoryModel category;
@@ -170,19 +167,7 @@ class _DisplayProductsByCategoryState extends State<DisplayProductsByCategory> {
     Navigator.pop(context);
   }
 
-  enquireOnWhatsapp(ProductModel product) async {
-    try {
-      String whatsappUrl =
-          "https://wa.me/${Constants.whatsappNumber}?text=${Uri.encodeQueryComponent('Product Images:${product.imageUris}\n Name: ${product.name},\n Price: ${product.price - product.discount}\n Discount given: ${product.discount}(${((product.discount / product.price) * 100).toInt()}%})')}";
-
-      if (await canLaunchUrl(Uri.parse(whatsappUrl))) {
-        await launchUrl(Uri.parse(whatsappUrl));
-      }
-    } catch (error) {
-      // print(error);
-      Fluttertoast.showToast(msg: error.toString());
-    }
-  }
+  
 
   void createBannerAd() {
     banner = AdmobService().createBannerAd();

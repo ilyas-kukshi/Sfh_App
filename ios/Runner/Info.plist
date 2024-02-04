@@ -61,7 +61,8 @@
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-7757893055810132~5722146681</string>
 
-
+	<key>FlutterDeepLinkingEnabled</key>
+	<true/>
 
 	<key>SKAdNetworkItems</key>
 		<array>

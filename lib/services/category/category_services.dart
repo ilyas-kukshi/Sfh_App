@@ -49,6 +49,24 @@ class CategoryServices {
     }
     return [];
   }
+
+  Future<CategoryModel?> getById(String categoryId) async {
+    try {
+      var response = await http.get(Uri.parse(
+          "${Constants.baseUrl}/category/get/byId?categoryId=$categoryId"));
+      var data = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return CategoryModel.fromJson(data["category"]);
+      } else if (response.statusCode == 400) {
+        return null;
+      }
+    } catch (error) {
+      // print(error);
+      return null;
+    }
+    return null;
+  }
 }
 
 @riverpod
@@ -65,7 +83,7 @@ Future<List<CategoryModel>> allCategories(AllCategoriesRef ref) async {
       return categories;
     }
   } catch (error) {
-// print(error);        
+// print(error);
     return [];
   }
   return [];

@@ -6,6 +6,7 @@ import 'package:sfh_app/services/product_services.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 import 'package:sfh_app/shared/carousel.dart';
 import 'package:sfh_app/shared/product_card.dart';
+import 'package:sfh_app/shared/utility.dart';
 
 class ViewProduct extends StatefulWidget {
   ProductModel product;
@@ -149,7 +150,7 @@ class _ProductDetailsState extends State<ViewProduct> {
                     buttonText: "Enquire",
                     color: AppThemeShared.secondaryColor,
                     onTap: () {
-                      ProductCard().enquireOnWhatsapp(widget.product);
+                      Utility().enquireOnWhatsapp(widget.product);
                     },
                   ),
                   AppThemeShared.sharedButton(
@@ -158,7 +159,7 @@ class _ProductDetailsState extends State<ViewProduct> {
                     width: MediaQuery.of(context).size.width * 0.5,
                     buttonText: "Add To Cart",
                     onTap: () {
-                      ProductCard().enquireOnWhatsapp(widget.product);
+                      // ProductCard().enquireOnWhatsapp(widget.product);
                     },
                   ),
                 ],
@@ -171,7 +172,7 @@ class _ProductDetailsState extends State<ViewProduct> {
                 buttonText: "Buy Now",
                 borderColor: AppThemeShared.primaryColor,
                 onTap: () {
-                  ProductCard().enquireOnWhatsapp(widget.product);
+                  // ProductCard().enquireOnWhatsapp(widget.product);
                 },
               ),
               // const SizedBox(height: 10),

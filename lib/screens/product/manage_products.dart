@@ -40,7 +40,7 @@ class _ManageProductsState extends ConsumerState<ManageProducts> {
           actions: [
             selectedProductIds.isNotEmpty
                 ? Padding(
-                    padding: EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(8.0),
                     child: GestureDetector(
                       onTap: () => DialogShared.doubleButtonDialog(
                           context,
@@ -48,7 +48,7 @@ class _ManageProductsState extends ConsumerState<ManageProducts> {
                           () => deleteProduct(), () {
                         Navigator.pop(context);
                       }),
-                      child: Icon(
+                      child: const Icon(
                         Icons.delete,
                         color: Colors.white,
                       ),

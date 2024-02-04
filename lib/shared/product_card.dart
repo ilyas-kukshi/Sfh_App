@@ -1,11 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sfh_app/models/products/product_model.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
-import 'package:sfh_app/shared/constants.dart';
+import 'package:sfh_app/shared/utility.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ProductCard {
   Widget productCard(ProductModel product, BuildContext context) {
@@ -56,12 +55,19 @@ class ProductCard {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: Icon(
-                      Icons.favorite,
-                      size: 23,
-                      color: Colors.grey,
+                  GestureDetector(
+                    onTap: () {
+                      Uri deeplink = Utility().buildDeepLink(
+                          '/product', {"productId": product.id!});
+                      Share.share("$deeplink");
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.only(left: 8.0),
+                      child: Icon(
+                        Icons.share,
+                        size: 23,
+                        color: Colors.grey,
+                      ),
                     ),
                   ),
                 ],
@@ -113,7 +119,7 @@ class ProductCard {
                     shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero)),
                 onPressed: () {
-                  enquireOnWhatsapp(product);
+                  Utility().enquireOnWhatsapp(product);
                 },
                 child: Text(
                   "Enquire",
@@ -191,18 +197,4 @@ class ProductCard {
   }
 
   imageViewed(ProductModel product) async {}
-
-  enquireOnWhatsapp(ProductModel product) async {
-    try {
-      String whatsappUrl =
-          "https://wa.me/${Constants.whatsappNumber}?text=${Uri.encodeQueryComponent('Product Images:${product.imageUris}\n Name: ${product.name},\n Price: ${product.price - product.discount}\n Discount given: ${product.discount}(${((product.discount / product.price) * 100).toInt()}%})')}";
-
-      if (await canLaunchUrl(Uri.parse(whatsappUrl))) {
-        await launchUrl(Uri.parse(whatsappUrl));
-      }
-    } catch (error) {
-      // print(error);
-      Fluttertoast.showToast(msg: error.toString());
-    }
-  }
 }

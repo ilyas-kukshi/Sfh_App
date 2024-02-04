@@ -1,10 +1,16 @@
 import 'dart:io';
 
+import 'package:app_links/app_links.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:sfh_app/models/products/product_model.dart';
+import 'package:sfh_app/services/product_services.dart';
+import 'package:sfh_app/shared/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 
 class Utility {
@@ -89,6 +95,8 @@ class Utility {
     return null;
   }
 
+  //Image related Utility Methods
+
   Future<List<String>?> uploadImages(List<CroppedFile> images) async {
     List<String> imageUrls = [];
 
@@ -163,6 +171,68 @@ class Utility {
   String getUniqueId() {
     var uuid = const Uuid();
     return uuid.v1();
+  }
+
+  //deep links related Utility methods
+
+  catchDeepLinks() async {
+    final appLinks = AppLinks();
+
+    var _linkSubscription = appLinks.uriLinkStream.listen((uri) {
+      // Do something (navigation, ...)
+      print("/////////////////DynamicLinks: $uri");
+      Fluttertoast.showToast(msg: "Dynamic Links: $uri");
+      // Utility().extractParameters(uri, context);
+      // print(uri);
+    });
+
+    // Maybe later. Get the latest link.
+    // final uri = await _appLinks.getLatestAppLink();
+  }
+
+  Uri buildDeepLink(String path, Map<String, String> queryParams) {
+    final uri = Uri(
+      scheme: 'https',
+      host: 'sfh-api-zlkq.onrender.com',
+      path: path,
+      queryParameters: queryParams,
+    );
+    return uri;
+  }
+
+  Future<void> extractParameters(Uri deepLink, BuildContext context) async {
+    final path = deepLink.path;
+    final queryParams = deepLink.queryParameters;
+    Fluttertoast.showToast(msg: queryParams.toString());
+    print(queryParams);
+
+    if (path == '/product') {
+      Fluttertoast.showToast(msg: queryParams["productId"].toString());
+      ProductModel? product =
+          await ProductServices().getById(queryParams["productId"] ?? '');
+      if (product != null) {
+        Navigator.pushNamed(context, '/viewProduct', arguments: product);
+      }
+    }
+
+    // Use the extracted parameters as needed
+  }
+
+  // To use with enquire button
+  enquireOnWhatsapp(ProductModel product) async {
+    try {
+      Uri deeplink =
+          Utility().buildDeepLink('/product', {"productId": product.id!});
+      String whatsappUrl =
+          "https://wa.me/${Constants.whatsappNumber}?text=${Uri.encodeQueryComponent('Product: $deeplink\n Name: ${product.name},\n Price: ${product.price - product.discount}\n Discount given: ${product.discount}(${((product.discount / product.price) * 100).toInt()}%})')}";
+
+      if (await canLaunchUrl(Uri.parse(whatsappUrl))) {
+        await launchUrl(Uri.parse(whatsappUrl));
+      }
+    } catch (error) {
+      // print(error);
+      Fluttertoast.showToast(msg: error.toString());
+    }
   }
 
   Future<String?> getPhoneNumberSF() async {

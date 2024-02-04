@@ -169,7 +169,7 @@ class _DashboardMainState extends State<DashboardMain> {
                   products.isNotEmpty
                       ? GridView.builder(
                           controller: scrollController,
-                          itemCount: products.length + 1,
+                          itemCount: products.length,
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           padding: EdgeInsets.only(
@@ -181,27 +181,21 @@ class _DashboardMainState extends State<DashboardMain> {
                                   mainAxisSpacing: 0,
                                   crossAxisSpacing: 0),
                           itemBuilder: (context, index) {
-                            if (index == products.length) {
-                              return VisibilityDetector(
-                                key: const Key("pagination"),
-                                onVisibilityChanged: (info) async {
-                                  if (info.visibleFraction > 0.0) {
-                                    print("visible now");
-                                    await getProducts();
-                                  }
-                                },
-                                child: const SizedBox(
-                                    height: 10,
-                                    child: Center(
-                                        child: CircularProgressIndicator())),
-                              );
-                            } else {
-                              return ProductCard()
-                                  .productCard(products[index], context);
-                            }
+                            return ProductCard()
+                                .productCard(products[index], context);
                           },
                         )
-                      : productGridShimmer(context)
+                      : productGridShimmer(context),
+                  VisibilityDetector(
+                    key: const Key("pagination"),
+                    onVisibilityChanged: (info) async {
+                      if (info.visibleFraction > 0.0) {
+                        print("visible now");
+                        await getProducts();
+                      }
+                    },
+                    child: const Center(child: CircularProgressIndicator()),
+                  )
 
                   // const Center(
                   //     child: Text(

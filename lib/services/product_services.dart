@@ -79,7 +79,7 @@ class ProductServices {
       }
     } catch (error) {
       Fluttertoast.showToast(msg: error.toString());
-      // print(error);
+      print(error);
     }
     return products;
   }
@@ -104,6 +104,26 @@ class ProductServices {
       print(error);
     }
     return products;
+  }
+
+  Future<ProductModel?> getById(String productId) async {
+    try {
+      var response = await http.get(Uri.parse(
+          "${Constants.baseUrl}/product/get/byId?productId=$productId"));
+      var data = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return ProductModel.fromJson(data["product"]);
+      } else if (response.statusCode == 400) {
+        Fluttertoast.showToast(msg: "Product Not Found");
+      } else if (response.statusCode == 500) {
+        Fluttertoast.showToast(msg: data["error"]);
+      }
+    } catch (error) {
+      Fluttertoast.showToast(msg: error.toString());
+      print(error);
+    }
+    return null;
   }
 
   Future<List<ProductModel>> getByCategory(String categoryId) async {

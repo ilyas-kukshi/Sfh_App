@@ -3,6 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:sfh_app/models/category/category_model.dart';
@@ -22,13 +23,11 @@ import 'package:sfh_app/screens/product/view_product.dart';
 import 'package:sfh_app/screens/seller/add_seller.dart';
 import 'package:sfh_app/screens/seller/seller_login.dart';
 import 'package:sfh_app/screens/seller/seller_register.dart';
+import 'package:sfh_app/services/category/category_services.dart';
 import 'package:sfh_app/services/notification_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
+import 'package:sfh_app/shared/navigation_service.dart';
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
-
-// initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
 const AndroidInitializationSettings initializationSettingsAndroid =
     AndroidInitializationSettings('@mipmap/ic_launcher');
 final DarwinInitializationSettings initializationSettingsDarwin =
@@ -37,40 +36,87 @@ final DarwinInitializationSettings initializationSettingsDarwin =
     // print("Darwin: $title");
   },
 );
+
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 final InitializationSettings initializationSettings = InitializationSettings(
   android: initializationSettingsAndroid,
   iOS: initializationSettingsDarwin,
 );
 
-//when notification is tapped while app is in background
 @pragma('vm:entry-point')
-void notificationTapBackground(NotificationResponse message) async {}
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print(message.data);
+  Fluttertoast.showToast(msg: message.data.toString());
+
+  NotificationService().handleNotificationPayload(message, navigatorKey);
+
+  // if (message.data.isNotEmpty) {
+  //   switch (message.data["type"]) {
+  //     case "category":
+  //       {
+  //         CategoryModel? category =
+  //             await CategoryServices().getById(message.data["categoryId"]);
+
+  //         if (category != null) {
+  //           if (navigatorKey.currentState != null) {
+  //             navigatorKey.currentState?.pushNamed('/displayProductsByCategory',
+  //                 arguments: category);
+  //           }
+  //           // NavigationService()
+  //           //     .navigateTo('/displayProductsByCategory', arguments: category);
+  //         }
+  //       }
+  //       break;
+  //     default:
+  //   }
+  // }
+}
+
+// final NavigationService navigationService = NavigationService();
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await MobileAds.instance.initialize();
 
-  // AdmobService().createInterstitialAd();
-  // FirebaseMessaging.onBackgroundMessage((message) => notificationTa)
-
   //When a new notification message is received
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    // Handle foreground notifications
+    // Display notifications received when app is in foreground
     NotificationService().displayForegroundNotification(message);
   });
+  //when app is in BACKGROUND and opened through notification
+  FirebaseMessaging.onMessageOpenedApp.listen((message) {
+    firebaseMessagingBackgroundHandler(message);
+  });
+  //when app is TERMINATED and opened through notification
+  FirebaseMessaging.instance.getInitialMessage().then((message) {
+    if (message != null) {
+      firebaseMessagingBackgroundHandler(message);
+    }
+  });
 
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(ProviderScope(
+      child: MyApp(
+          // navigationService: navigationService,
+          )));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  // final NavigationService navigationService;
+  const MyApp({
+    super.key,
+  });
 
   // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
+    // print('MyApp - navigatorKey: ${navigationService.navigatorKey}');
     return MaterialApp(
         title: 'Flutter Demo',
+        navigatorKey: navigatorKey,
         theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             useMaterial3: true,
@@ -90,7 +136,7 @@ class MyApp extends StatelessWidget {
             child: const BottomNav(), type: PageTransitionType.leftToRight);
       case '/dashboardMain':
         return PageTransition(
-            child: DashboardMain(), type: PageTransitionType.leftToRight);
+            child: const DashboardMain(), type: PageTransitionType.leftToRight);
       case '/addCategory':
         return PageTransition(
             child: AddCategory(category: settings.arguments as CategoryModel?),
@@ -151,10 +197,7 @@ class MyApp extends StatelessWidget {
             child: const AddSeller(), type: PageTransitionType.leftToRight);
       default:
         return PageTransition(
-            child: AddCategory(
-              category: settings.arguments as CategoryModel,
-            ),
-            type: PageTransitionType.leftToRight);
+            child: Login(), type: PageTransitionType.leftToRight);
     }
   }
 }
