@@ -14,6 +14,9 @@ _$_UserModel _$$_UserModelFromJson(Map<String, dynamic> json) => _$_UserModel(
       categoryAccess: (json['categoryAccess'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
+      wishlist: (json['wishlist'] as List<dynamic>?)
+          ?.map((e) => ProductModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
       id: json['_id'] as String?,
       createdAt: json['createdAt'] == null
           ? null
@@ -31,6 +34,7 @@ Map<String, dynamic> _$$_UserModelToJson(_$_UserModel instance) =>
       'productLimit': instance.productLimit,
       'name': instance.name,
       'categoryAccess': instance.categoryAccess,
+      'wishlist': instance.wishlist,
       '_id': instance.id,
       'createdAt': instance.createdAt?.toIso8601String(),
       'updatedAt': instance.updatedAt?.toIso8601String(),

@@ -17,15 +17,17 @@ class AppThemeShared {
       Color? backgroundColor = const Color(0xff439A97),
       double textSize = 26,
       Color textColor = Colors.white,
+      TextStyle textStyle = const TextStyle(
+          fontSize: 18,
+          fontFamily: 'Roboto',
+          fontWeight: FontWeight.bold,
+          color: Colors.white),
       FontWeight fontWeight = FontWeight.w600}) {
     return AppBar(
       title: Text(
         title,
         overflow: TextOverflow.ellipsis,
-        style: TextStyle(
-          color: textColor,
-          fontWeight: fontWeight,
-        ),
+        style: textStyle,
       ),
       automaticallyImplyLeading: false,
       centerTitle: centerTitle,
@@ -44,32 +46,33 @@ class AppThemeShared {
     );
   }
 
-  static sharedButton(
-      {required BuildContext context,
-      double height = 60,
-      required double width,
-      Color color = const Color(0xff62B6B7),
-      required String buttonText,
-      required dynamic Function()? onTap,
-      double borderRadius = 0.0,
-      double textSize = 16,
-      Color textColor = Colors.white,
-      FontWeight fontWeight = FontWeight.w600,
-      Color borderColor = Colors.transparent}) {
+  static sharedButton({
+    required BuildContext context,
+    double height = 60,
+    required double width,
+    Color color = const Color(0xff62B6B7),
+    required String buttonText,
+    required dynamic Function()? onTap,
+    double borderRadius = 0.0,
+    double borderWidth = 0.0,
+    double elevation = 0.0,
+    // double textSize = 16,
+    TextStyle textStyle = const TextStyle(color: Colors.white),
+    Color textColor = Colors.white,
+    FontWeight fontWeight = FontWeight.w600,
+    Color borderColor = Colors.transparent,
+  }) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
           fixedSize: Size(width, height),
           backgroundColor: color,
+          elevation: elevation,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadius),
           ),
-          side: BorderSide(color: borderColor)),
+          side: BorderSide(color: borderColor, width: borderWidth)),
       onPressed: onTap,
-      child: Text(
-        buttonText,
-        style: TextStyle(fontSize: textSize)
-            .copyWith(color: textColor, fontWeight: fontWeight),
-      ),
+      child: Text(buttonText, style: textStyle),
     );
 
     // return ElevatedButton(
@@ -89,7 +92,7 @@ class AppThemeShared {
       AutovalidateMode? autovalidateMode,
 
       //
-      EdgeInsetsGeometry contentPadding = const EdgeInsets.all(15),
+      EdgeInsetsGeometry contentPadding = const EdgeInsets.all(14),
 
       //
       String? Function(String?)? validator,
@@ -147,16 +150,20 @@ class AppThemeShared {
         onFieldSubmitted: onFieldSubmitted,
         onTap: onTap,
         inputFormatters: inputFormatters,
-        style: const TextStyle(fontSize: 18),
+        style: const TextStyle(fontSize: 16),
         decoration: InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.always,
           contentPadding: contentPadding,
           hintText: hintText,
-          hintStyle:
-              TextStyle(fontSize: 18, color: Colors.black.withOpacity(0.7)),
+          hintStyle: Theme.of(context)
+              .textTheme
+              .labelMedium!
+              .copyWith(color: Colors.black.withOpacity(0.5)),
           labelText: labelText,
-          labelStyle:
-              TextStyle(fontSize: 16, color: AppThemeShared.primaryColor),
+          labelStyle: Theme.of(context)
+              .textTheme
+              .labelMedium!
+              .copyWith(color: AppThemeShared.primaryColor),
           suffix: suffix,
           suffixText: suffixText,
           suffixIcon: suffixIcon,

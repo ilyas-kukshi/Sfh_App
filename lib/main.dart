@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -23,16 +25,19 @@ import 'package:sfh_app/screens/product/view_product.dart';
 import 'package:sfh_app/screens/seller/add_seller.dart';
 import 'package:sfh_app/screens/seller/seller_login.dart';
 import 'package:sfh_app/screens/seller/seller_register.dart';
-import 'package:sfh_app/services/category/category_services.dart';
+import 'package:sfh_app/screens/user/wishlist.dart';
 import 'package:sfh_app/services/notification_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
-import 'package:sfh_app/shared/navigation_service.dart';
 
 const AndroidInitializationSettings initializationSettingsAndroid =
     AndroidInitializationSettings('@mipmap/ic_launcher');
 final DarwinInitializationSettings initializationSettingsDarwin =
     DarwinInitializationSettings(
   onDidReceiveLocalNotification: (id, title, body, payload) {
+    if (payload != null) {
+      firebaseMessagingBackgroundHandler(
+          RemoteMessage(data: jsonDecode(payload)));
+    }
     // print("Darwin: $title");
   },
 );
@@ -46,31 +51,9 @@ final InitializationSettings initializationSettings = InitializationSettings(
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print(message.data);
   Fluttertoast.showToast(msg: message.data.toString());
 
-  NotificationService().handleNotificationPayload(message, navigatorKey);
-
-  // if (message.data.isNotEmpty) {
-  //   switch (message.data["type"]) {
-  //     case "category":
-  //       {
-  //         CategoryModel? category =
-  //             await CategoryServices().getById(message.data["categoryId"]);
-
-  //         if (category != null) {
-  //           if (navigatorKey.currentState != null) {
-  //             navigatorKey.currentState?.pushNamed('/displayProductsByCategory',
-  //                 arguments: category);
-  //           }
-  //           // NavigationService()
-  //           //     .navigateTo('/displayProductsByCategory', arguments: category);
-  //         }
-  //       }
-  //       break;
-  //     default:
-  //   }
-  // }
+  NotificationService.handleNotificationPayload(message, navigatorKey);
 }
 
 // final NavigationService navigationService = NavigationService();
@@ -80,27 +63,19 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await MobileAds.instance.initialize();
+  NotificationService().catchNotification();
 
-  //When a new notification message is received
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    // Display notifications received when app is in foreground
-    NotificationService().displayForegroundNotification(message);
-  });
-  //when app is in BACKGROUND and opened through notification
-  FirebaseMessaging.onMessageOpenedApp.listen((message) {
-    firebaseMessagingBackgroundHandler(message);
-  });
-  //when app is TERMINATED and opened through notification
-  FirebaseMessaging.instance.getInitialMessage().then((message) {
-    if (message != null) {
-      firebaseMessagingBackgroundHandler(message);
-    }
-  });
-
-  runApp(ProviderScope(
-      child: MyApp(
-          // navigationService: navigationService,
-          )));
+  flutterLocalNotificationsPlugin.initialize(
+    initializationSettings,
+    onDidReceiveNotificationResponse: (details) {
+      if (details.payload != null) {
+        RemoteMessage message =
+            RemoteMessage(data: jsonDecode(details.payload!));
+        firebaseMessagingBackgroundHandler(message);
+      }
+    },
+  );
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -121,10 +96,20 @@ class MyApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             useMaterial3: true,
             textTheme: TextTheme(
-                titleMedium: TextStyle(
-                    color: AppThemeShared.primaryColor,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 22))),
+              titleLarge: const TextStyle(fontFamily: 'Oswald'),
+              titleMedium: TextStyle(
+                fontFamily: 'Roboto',
+                color: AppThemeShared.primaryColor,
+                fontWeight: FontWeight.w600,
+              ),
+              //use for buttons
+              labelLarge: const TextStyle(
+                fontFamily: 'Roboto',
+                fontWeight: FontWeight.bold,
+              ),
+              //use for hint and label texts of textformfields/dropdowns etc
+              labelMedium: const TextStyle(fontFamily: 'Roboto'),
+            )),
         onGenerateRoute: _routing,
         home: const Login());
   }
@@ -166,6 +151,7 @@ class MyApp extends StatelessWidget {
               data: settings.arguments as Map<String, dynamic>,
             ),
             type: PageTransitionType.scale,
+            duration: const Duration(milliseconds: 700),
             alignment: Alignment.center);
       case '/viewImages':
         return PageTransition(
@@ -173,6 +159,15 @@ class MyApp extends StatelessWidget {
               imageUris: settings.arguments as List<String>,
             ),
             type: PageTransitionType.scale,
+            alignment: Alignment.center);
+      case '/wishlist':
+        return PageTransition(
+            child: Wishlist(
+              phoneNumber: settings.arguments as String,
+                // imageUris: settings.arguments as List<String>,
+                ),
+            type: PageTransitionType.scale,
+            duration: const Duration(milliseconds: 700),
             alignment: Alignment.center);
       case '/manageProducts':
         return PageTransition(
@@ -197,7 +192,7 @@ class MyApp extends StatelessWidget {
             child: const AddSeller(), type: PageTransitionType.leftToRight);
       default:
         return PageTransition(
-            child: Login(), type: PageTransitionType.leftToRight);
+            child: const Login(), type: PageTransitionType.leftToRight);
     }
   }
 }

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:app_links/app_links.dart';
@@ -95,6 +97,7 @@ class Utility {
     return null;
   }
 
+  
   //Image related Utility Methods
 
   Future<List<String>?> uploadImages(List<CroppedFile> images) async {
@@ -175,14 +178,20 @@ class Utility {
 
   //deep links related Utility methods
 
-  catchDeepLinks() async {
+  catchDeepLinks(BuildContext context) async {
     final appLinks = AppLinks();
 
-    var _linkSubscription = appLinks.uriLinkStream.listen((uri) {
+    appLinks.getInitialAppLink().then((deeplink) {
+      if (deeplink != null) {
+        Utility().extractParameters(deeplink, context);
+      }
+    });
+
+    appLinks.uriLinkStream.listen((uri) {
       // Do something (navigation, ...)
-      print("/////////////////DynamicLinks: $uri");
+      // print("/////////////////DynamicLinks: $uri");
       Fluttertoast.showToast(msg: "Dynamic Links: $uri");
-      // Utility().extractParameters(uri, context);
+      Utility().extractParameters(uri, context);
       // print(uri);
     });
 
@@ -204,7 +213,7 @@ class Utility {
     final path = deepLink.path;
     final queryParams = deepLink.queryParameters;
     Fluttertoast.showToast(msg: queryParams.toString());
-    print(queryParams);
+    // print(queryParams);
 
     if (path == '/product') {
       Fluttertoast.showToast(msg: queryParams["productId"].toString());
@@ -238,7 +247,7 @@ class Utility {
   Future<String?> getPhoneNumberSF() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      print(prefs.getString("phoneNumber"));
+      // print(prefs.getString("phoneNumber"));
       return prefs.getString("phoneNumber");
     } catch (error) {
       Fluttertoast.showToast(msg: error.toString());

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:sfh_app/shared/constants.dart';
 
@@ -32,7 +33,7 @@ class AdmobService {
           onAdLoaded: (ad) {
             ad.show();
 
-            print("InterstitialAd ad loaded");
+            // print("InterstitialAd ad loaded");
             // Keep a reference to the ad so you can show it later.
             ad.fullScreenContentCallback = FullScreenContentCallback(
                 // Called when the ad showed the full screen content.
@@ -55,7 +56,8 @@ class AdmobService {
           // Called when an ad request failed.
           onAdFailedToLoad: (LoadAdError error) {
             // debugPrint('InterstitialAd failed to load: $error');
-            print(error.toString());
+            // print(error.toString());
+            Fluttertoast.showToast(msg: error.toString());
           },
         ));
   }

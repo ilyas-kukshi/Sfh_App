@@ -32,6 +32,7 @@ class ProductModel with _$ProductModel {
     required UserModel seller,
     List<TagModel>? tags,
     List<String>? colors,
+    String? variantGroup,
     int? views,
     int? enquired,
     @JsonKey(name: '_id') String? id,

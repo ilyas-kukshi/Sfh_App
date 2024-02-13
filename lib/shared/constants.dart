@@ -5,8 +5,8 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class Constants {
   // static String baseUrl = "https://sfh-api-zlkq.onrender.com";
-  static String baseUrl = 'http://192.168.1.104:8080';
-  // static String baseUrl = 'http://192.168.50.186:8080'; // phone hotspot
+  static String baseUrl = 'http://192.168.1.102:8080';
+  // static String baseUrl = 'http://192.168.205.186:8080'; // phone hotspot
 
   static String whatsappNumber = "919987655052";
 

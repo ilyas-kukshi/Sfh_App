@@ -5,6 +5,7 @@ import 'package:sfh_app/models/products/product_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:sfh_app/shared/constants.dart';
 import 'package:sfh_app/shared/utility.dart';
+import 'package:tuple/tuple.dart';
 
 class ProductServices {
   Future<bool> add(ProductModel product, bool asVariants) async {
@@ -62,7 +63,7 @@ class ProductServices {
     return products;
   }
 
-  Future<List<ProductModel>> getLatest(int page) async {
+  Future<Tuple2> getLatest(int page) async {
     List<ProductModel> products = [];
     try {
       var response = await http.get(Uri.parse(
@@ -73,15 +74,15 @@ class ProductServices {
         for (var product in data["products"]) {
           products.add(ProductModel.fromJson(product));
         }
-        return products;
+        return Tuple2(products, data["isLastPage"]);
       } else if (response.statusCode == 500) {
         Fluttertoast.showToast(msg: data["error"]);
       }
     } catch (error) {
       Fluttertoast.showToast(msg: error.toString());
-      print(error);
+      // print(error);
     }
-    return products;
+    return const Tuple2([], true);
   }
 
   Future<List<ProductModel>> getForStories(String categoryId) async {
@@ -101,7 +102,7 @@ class ProductServices {
       }
     } catch (error) {
       Fluttertoast.showToast(msg: error.toString());
-      print(error);
+      // print(error);
     }
     return products;
   }
@@ -126,6 +127,31 @@ class ProductServices {
     return null;
   }
 
+  Future<List<ProductModel>> getVariants(String variantId) async {
+    List<ProductModel> products = [];
+
+    try {
+      var response = await http.get(Uri.parse(
+          "${Constants.baseUrl}/product/get/variants?variantId=$variantId"));
+      var data = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        for (var product in data["products"]) {
+          products.add(ProductModel.fromJson(product));
+        }
+        return products;
+      } else if (response.statusCode == 400) {
+        Fluttertoast.showToast(msg: "Product Not Found");
+      } else if (response.statusCode == 500) {
+        Fluttertoast.showToast(msg: data["error"]);
+      }
+    } catch (error) {
+      Fluttertoast.showToast(msg: error.toString());
+      print(error);
+    }
+    return [];
+  }
+
   Future<List<ProductModel>> getByCategory(String categoryId) async {
     List<ProductModel> products = [];
     try {
@@ -148,20 +174,20 @@ class ProductServices {
     return products;
   }
 
-  Future<List<ProductModel>> getByCategoryAndTag(
-      String categoryId, List<String> tagIds) async {
+  Future<Tuple2> getByCategoryAndTag(
+      String categoryId, List<String> tagIds, int page) async {
     List<ProductModel> products = [];
     var tags = jsonEncode(tagIds);
     try {
       var response = await http.get(Uri.parse(
-          "${Constants.baseUrl}/product/get/category/tags?categoryId=$categoryId&tags=$tags"));
+          "${Constants.baseUrl}/product/get/category/tags?page=$page&pageSize=10&categoryId=$categoryId&tags=$tags"));
       var data = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
         for (var product in data["products"]) {
           products.add(ProductModel.fromJson(product));
         }
-        return products;
+        return Tuple2(products, data["isLastPage"]);
       } else if (response.statusCode == 500) {
         Fluttertoast.showToast(msg: data["error"]);
       }
@@ -169,8 +195,9 @@ class ProductServices {
       // print(error);
       Fluttertoast.showToast(msg: error.toString());
     }
-    return products;
+    return const Tuple2([], false);
   }
+
 
   Future<bool> updateProduct(ProductModel product) async {
     try {

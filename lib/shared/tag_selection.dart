@@ -19,11 +19,10 @@ class TagSelection extends StatefulWidget {
 }
 
 class _TagSelectionState extends State<TagSelection> {
-  // bool selected = false;
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(2.0),
       child: GestureDetector(
         onTap: () {
           setState(() {
@@ -36,16 +35,20 @@ class _TagSelectionState extends State<TagSelection> {
               color: widget.selected
                   ? AppThemeShared.primaryColor
                   : Colors.transparent,
-              border: Border.all(color: AppThemeShared.primaryColor, width: 2)),
+              border: Border.all(color: AppThemeShared.primaryColor, width: 2),
+              borderRadius: BorderRadius.circular(6)),
           child: Padding(
-            padding: const EdgeInsets.all(6.0),
-            child: Text(
-              widget.tag.name,
-              style: TextStyle(
-                  fontSize: 18,
-                  color: widget.selected
-                      ? Colors.white
-                      : AppThemeShared.primaryColor),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            child: Center(
+              child: Text(
+                widget.tag.name,
+                style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                      fontSize: 16,
+                      color: widget.selected
+                          ? Colors.white
+                          : AppThemeShared.primaryColor,
+                    ),
+              ),
             ),
           ),
         ),

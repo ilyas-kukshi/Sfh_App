@@ -30,6 +30,7 @@ mixin _$ProductModel {
   UserModel get seller => throw _privateConstructorUsedError;
   List<TagModel>? get tags => throw _privateConstructorUsedError;
   List<String>? get colors => throw _privateConstructorUsedError;
+  String? get variantGroup => throw _privateConstructorUsedError;
   int? get views => throw _privateConstructorUsedError;
   int? get enquired => throw _privateConstructorUsedError;
   @JsonKey(name: '_id')
@@ -62,6 +63,7 @@ abstract class $ProductModelCopyWith<$Res> {
       UserModel seller,
       List<TagModel>? tags,
       List<String>? colors,
+      String? variantGroup,
       int? views,
       int? enquired,
       @JsonKey(name: '_id') String? id,
@@ -96,6 +98,7 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
     Object? seller = null,
     Object? tags = freezed,
     Object? colors = freezed,
+    Object? variantGroup = freezed,
     Object? views = freezed,
     Object? enquired = freezed,
     Object? id = freezed,
@@ -144,6 +147,10 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
           ? _value.colors
           : colors // ignore: cast_nullable_to_non_nullable
               as List<String>?,
+      variantGroup: freezed == variantGroup
+          ? _value.variantGroup
+          : variantGroup // ignore: cast_nullable_to_non_nullable
+              as String?,
       views: freezed == views
           ? _value.views
           : views // ignore: cast_nullable_to_non_nullable
@@ -207,6 +214,7 @@ abstract class _$$_ProductModelCopyWith<$Res>
       UserModel seller,
       List<TagModel>? tags,
       List<String>? colors,
+      String? variantGroup,
       int? views,
       int? enquired,
       @JsonKey(name: '_id') String? id,
@@ -241,6 +249,7 @@ class __$$_ProductModelCopyWithImpl<$Res>
     Object? seller = null,
     Object? tags = freezed,
     Object? colors = freezed,
+    Object? variantGroup = freezed,
     Object? views = freezed,
     Object? enquired = freezed,
     Object? id = freezed,
@@ -289,6 +298,10 @@ class __$$_ProductModelCopyWithImpl<$Res>
           ? _value._colors
           : colors // ignore: cast_nullable_to_non_nullable
               as List<String>?,
+      variantGroup: freezed == variantGroup
+          ? _value.variantGroup
+          : variantGroup // ignore: cast_nullable_to_non_nullable
+              as String?,
       views: freezed == views
           ? _value.views
           : views // ignore: cast_nullable_to_non_nullable
@@ -331,6 +344,7 @@ class _$_ProductModel implements _ProductModel {
       required this.seller,
       final List<TagModel>? tags,
       final List<String>? colors,
+      this.variantGroup,
       this.views,
       this.enquired,
       @JsonKey(name: '_id') this.id,
@@ -387,6 +401,8 @@ class _$_ProductModel implements _ProductModel {
   }
 
   @override
+  final String? variantGroup;
+  @override
   final int? views;
   @override
   final int? enquired;
@@ -403,7 +419,7 @@ class _$_ProductModel implements _ProductModel {
 
   @override
   String toString() {
-    return 'ProductModel(imageUris: $imageUris, name: $name, price: $price, discount: $discount, category: $category, available: $available, freeShipping: $freeShipping, seller: $seller, tags: $tags, colors: $colors, views: $views, enquired: $enquired, id: $id, createdAt: $createdAt, updatedAt: $updatedAt, v: $v)';
+    return 'ProductModel(imageUris: $imageUris, name: $name, price: $price, discount: $discount, category: $category, available: $available, freeShipping: $freeShipping, seller: $seller, tags: $tags, colors: $colors, variantGroup: $variantGroup, views: $views, enquired: $enquired, id: $id, createdAt: $createdAt, updatedAt: $updatedAt, v: $v)';
   }
 
   @override
@@ -426,6 +442,8 @@ class _$_ProductModel implements _ProductModel {
             (identical(other.seller, seller) || other.seller == seller) &&
             const DeepCollectionEquality().equals(other._tags, _tags) &&
             const DeepCollectionEquality().equals(other._colors, _colors) &&
+            (identical(other.variantGroup, variantGroup) ||
+                other.variantGroup == variantGroup) &&
             (identical(other.views, views) || other.views == views) &&
             (identical(other.enquired, enquired) ||
                 other.enquired == enquired) &&
@@ -451,6 +469,7 @@ class _$_ProductModel implements _ProductModel {
       seller,
       const DeepCollectionEquality().hash(_tags),
       const DeepCollectionEquality().hash(_colors),
+      variantGroup,
       views,
       enquired,
       id,
@@ -484,6 +503,7 @@ abstract class _ProductModel implements ProductModel {
       required final UserModel seller,
       final List<TagModel>? tags,
       final List<String>? colors,
+      final String? variantGroup,
       final int? views,
       final int? enquired,
       @JsonKey(name: '_id') final String? id,
@@ -514,6 +534,8 @@ abstract class _ProductModel implements ProductModel {
   List<TagModel>? get tags;
   @override
   List<String>? get colors;
+  @override
+  String? get variantGroup;
   @override
   int? get views;
   @override

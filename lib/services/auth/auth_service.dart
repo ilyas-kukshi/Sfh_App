@@ -50,7 +50,7 @@ Future<UserModel?> getUserByNumber(
     var data = jsonDecode(respose.body);
 
     if (respose.statusCode == 200) {
-      print("returning user");
+      // print("returning user");
       return UserModel.fromJson(data["user"]);
     } else if (respose.statusCode == 404) {
       return null;

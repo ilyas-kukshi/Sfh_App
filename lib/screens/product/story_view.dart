@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:sfh_app/models/category/category_model.dart';
 import 'package:sfh_app/models/products/product_model.dart';
@@ -48,8 +49,6 @@ class _StoryPageState extends State<StoryPage> {
           moveForward();
         } else {
           // If it reaches the last story, you can navigate to the next page or close the stories.
-          // For simplicity, this example resets to the first story.
-          // _currentIndex = 0;
           Navigator.pop(context);
         }
 
@@ -66,6 +65,10 @@ class _StoryPageState extends State<StoryPage> {
   void dispose() {
     _timer.cancel();
     _pageController.dispose();
+    if (interstitialAd != null) {
+      interstitialAd!.dispose();
+    }
+
     super.dispose();
   }
 
@@ -86,49 +89,67 @@ class _StoryPageState extends State<StoryPage> {
                         children: [
                           Center(
                             child: GestureDetector(
-                              onTapUp: (tapUpDetails) {
-                                onTapStory(tapUpDetails);
-                              },
-                              onLongPress: () {
-                                setState(() {
-                                  _isPaused = !_isPaused;
-                                });
-                              },
-                              // onLongPressCancel: ,
-                              // onVerticalDragDown: (_) {
-                              //   checkForAd();
-                              //   Navigator.pop(context);
-                              // },
-                              // onLongPress: () {
-                              //   setState(() {
-                              //     _isPaused = !_isPaused;
-                              //   });
-                              // },
-                              onHorizontalDragEnd: (details) {
-                                if (details.primaryVelocity! > 0) {
-                                  //check for if ad is to be shown
+                                onTapUp: (tapUpDetails) {
+                                  onTapStory(tapUpDetails);
+                                },
+                                onLongPress: () {
+                                  setState(() {
+                                    _isPaused = !_isPaused;
+                                  });
+                                },
+                                // onLongPressCancel: ,
+                                // onVerticalDragDown: (_) {
+                                //   checkForAd();
+                                //   Navigator.pop(context);
+                                // },
+                                // onLongPress: () {
+                                //   setState(() {
+                                //     _isPaused = !_isPaused;
+                                //   });
+                                // },
+                                onHorizontalDragEnd: (details) {
+                                  if (details.primaryVelocity! > 0) {
+                                    //check for if ad is to be shown
 
-                                  // Swipe right, move to the previous story
-                                  if (_currentIndex > 0) {
-                                    moveBack();
+                                    // Swipe right, move to the previous story
+                                    if (_currentIndex > 0) {
+                                      moveBack();
+                                    }
+                                  } else {
+                                    // Swipe left, move to the next story
+                                    if (_currentIndex < stories.length - 1) {
+                                      moveForward();
+                                    }
+                                    // checkForAd();
                                   }
-                                } else {
-                                  // Swipe left, move to the next story
-                                  if (_currentIndex < stories.length - 1) {
-                                    moveForward();
-                                  }
-                                  // checkForAd();
-                                }
-                              },
-                              child: Image(
-                                height: MediaQuery.of(context).size.height -
-                                    kToolbarHeight,
-                                width: MediaQuery.of(context).size.width,
-                                image:
+                                },
+                                child: FutureBuilder<void>(
+                                  future: precacheImage(
                                     NetworkImage(currProduct.imageUris.first),
-                                fit: BoxFit.fill,
-                              ),
-                            ),
+                                    context,
+                                  ),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      // Image is still loading
+                                      return const CircularProgressIndicator();
+                                    } else if (snapshot.hasError) {
+                                      // Error loading the image
+                                      return const Text('Error loading image');
+                                    } else {
+                                      // Image loaded successfully
+                                      return Image.network(
+                                        currProduct.imageUris.first,
+                                        height:
+                                            MediaQuery.of(context).size.height -
+                                                kToolbarHeight,
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        fit: BoxFit.fill,
+                                      );
+                                    }
+                                  },
+                                )),
                           ),
                           Align(
                             alignment: Alignment.topLeft,
@@ -194,7 +215,7 @@ class _StoryPageState extends State<StoryPage> {
                         _currentIndex = index;
                       });
                     })
-                : const Center(child: const CircularProgressIndicator())));
+                : const Center(child: CircularProgressIndicator())));
   }
 
   getStories() async {
@@ -274,13 +295,13 @@ class _StoryPageState extends State<StoryPage> {
                 // Called when the ad failed to show full screen content.
                 onAdFailedToShowFullScreenContent: (ad, err) {
                   // Dispose the ad here to free resources.
-                  ad.dispose();
+                  // ad.dispose();
                 },
                 // Called when the ad dismissed full screen content.
                 onAdDismissedFullScreenContent: (ad) {
                   // Dispose the ad here to free resources.
                   updateStoryViewCount(0);
-                  ad.dispose();
+                  // ad.dispose();
                 },
                 // Called when a click is recorded for an ad.
                 onAdClicked: (ad) {});
@@ -288,7 +309,8 @@ class _StoryPageState extends State<StoryPage> {
           // Called when an ad request failed.
           onAdFailedToLoad: (LoadAdError error) {
             // debugPrint('InterstitialAd failed to load: $error');
-            print(error.toString());
+            // print(error.toString());
+            Fluttertoast.showToast(msg: error.toString());
           },
         ));
   }
@@ -423,7 +445,7 @@ class _StoryPageState extends State<StoryPage> {
       _timer.cancel();
       _startTimer();
 
-      print(_currentIndex);
+      // print(_currentIndex);
     }
   }
 
@@ -439,7 +461,7 @@ class _StoryPageState extends State<StoryPage> {
     });
     _timer.cancel();
     _startTimer();
-    print(_currentIndex);
+    // print(_currentIndex);
   }
 }
 

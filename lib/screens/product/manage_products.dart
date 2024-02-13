@@ -138,12 +138,12 @@ class _ManageProductsState extends ConsumerState<ManageProducts> {
 }
 
 class ManageProductCard extends StatefulWidget {
-  ProductModel product;
-  bool available;
+  final ProductModel product;
+  final bool available;
   // bool selected;
-  Function(bool, ProductModel) availability;
-  Function(bool, ProductModel) selection;
-  ManageProductCard(
+  final Function(bool, ProductModel) availability;
+  final Function(bool, ProductModel) selection;
+  const ManageProductCard(
       {super.key,
       required this.product,
       required this.available,
@@ -161,7 +161,6 @@ class _ManageProductCardState extends State<ManageProductCard> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     available = widget.available;
   }

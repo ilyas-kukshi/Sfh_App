@@ -1,7 +1,8 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sfh_app/services/auth/auth_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 import 'package:sfh_app/shared/utility.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,7 +16,8 @@ class Login extends ConsumerStatefulWidget {
 
 class _LoginState extends ConsumerState<Login> {
   bool accExists = true;
-
+  bool buttonValid = false;
+  GlobalKey<FormState> formkey = GlobalKey();
   TextEditingController phoneNumber = TextEditingController();
 
   // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
@@ -24,54 +26,83 @@ class _LoginState extends ConsumerState<Login> {
   void initState() {
     super.initState();
     checkUser();
-    Utility().catchDeepLinks();
+    Utility().catchDeepLinks(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppThemeShared.appBar(
-      //     title: "Login", context: context, backButton: false),
-      body: SafeArea(
-        child: Center(
+      appBar: AppThemeShared.appBar(
+          title: "Login", context: context, backButton: false),
+      body: Center(
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.9,
           child: Form(
+            key: formkey,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // const SizedBox(height: kToolbarHeight + 20),
                 const SizedBox(height: 20),
-                const Text(
-                  "Welcome to",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                ),
+                Text("Welcome to Sakina Fashion House",
+                    // textAlign: TextAlign.left,
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleLarge!
+                        .copyWith(fontSize: 26)),
+                const SizedBox(height: 20),
                 Text(
-                  "Sakina Fashion House",
-                  style: TextStyle(
-                      color: AppThemeShared.primaryColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 30),
+                  "Log in for best experience",
+                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                      color: Colors.black.withOpacity(0.6), fontSize: 16),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 20),
                 AppThemeShared.textFormField(
-                    context: context,
-                    hintText: "Enter your whatsapp number",
-                    controller: phoneNumber,
-                    validator: Utility.phoneNumberValidator,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [LengthLimitingTextInputFormatter(10)]),
-                const SizedBox(height: 10),
+                  widthPercent: 0.95,
+                  context: context,
+                  // hintText: "Enter your whatsapp number",
+                  labelText: "Phone number",
+                  controller: phoneNumber,
+                  autoFocus: true,
+                  validator: Utility.phoneNumberValidator,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [LengthLimitingTextInputFormatter(10)],
+                  onChanged: (value) {
+                    if (formkey.currentState!.validate()) {
+                      setState(() {
+                        buttonValid = !buttonValid;
+                      });
+                    } else {
+                      if (buttonValid == true) {
+                        setState(() {
+                          buttonValid = false;
+                        });
+                      }
+                    }
+                  },
+                ),
+                const SizedBox(height: 20),
                 AppThemeShared.sharedButton(
                   height: 50,
                   context: context,
-                  width: MediaQuery.of(context).size.width * 0.85,
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  color:
+                      buttonValid ? AppThemeShared.primaryColor : Colors.grey,
                   buttonText: "Get Otp",
+                  textStyle: Theme.of(context).textTheme.labelLarge!.copyWith(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
                   onTap: () async {
-                    final user = ref.read(
-                        getUserByNumberProvider("91${phoneNumber.text}")
-                            .future);
-                    user.then((value) {
-                      if (value != null) {
-                        Navigator.pushNamed(context, '/bottomNav');
-                      }
-                    });
+                    // if(phoneNumbe)
+                    // final user = ref.read(
+                    //     getUserByNumberProvider("91${phoneNumber.text}")
+                    //         .future);
+                    // user.then((value) {
+                    //   if (value != null) {
+                    //     Navigator.pushNamed(context, '/bottomNav');
+                    //   }
+                    // });
                     // user.when(
                     //   data: (data) {
                     //     if (data != null) {
@@ -81,6 +112,27 @@ class _LoginState extends ConsumerState<Login> {
                     //   error: (error, stackTrace) => const Offstage(),
                     //   loading: () => const Offstage(),
                     // );
+                  },
+                ),
+                const SizedBox(height: 20),
+                Center(
+                    child: Text(
+                  "OR",
+                  style: Theme.of(context).textTheme.labelLarge,
+                )),
+                const SizedBox(height: 20),
+                AppThemeShared.sharedButton(
+                  height: 50,
+                  context: context,
+                  color: AppThemeShared.primaryColor,
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  buttonText: "Continue as Guest",
+                  textStyle: Theme.of(context).textTheme.labelLarge!.copyWith(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/bottomNav');
                   },
                 )
               ],

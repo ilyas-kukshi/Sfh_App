@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:sfh_app/main.dart';
 import 'package:sfh_app/models/category/category_model.dart';
 import 'package:sfh_app/services/category/category_services.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
@@ -40,7 +41,7 @@ class NotificationService {
       message.notification?.title ?? 'Default Title',
       message.notification?.body ?? 'Default Body',
       platformChannelSpecifics,
-      payload: message.data['data'] ?? '',
+      payload: jsonEncode(message.data),
     );
   }
 
@@ -56,9 +57,27 @@ class NotificationService {
     });
   }
 
-  handleNotificationPayload(
+  catchNotification() {
+    //When a new notification message is received
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      // Display notifications received when app is in foreground
+      NotificationService().displayForegroundNotification(message);
+    });
+    //when app is in BACKGROUND and opened through notification
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      firebaseMessagingBackgroundHandler(message);
+    });
+    //when app is TERMINATED and opened through notification
+    FirebaseMessaging.instance.getInitialMessage().then((message) {
+      if (message != null) {
+        firebaseMessagingBackgroundHandler(message);
+      }
+    });
+  }
+
+  static handleNotificationPayload(
       RemoteMessage message, GlobalKey<NavigatorState> navigatorKey) async {
-    Fluttertoast.showToast(msg: message.data.toString());
+    // Fluttertoast.showToast(msg: message.data.toString());
 
     if (message.data.isNotEmpty) {
       switch (message.data["type"]) {
@@ -73,8 +92,6 @@ class NotificationService {
                     '/displayProductsByCategory',
                     arguments: category);
               }
-              // NavigationService()
-              //     .navigateTo('/displayProductsByCategory', arguments: category);
             }
           }
           break;

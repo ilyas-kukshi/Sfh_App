@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:sfh_app/models/products/product_model.dart';
+import 'package:sfh_app/screens/product/product_shimmer.dart';
+import 'package:sfh_app/screens/product/variants_view.dart';
 import 'package:sfh_app/services/product_services.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 import 'package:sfh_app/shared/carousel.dart';
@@ -17,11 +19,13 @@ class ViewProduct extends StatefulWidget {
 }
 
 class _ProductDetailsState extends State<ViewProduct> {
+  double variantScrollPosition = 0;
+  double initialScrollOffset = 0;
+
   List<ProductModel> similarProducts = [];
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getProducts(widget.product.category.id!);
   }
@@ -31,71 +35,104 @@ class _ProductDetailsState extends State<ViewProduct> {
     return SafeArea(
       // bottom: false,
       child: Scaffold(
-        appBar:
-            AppThemeShared.appBar(title: widget.product.name, context: context),
+        appBar: AppThemeShared.appBar(
+            title: widget.product.name,
+            context: context,
+            textStyle: Theme.of(context)
+                .textTheme
+                .titleLarge!
+                .copyWith(color: Colors.white)),
         body: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 8),
+              GestureDetector(
+                onTap: () => Navigator.pushNamed(
+                    context, '/displayProductsByCategory',
+                    arguments: widget.product.category),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 4.0),
+                  child: Text(
+                    widget.product.category.name,
+                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                          fontSize: 18,
+                          color: AppThemeShared.primaryColor,
+                        ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 2),
+              Padding(
+                padding: const EdgeInsets.only(left: 4.0),
+                child: Text(
+                  widget.product.name,
+                  style: Theme.of(context)
+                      .textTheme
+                      .labelMedium!
+                      .copyWith(fontSize: 14, color: Colors.grey.shade600),
+                ),
+              ),
+              const SizedBox(height: 4),
               Carousel(
-                height: 400,
+                height: 350,
                 isUrl: true,
                 imageUrls: widget.product.imageUris,
                 files: const [],
+                productId: widget.product.id,
               ),
+              widget.product.variantGroup != null
+                  ? VariantsView(
+                      product: widget.product,
+                      initialScrollOffset: initialScrollOffset,
+                      onTap: (selectedProduct, scrollOffset) {
+                        widget.product = selectedProduct;
+                        initialScrollOffset = scrollOffset;
+                        setState(() {});
+                      },
+                    )
+                  : const Offstage(),
+              const Divider(),
+
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.product.name,
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      "${((widget.product.discount / widget.product.price) * 100).toInt()}% OFF",
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleLarge!
+                          .copyWith(fontSize: 26, color: Colors.redAccent),
                     ),
+                    const SizedBox(height: 4),
                     Row(
                       children: [
-                        Text(
-                          "₹${widget.product.price}",
-                          style: const TextStyle(
-                              fontSize: 20,
-                              color: Colors.grey,
-                              decoration: TextDecoration.lineThrough),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4.0),
+                          child: Text("₹${widget.product.price}",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelLarge!
+                                  .copyWith(
+                                      fontSize: 20,
+                                      color: Colors.grey.shade600,
+                                      decoration: TextDecoration.lineThrough)),
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          "₹${widget.product.price - widget.product.discount}",
-                          style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
+                            "₹${widget.product.price - widget.product.discount}",
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge!
+                                .copyWith(
+                                  fontSize: 32,
+                                )),
                         const SizedBox(width: 12),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 14),
-                          decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                  colors: [
-                                Colors.red.withOpacity(0.85),
-                                Colors.orange
-                              ],
-                                  stops: const [
-                                1,
-                                1
-                              ],
-                                  tileMode: TileMode.clamp,
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomRight)),
-                          child: Text(
-                            "₹${((widget.product.discount / widget.product.price) * 100).toInt()}% OFF",
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
                       ],
                     ),
+                    const SizedBox(height: 6),
                     Row(
                       children: [
                         widget.product.freeShipping
@@ -107,8 +144,20 @@ class _ProductDetailsState extends State<ViewProduct> {
                         ),
                         const SizedBox(width: 6),
                         widget.product.freeShipping
-                            ? const Text("Free Shipping")
-                            : const Text("Shipping Charges"),
+                            ? Text("Free Shipping",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge!
+                                    .copyWith(
+                                      fontSize: 14,
+                                    ))
+                            : Text("Shipping Charges",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelLarge!
+                                    .copyWith(
+                                      fontSize: 14,
+                                    )),
                       ],
                     ),
                     widget.product.colors != null &&
@@ -140,40 +189,73 @@ class _ProductDetailsState extends State<ViewProduct> {
                   ],
                 ),
               ),
-              // const SizedBox(height: 10),
+              const SizedBox(height: 10),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   AppThemeShared.sharedButton(
                     context: context,
                     height: 50,
-                    width: MediaQuery.of(context).size.width * 0.5,
+                    width: MediaQuery.of(context).size.width * 0.96,
+                    borderColor: AppThemeShared.primaryColor,
+                    borderRadius: 12,
+                    borderWidth: 2,
                     buttonText: "Enquire",
-                    color: AppThemeShared.secondaryColor,
+                    textStyle: Theme.of(context)
+                        .textTheme
+                        .labelLarge!
+                        .copyWith(color: AppThemeShared.primaryColor),
+                    // elevation: 2,
+                    color: Colors.transparent,
                     onTap: () {
                       Utility().enquireOnWhatsapp(widget.product);
                     },
                   ),
+                ],
+              ),
+              const SizedBox(height: 10),
+
+              // const SizedBox(height: 4),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
                   AppThemeShared.sharedButton(
                     context: context,
                     height: 50,
-                    width: MediaQuery.of(context).size.width * 0.5,
+                    width: MediaQuery.of(context).size.width * 0.48,
+                    borderRadius: 12,
+                    elevation: 5,
+                    // borderWidth: 2,
+                    color: const Color(0xffFFA500),
                     buttonText: "Add To Cart",
+                    textStyle: Theme.of(context)
+                        .textTheme
+                        .labelLarge!
+                        .copyWith(color: Colors.white),
                     onTap: () {
                       // ProductCard().enquireOnWhatsapp(widget.product);
                     },
                   ),
+                  Center(
+                    child: AppThemeShared.sharedButton(
+                      context: context,
+                      height: 50,
+                      width: MediaQuery.of(context).size.width * 0.48,
+                      borderRadius: 12,
+                      elevation: 5,
+                      // borderWidth: 2,
+                      color: const Color(0xffFF6347),
+                      buttonText: "Buy Now",
+                      textStyle: Theme.of(context)
+                          .textTheme
+                          .labelLarge!
+                          .copyWith(color: Colors.white),
+                      onTap: () {
+                        // ProductCard().enquireOnWhatsapp(widget.product);
+                      },
+                    ),
+                  ),
                 ],
-              ),
-              // const SizedBox(height: 4),
-              AppThemeShared.sharedButton(
-                context: context,
-                height: 50,
-                width: MediaQuery.of(context).size.width,
-                buttonText: "Buy Now",
-                borderColor: AppThemeShared.primaryColor,
-                onTap: () {
-                  // ProductCard().enquireOnWhatsapp(widget.product);
-                },
               ),
               // const SizedBox(height: 10),
               const Padding(
@@ -197,8 +279,7 @@ class _ProductDetailsState extends State<ViewProduct> {
                               mainAxisSpacing: 0,
                               crossAxisSpacing: 0),
                       itemBuilder: (context, index) {
-                        return ProductCard()
-                            .productCard(similarProducts[index], context);
+                        return ProductCard(product: similarProducts[index]);
                       },
                     )
                   : GridView.builder(
@@ -214,7 +295,7 @@ class _ProductDetailsState extends State<ViewProduct> {
                               mainAxisSpacing: 0,
                               crossAxisSpacing: 0),
                       itemBuilder: (context, index) {
-                        return ProductCard().productShimmerCard(context);
+                        return ProductShimmer().productShimmerVertical(context);
                       },
                     )
             ],

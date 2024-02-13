@@ -1,7 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-// ignore_for_file: non_constant_identifier_names
-
 part of 'product_model.dart';
 
 // **************************************************************************
@@ -25,6 +23,7 @@ _$_ProductModel _$$_ProductModelFromJson(Map<String, dynamic> json) =>
           .toList(),
       colors:
           (json['colors'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      variantGroup: json['variantGroup'] as String?,
       views: json['views'] as int?,
       enquired: json['enquired'] as int?,
       id: json['_id'] as String?,
@@ -49,6 +48,7 @@ Map<String, dynamic> _$$_ProductModelToJson(_$_ProductModel instance) =>
       'seller': instance.seller,
       'tags': instance.tags,
       'colors': instance.colors,
+      'variantGroup': instance.variantGroup,
       'views': instance.views,
       'enquired': instance.enquired,
       '_id': instance.id,

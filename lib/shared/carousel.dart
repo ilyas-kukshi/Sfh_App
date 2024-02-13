@@ -6,6 +6,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
+import 'package:sfh_app/shared/utility.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:widget_zoom/widget_zoom.dart';
 
 class Carousel extends StatefulWidget {
@@ -13,12 +15,14 @@ class Carousel extends StatefulWidget {
   bool isUrl;
   List<String>? imageUrls;
   List<CroppedFile>? files;
+  String? productId;
   Carousel(
       {super.key,
       required this.height,
       required this.isUrl,
       required this.files,
-      required this.imageUrls});
+      required this.imageUrls,
+      this.productId});
 
   @override
   State<Carousel> createState() => _CarouselState();
@@ -49,47 +53,63 @@ class _CarouselState extends State<Carousel> {
               });
             },
             itemBuilder: (context, index) {
-              return Stack(
-                children: [
-                  Center(
-                    child: CachedNetworkImage(
-                        width: MediaQuery.of(context).size.width,
-                        fit: BoxFit.fill,
-                        imageUrl:
-                            "https://img.freepik.com/free-photo/clear-empty-photographer-studio-background-abstract-background-texture-beauty-dark-light-clear-blue-cold-gray-snowy-white-gradient-flat-wall-floor-empty-spacious-room-winter-interior_1258-53070.jpg?size=626&ext=jpg&ga=GA1.1.834066242.1705652128&semt=ais"),
-                  ),
-                  Center(
-                    child: Column(
-                      children: [
-                        widget.isUrl
-                            ? WidgetZoom(
-                                heroAnimationTag: 't',
-                                zoomWidget: CachedNetworkImage(
-                                  imageUrl: widget.imageUrls![index],
-                                  height: widget.height,
-                                  // width: MediaQuery.of(context).size.width,
-                                  fit: BoxFit.fill,
-
-                                  // color: Colors.grey.withOpacity(0.2),
-                                  // color: Colors.pink,
-                                  // imageBuilder: (context, imageProvider) {
-                                  //   return Container(
-                                  //     color: Colors.pink,
-                                  //     width: MediaQuery.of(context).size.width,
-                                  //     child: Image(image: imageProvider),
-                                  //   );
-                                  // },
-                                ))
-                            : Image.file(
-                                File(widget.files![index].path),
-                                height: 250,
-                                // color: Colors.pink,
-                                fit: BoxFit.cover,
-                              )
-                      ],
+              return SizedBox(
+                height: widget.height,
+                child: Stack(
+                  children: [
+                    Center(
+                      child: CachedNetworkImage(
+                          width: MediaQuery.of(context).size.width,
+                          fit: BoxFit.fill,
+                          imageUrl:
+                              "https://img.freepik.com/free-photo/clear-empty-photographer-studio-background-abstract-background-texture-beauty-dark-light-clear-blue-cold-gray-snowy-white-gradient-flat-wall-floor-empty-spacious-room-winter-interior_1258-53070.jpg?size=626&ext=jpg&ga=GA1.1.834066242.1705652128&semt=ais"),
                     ),
-                  ),
-                ],
+                    Center(
+                      child: Column(
+                        children: [
+                          widget.isUrl
+                              ? WidgetZoom(
+                                  heroAnimationTag: 't',
+                                  zoomWidget: CachedNetworkImage(
+                                    imageUrl: widget.imageUrls![index],
+                                    height: widget.height,
+                                    // width: MediaQuery.of(context).size.width,
+                                    fit: BoxFit.fill,
+
+                                    // color: Colors.grey.withOpacity(0.2),
+                                    // color: Colors.pink,
+                                    // imageBuilder: (context, imageProvider) {
+                                    //   return Container(
+                                    //     color: Colors.pink,
+                                    //     width: MediaQuery.of(context).size.width,
+                                    //     child: Image(image: imageProvider),
+                                    //   );
+                                    // },
+                                  ))
+                              : Image.file(
+                                  File(widget.files![index].path),
+                                  height: 250,
+                                  // color: Colors.pink,
+                                  fit: BoxFit.cover,
+                                )
+                        ],
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Uri deeplink = Utility().buildDeepLink(
+                            '/product', {"productId": widget.productId!});
+                        Share.share("$deeplink");
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Align(
+                            alignment: Alignment.topRight,
+                            child: Icon(Icons.share)),
+                      ),
+                    )
+                  ],
+                ),
               );
             },
           ),
