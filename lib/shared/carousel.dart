@@ -95,19 +95,6 @@ class _CarouselState extends State<Carousel> {
                         ],
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        Uri deeplink = Utility().buildDeepLink(
-                            '/product', {"productId": widget.productId!});
-                        Share.share("$deeplink");
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Align(
-                            alignment: Alignment.topRight,
-                            child: Icon(Icons.share)),
-                      ),
-                    )
                   ],
                 ),
               );

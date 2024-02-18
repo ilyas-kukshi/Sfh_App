@@ -119,6 +119,8 @@ class AppThemeShared {
       //
       Color enabledBorderColor = Colors.cyan,
       Color focusedBorderColor = const Color(0xff439A97),
+      Color borderColor = const Color(0xff439A97),
+      Color disabledBorderColor = const Color(0xff439A97),
 
       //
       Widget? suffix,
@@ -150,7 +152,7 @@ class AppThemeShared {
         onFieldSubmitted: onFieldSubmitted,
         onTap: onTap,
         inputFormatters: inputFormatters,
-        style: const TextStyle(fontSize: 16),
+        style: Theme.of(context).textTheme.labelMedium!,
         decoration: InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.always,
           contentPadding: contentPadding,
@@ -174,9 +176,8 @@ class AppThemeShared {
               const BoxConstraints(minWidth: 0, minHeight: 0),
           border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(borderRadius),
-              borderSide: BorderSide(
-                  color: AppThemeShared.secondaryColor,
-                  width: enabledBorderWidth)),
+              borderSide:
+                  BorderSide(color: borderColor, width: enabledBorderWidth)),
           enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(borderRadius),
               borderSide: BorderSide(
@@ -188,7 +189,7 @@ class AppThemeShared {
                   color: focusedBorderColor, width: enabledBorderWidth)),
           disabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(borderRadius),
-              borderSide: const BorderSide(color: Colors.black)),
+              borderSide: BorderSide(color: disabledBorderColor)),
         ),
       ),
     );

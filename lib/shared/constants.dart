@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class Constants {
-  // static String baseUrl = "https://sfh-api-zlkq.onrender.com";
-  static String baseUrl = 'http://192.168.1.102:8080';
+  static String baseUrl = "https://sfh-api-zlkq.onrender.com";
+  // static String baseUrl = 'http://192.168.1.103:8080';
   // static String baseUrl = 'http://192.168.205.186:8080'; // phone hotspot
 
   static String whatsappNumber = "919987655052";
@@ -13,6 +13,10 @@ class Constants {
   static String admin = "Admin";
   static String seller = "Seller";
   static String user = "User";
+
+  static const String category = "Category";
+  static const String tag = "Tag";
+  static const String product = "Product";
 
   static String feedbackUrl = "https://forms.gle/TfaHhierhcxoRDwH6";
 

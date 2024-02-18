@@ -13,6 +13,7 @@ import 'package:sfh_app/models/products/product_model.dart';
 import 'package:sfh_app/screens/auth/login.dart';
 import 'package:sfh_app/screens/category/add_category.dart';
 import 'package:sfh_app/screens/category/manage_categories.dart';
+import 'package:sfh_app/screens/category/manage_tags.dart';
 import 'package:sfh_app/screens/dashboard/bottom_nav.dart';
 import 'package:sfh_app/screens/dashboard/dashboard_main.dart';
 import 'package:sfh_app/screens/product/add_products.dart';
@@ -129,6 +130,12 @@ class MyApp extends StatelessWidget {
       case '/manageCategories':
         return PageTransition(
             child: const ManageCategories(),
+            type: PageTransitionType.leftToRight);
+            case '/manageTags':
+        return PageTransition(
+            child:  ManageTags(
+              category: settings.arguments as CategoryModel,
+            ),
             type: PageTransitionType.leftToRight);
       case '/addProduct':
         return PageTransition(

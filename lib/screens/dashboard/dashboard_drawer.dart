@@ -15,8 +15,7 @@ class _DashboardDrawerState extends ConsumerState<DashboardDrawer> {
   Widget build(BuildContext context) {
     return Drawer(
       child: Padding(
-        padding:
-            const EdgeInsets.only(top: kToolbarHeight, left: 10, right: 10),
+        padding: const EdgeInsets.all(10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

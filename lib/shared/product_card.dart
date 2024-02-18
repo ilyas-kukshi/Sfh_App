@@ -38,7 +38,7 @@ class _ProductCardState extends State<ProductCard> {
           children: [
             SizedBox(
               height: 170,
-              width: MediaQuery.of(context).size.width * 0.48,
+              width: MediaQuery.of(context).size.width * 0.46,
               child: Stack(
                 children: [
                   Center(

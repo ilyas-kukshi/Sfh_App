@@ -7,7 +7,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:sfh_app/models/category/category_model.dart';
 import 'package:sfh_app/models/products/product_model.dart';
 import 'package:sfh_app/services/admob_service.dart';
-import 'package:sfh_app/services/product_services.dart';
+import 'package:sfh_app/services/product_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

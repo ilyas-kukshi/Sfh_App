@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sfh_app/models/products/product_model.dart';
 import 'package:sfh_app/services/category/category_services.dart';
-import 'package:sfh_app/services/product_services.dart';
+import 'package:sfh_app/services/product_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 import 'package:sfh_app/shared/category_selection.dart';
 import 'package:sfh_app/shared/dialogs.dart';

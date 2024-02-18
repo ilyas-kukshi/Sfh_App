@@ -1,14 +1,19 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sfh_app/models/products/product_model.dart';
 import 'package:sfh_app/screens/product/product_shimmer.dart';
 import 'package:sfh_app/screens/product/variants_view.dart';
-import 'package:sfh_app/services/product_services.dart';
+import 'package:sfh_app/services/auth/auth_service.dart';
+import 'package:sfh_app/services/product_service.dart';
+import 'package:sfh_app/services/user_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 import 'package:sfh_app/shared/carousel.dart';
 import 'package:sfh_app/shared/product_card.dart';
 import 'package:sfh_app/shared/utility.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ViewProduct extends StatefulWidget {
   ProductModel product;
@@ -23,6 +28,8 @@ class _ProductDetailsState extends State<ViewProduct> {
   double initialScrollOffset = 0;
 
   List<ProductModel> similarProducts = [];
+
+  String? phoneNumber;
 
   @override
   void initState() {
@@ -74,12 +81,44 @@ class _ProductDetailsState extends State<ViewProduct> {
                 ),
               ),
               const SizedBox(height: 4),
-              Carousel(
-                height: 350,
-                isUrl: true,
-                imageUrls: widget.product.imageUris,
-                files: const [],
-                productId: widget.product.id,
+              Stack(
+                children: [
+                  Carousel(
+                    height: 350,
+                    isUrl: true,
+                    imageUrls: widget.product.imageUris,
+                    files: const [],
+                    productId: widget.product.id,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Uri deeplink = Utility().buildDeepLink(
+                          '/product', {"productId": widget.product.id!});
+                      Share.share("$deeplink");
+                    },
+                    child: Align(
+                      alignment: Alignment.topRight,
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 4),
+                          favouriteIcon(),
+                          const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: CircleAvatar(
+                              backgroundColor: Colors.white,
+                              child: Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Align(
+                                    alignment: Alignment.topRight,
+                                    child: Icon(Icons.share)),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
               ),
               widget.product.variantGroup != null
                   ? VariantsView(
@@ -312,5 +351,81 @@ class _ProductDetailsState extends State<ViewProduct> {
     // print("Products");
     // print(products);
     setState(() {});
+  }
+
+  Widget favouriteIcon() {
+    return FutureBuilder(
+        future: getPhoneNumber(),
+        builder: (context, snapshot) {
+          return Consumer(
+            builder: (context, ref, child) {
+              if (phoneNumber != null) {
+                final user = ref.watch(getUserByNumberProvider(phoneNumber!));
+                return user.when(
+                  data: (data) {
+                    if (data == null) {
+                      return GestureDetector(
+                        onTap: () {},
+                        child: const CircleAvatar(
+                            backgroundColor: Colors.white,
+                            child: Icon(Icons.favorite_border_outlined)),
+                      );
+                    } else if (data.wishlist == null ||
+                        !data.wishlist!.contains(widget.product)) {
+                      return GestureDetector(
+                        onTap: () async {
+                          bool updated = await updateWishlist(
+                              widget.product.id!, data.id!);
+                          if (updated) {
+                            // ignore: unused_result
+                            ref.refresh(getUserByNumberProvider(phoneNumber!));
+                          } else {
+                            Fluttertoast.showToast(msg: "Wishlist not updated");
+                          }
+                        },
+                        child: const CircleAvatar(
+                            backgroundColor: Colors.white,
+                            child: Icon(Icons.favorite_border_outlined)),
+                      );
+                    } else {
+                      return GestureDetector(
+                        onTap: () async {
+                          bool updated = await updateWishlist(
+                              widget.product.id!, data.id!);
+                          if (updated) {
+                            // ignore: unused_result
+                            ref.refresh(getUserByNumberProvider(phoneNumber!));
+                          } else {
+                            Fluttertoast.showToast(msg: "Wishlist not updated");
+                          }
+                        },
+                        child: const CircleAvatar(
+                          backgroundColor: Colors.white,
+                          child: Icon(
+                            Icons.favorite,
+                            color: Colors.red,
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  error: (error, stackTrace) => const Offstage(),
+                  loading: () => const Offstage(),
+                );
+              } else {
+                return const Offstage();
+              }
+            },
+          );
+        });
+  }
+
+  Future<String?> getPhoneNumber() async {
+    phoneNumber = await Utility().getPhoneNumberSF();
+    return phoneNumber;
+  }
+
+  Future<bool> updateWishlist(String productId, String userId) async {
+    return await UserService().updateWishlist(productId, userId);
   }
 }
