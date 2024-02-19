@@ -7,7 +7,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:sfh_app/main.dart';
 import 'package:sfh_app/models/category/category_model.dart';
+import 'package:sfh_app/models/tags/tag_model.dart';
 import 'package:sfh_app/services/category/category_services.dart';
+import 'package:sfh_app/services/tags_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 import 'package:sfh_app/shared/constants.dart';
 
@@ -84,7 +86,7 @@ class NotificationService {
         case "category":
           {
             CategoryModel? category =
-                await CategoryServices().getById(message.data["categoryId"]);
+                await CategoryServices().getById(message.data["category"]);
 
             if (category != null) {
               if (navigatorKey.currentState != null) {
@@ -93,6 +95,20 @@ class NotificationService {
                     arguments: category);
               }
             }
+          }
+          break;
+          case "tag":
+          {
+            // TagModel? category =
+            //     await TagServices().getById(message.data["tag"]);
+
+            // if (category != null) {
+            //   if (navigatorKey.currentState != null) {
+            //     navigatorKey.currentState?.pushNamed(
+            //         '/displayProductsByCategory',
+            //         arguments: category);
+            //   }
+            // }
           }
           break;
         default:
@@ -132,7 +148,7 @@ class NotificationService {
               "title": "title",
               "body": "subject",
             },
-            "data": {"type": "category", "category": "28342893427482"}
+            "data": {"type": "category", "category": "65accde3ce6169072cfb2073"}
           }));
 
       if (response.statusCode == 200) {

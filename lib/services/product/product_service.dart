@@ -7,6 +7,9 @@ import 'package:sfh_app/shared/constants.dart';
 import 'package:sfh_app/shared/utility.dart';
 import 'package:tuple/tuple.dart';
 
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+part 'product_service.g.dart';
+
 class ProductServices {
   Future<bool> add(ProductModel product, bool asVariants) async {
     try {
@@ -174,6 +177,29 @@ class ProductServices {
     return products;
   }
 
+  Future<Tuple2> getByTags(List<String> tagIds, int page) async {
+    List<ProductModel> products = [];
+    var tags = jsonEncode(tagIds);
+    try {
+      var response = await http.get(Uri.parse(
+          "${Constants.baseUrl}/product/get/tags?page=$page&pageSize=10&tags=$tags"));
+      var data = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        for (var product in data["products"]) {
+          products.add(ProductModel.fromJson(product));
+        }
+        return Tuple2(products, data["isLastPage"]);
+      } else if (response.statusCode == 500) {
+        Fluttertoast.showToast(msg: data["error"]);
+      }
+    } catch (error) {
+      // print(error);
+      Fluttertoast.showToast(msg: error.toString());
+    }
+    return const Tuple2([], false);
+  }
+
   Future<Tuple2> getByCategoryAndTag(
       String categoryId, List<String> tagIds, int page) async {
     List<ProductModel> products = [];
@@ -197,7 +223,6 @@ class ProductServices {
     }
     return const Tuple2([], false);
   }
-
 
   Future<bool> updateProduct(ProductModel product) async {
     try {
@@ -255,5 +280,19 @@ class ProductServices {
       Fluttertoast.showToast(msg: error.toString());
     }
     return false;
+  }
+}
+
+@Riverpod(keepAlive: true)
+class ViewsCounterNotifier extends _$ViewsCounterNotifier {
+  @override
+  Map<String, int> build() {
+    return {};
+  }
+
+  void add(String id) {
+    final copiedState = {...state};
+    copiedState[id] = (copiedState[id] ?? 0) + 1;
+    state = copiedState;
   }
 }

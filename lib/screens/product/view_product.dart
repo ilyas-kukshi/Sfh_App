@@ -1,5 +1,6 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -7,7 +8,7 @@ import 'package:sfh_app/models/products/product_model.dart';
 import 'package:sfh_app/screens/product/product_shimmer.dart';
 import 'package:sfh_app/screens/product/variants_view.dart';
 import 'package:sfh_app/services/auth/auth_service.dart';
-import 'package:sfh_app/services/product_service.dart';
+import 'package:sfh_app/services/product/product_service.dart';
 import 'package:sfh_app/services/user_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 import 'package:sfh_app/shared/carousel.dart';
@@ -15,15 +16,15 @@ import 'package:sfh_app/shared/product_card.dart';
 import 'package:sfh_app/shared/utility.dart';
 import 'package:share_plus/share_plus.dart';
 
-class ViewProduct extends StatefulWidget {
+class ViewProduct extends ConsumerStatefulWidget {
   ProductModel product;
   ViewProduct({super.key, required this.product});
 
   @override
-  State<ViewProduct> createState() => _ProductDetailsState();
+  ConsumerState<ViewProduct> createState() => _ProductDetailsState();
 }
 
-class _ProductDetailsState extends State<ViewProduct> {
+class _ProductDetailsState extends ConsumerState<ViewProduct> {
   double variantScrollPosition = 0;
   double initialScrollOffset = 0;
 
@@ -232,24 +233,62 @@ class _ProductDetailsState extends State<ViewProduct> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  AppThemeShared.sharedButton(
-                    context: context,
-                    height: 50,
-                    width: MediaQuery.of(context).size.width * 0.96,
-                    borderColor: AppThemeShared.primaryColor,
-                    borderRadius: 12,
-                    borderWidth: 2,
-                    buttonText: "Enquire",
-                    textStyle: Theme.of(context)
-                        .textTheme
-                        .labelLarge!
-                        .copyWith(color: AppThemeShared.primaryColor),
-                    // elevation: 2,
-                    color: Colors.transparent,
-                    onTap: () {
-                      Utility().enquireOnWhatsapp(widget.product);
-                    },
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        fixedSize: Size(
+                          MediaQuery.of(context).size.width * 0.96,
+                          50,
+                        ),
+                        backgroundColor: Colors.white,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        side: BorderSide(
+                            color: AppThemeShared.primaryColor, width: 2)),
+                    onPressed: () =>
+                        Utility().enquireOnWhatsapp(widget.product),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Enquire",
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelLarge!
+                              .copyWith(
+                                  color: AppThemeShared.primaryColor,
+                                  fontSize: 16,
+                                  letterSpacing: 1.1),
+                        ),
+                        const SizedBox(width: 8),
+                        CachedNetworkImage(
+                            height: 30,
+                            width: 25,
+                            imageUrl:
+                                "https://e7.pngegg.com/pngimages/551/579/png-clipart-whats-app-logo-whatsapp-logo-whatsapp-cdr-leaf-thumbnail.png")
+                      ],
+                    ),
                   ),
+                  // AppThemeShared.sharedButton(
+                  //   context: context,
+                  //   height: 50,
+                  //   width: MediaQuery.of(context).size.width * 0.96,
+                  //   borderColor: AppThemeShared.primaryColor,
+                  //   borderRadius: 12,
+                  //   borderWidth: 2,
+                  //   buttonText: "Enquire",
+                  //   textStyle: Theme.of(context)
+                  //       .textTheme
+                  //       .labelLarge!
+                  //       .copyWith(color: AppThemeShared.primaryColor),
+
+                  //   // elevation: 2,
+                  //   color: Colors.transparent,
+                  //   onTap: () {
+                  //     Utility().enquireOnWhatsapp(widget.product);
+                  //   },
+                  // ),
                 ],
               ),
               const SizedBox(height: 10),
@@ -314,7 +353,7 @@ class _ProductDetailsState extends State<ViewProduct> {
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
-                              mainAxisExtent: 350,
+                              mainAxisExtent: 300,
                               mainAxisSpacing: 0,
                               crossAxisSpacing: 0),
                       itemBuilder: (context, index) {
@@ -351,6 +390,7 @@ class _ProductDetailsState extends State<ViewProduct> {
     // print("Products");
     // print(products);
     setState(() {});
+    ref.read(viewsCounterNotifierProvider.notifier).add(widget.product.id!);
   }
 
   Widget favouriteIcon() {

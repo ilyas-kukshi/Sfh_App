@@ -16,7 +16,7 @@ import 'package:sfh_app/services/auth/auth_service.dart';
 import 'package:sfh_app/services/category/category_services.dart';
 import 'package:sfh_app/services/festival_service.dart';
 import 'package:sfh_app/services/notification_service.dart';
-import 'package:sfh_app/services/product_service.dart';
+import 'package:sfh_app/services/product/product_service.dart';
 import 'package:sfh_app/services/search_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 import 'package:sfh_app/shared/constants.dart';
@@ -55,8 +55,9 @@ class _DashboardMainState extends State<DashboardMain> {
   @override
   void initState() {
     super.initState();
-    getProducts();
+
     getPhoneNumber();
+    getProducts();
     getFestivals();
 
     // createBannerAd();
@@ -112,7 +113,7 @@ class _DashboardMainState extends State<DashboardMain> {
                 ),
                 leading: drawerIcon(),
                 bottom: PreferredSize(
-                    preferredSize: Size.fromHeight(50),
+                    preferredSize: const Size.fromHeight(50),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: searchBar(),
@@ -268,8 +269,10 @@ class _DashboardMainState extends State<DashboardMain> {
                                           await getProducts();
                                         }
                                       },
-                                      child: const Center(
-                                          child: CircularProgressIndicator()),
+                                      child: Center(
+                                          child: CircularProgressIndicator(
+                                        color: AppThemeShared.primaryColor,
+                                      )),
                                     )
 
                               // const Center(
@@ -284,16 +287,6 @@ class _DashboardMainState extends State<DashboardMain> {
         ));
   }
 
-  // onScroll() async {
-  //   if (scrollController.position.pixels >=
-  //       scrollController.position.maxScrollExtent - 1200) {
-  //     currentPage++;
-  //     await getProducts().then((value) {
-  //       setState(() {});
-  //     });
-  //   }
-  // }
-
   Widget searchBar() {
     return TextFormField(
       controller: search,
@@ -303,9 +296,12 @@ class _DashboardMainState extends State<DashboardMain> {
           .labelMedium!
           .copyWith(color: Colors.white, fontSize: 16),
       onChanged: (query) async {
+        Future.delayed(const Duration(milliseconds: 500));
         searchSuggestions.clear();
         if (search.text.isNotEmpty) {
           searchSuggestions = await SearchService().suggestions(search.text);
+        } else {
+          searchSuggestions.clear();
         }
         setState(() {});
       },
@@ -320,15 +316,15 @@ class _DashboardMainState extends State<DashboardMain> {
             Icons.search,
             color: Colors.white,
           ),
-          contentPadding: EdgeInsets.all(0),
-          border:
-              OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-          focusedBorder:
-              OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-          enabledBorder:
-              OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-          disabledBorder:
-              OutlineInputBorder(borderSide: BorderSide(color: Colors.white))),
+          contentPadding: const EdgeInsets.all(0),
+          border: const OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.white)),
+          focusedBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.white)),
+          enabledBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.white)),
+          disabledBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.white))),
     );
   }
 
@@ -488,40 +484,43 @@ class _DashboardMainState extends State<DashboardMain> {
         });
   }
 
-  suggestionListView() {
+  Widget suggestionListView() {
     return SliverList(
         delegate: SliverChildBuilderDelegate(
             childCount: searchSuggestions.length,
-            (context, index) => Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              getSuggestionName(searchSuggestions[index]),
-                              overflow: TextOverflow.ellipsis,
+            (context, index) => GestureDetector(
+                  onTap: () => navigateFromSuggestion(searchSuggestions[index]),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                getSuggestionName(searchSuggestions[index]),
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .copyWith(),
+                              ),
+                            ),
+                            Text(
+                              searchSuggestions[index].type,
                               style: Theme.of(context)
                                   .textTheme
                                   .titleMedium!
-                                  .copyWith(),
+                                  .copyWith(color: Colors.grey),
                             ),
-                          ),
-                          Text(
-                            searchSuggestions[index].type,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium!
-                                .copyWith(color: Colors.grey),
-                          ),
-                          const SizedBox(width: 12),
-                          const Icon(Icons.north_west)
-                        ],
+                            const SizedBox(width: 12),
+                            const Icon(Icons.north_west)
+                          ],
+                        ),
                       ),
-                    ),
-                    Divider()
-                  ],
+                      const Divider()
+                    ],
+                  ),
                 )));
   }
 
@@ -536,6 +535,25 @@ class _DashboardMainState extends State<DashboardMain> {
 
       default:
         return "Error";
+    }
+  }
+
+  navigateFromSuggestion(SearchSuggestionsModel suggestion) {
+    switch (suggestion.type) {
+      case Constants.category:
+        Navigator.pushNamed(context, '/displayProductsByCategory',
+            arguments: suggestion.category!);
+        break;
+      case Constants.tag:
+        Navigator.pushNamed(context, '/displayProductsByTags',
+            arguments: [suggestion.tag!]);
+        break;
+      case Constants.product:
+        Navigator.pushNamed(context, '/viewProduct',
+            arguments: suggestion.product);
+        break;
+
+      default:
     }
   }
 }

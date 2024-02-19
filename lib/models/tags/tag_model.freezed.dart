@@ -22,7 +22,7 @@ TagModel _$TagModelFromJson(Map<String, dynamic> json) {
 mixin _$TagModel {
   String get name => throw _privateConstructorUsedError;
   String? get imageUri => throw _privateConstructorUsedError;
-  String get category => throw _privateConstructorUsedError;
+  CategoryModel get category => throw _privateConstructorUsedError;
   @JsonKey(name: '_id')
   String? get id => throw _privateConstructorUsedError;
   int? get v => throw _privateConstructorUsedError;
@@ -41,9 +41,11 @@ abstract class $TagModelCopyWith<$Res> {
   $Res call(
       {String name,
       String? imageUri,
-      String category,
+      CategoryModel category,
       @JsonKey(name: '_id') String? id,
       int? v});
+
+  $CategoryModelCopyWith<$Res> get category;
 }
 
 /// @nodoc
@@ -77,7 +79,7 @@ class _$TagModelCopyWithImpl<$Res, $Val extends TagModel>
       category: null == category
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
-              as String,
+              as CategoryModel,
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -87,6 +89,14 @@ class _$TagModelCopyWithImpl<$Res, $Val extends TagModel>
           : v // ignore: cast_nullable_to_non_nullable
               as int?,
     ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $CategoryModelCopyWith<$Res> get category {
+    return $CategoryModelCopyWith<$Res>(_value.category, (value) {
+      return _then(_value.copyWith(category: value) as $Val);
+    });
   }
 }
 
@@ -100,9 +110,12 @@ abstract class _$$_TagModelCopyWith<$Res> implements $TagModelCopyWith<$Res> {
   $Res call(
       {String name,
       String? imageUri,
-      String category,
+      CategoryModel category,
       @JsonKey(name: '_id') String? id,
       int? v});
+
+  @override
+  $CategoryModelCopyWith<$Res> get category;
 }
 
 /// @nodoc
@@ -134,7 +147,7 @@ class __$$_TagModelCopyWithImpl<$Res>
       category: null == category
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
-              as String,
+              as CategoryModel,
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -165,7 +178,7 @@ class _$_TagModel implements _TagModel {
   @override
   final String? imageUri;
   @override
-  final String category;
+  final CategoryModel category;
   @override
   @JsonKey(name: '_id')
   final String? id;
@@ -213,7 +226,7 @@ abstract class _TagModel implements TagModel {
   const factory _TagModel(
       {required final String name,
       final String? imageUri,
-      required final String category,
+      required final CategoryModel category,
       @JsonKey(name: '_id') final String? id,
       final int? v}) = _$_TagModel;
 
@@ -224,7 +237,7 @@ abstract class _TagModel implements TagModel {
   @override
   String? get imageUri;
   @override
-  String get category;
+  CategoryModel get category;
   @override
   @JsonKey(name: '_id')
   String? get id;

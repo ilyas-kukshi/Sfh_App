@@ -10,6 +10,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:sfh_app/models/category/category_model.dart';
 import 'package:sfh_app/models/products/product_model.dart';
+import 'package:sfh_app/models/tags/tag_model.dart';
 import 'package:sfh_app/screens/auth/login.dart';
 import 'package:sfh_app/screens/category/add_category.dart';
 import 'package:sfh_app/screens/category/manage_categories.dart';
@@ -18,6 +19,7 @@ import 'package:sfh_app/screens/dashboard/bottom_nav.dart';
 import 'package:sfh_app/screens/dashboard/dashboard_main.dart';
 import 'package:sfh_app/screens/product/add_products.dart';
 import 'package:sfh_app/screens/product/display_products_by_category.dart';
+import 'package:sfh_app/screens/product/display_products_by_tags.dart';
 import 'package:sfh_app/screens/product/edit_product.dart';
 import 'package:sfh_app/screens/product/manage_products.dart';
 import 'package:sfh_app/screens/product/story_view.dart';
@@ -52,7 +54,7 @@ final InitializationSettings initializationSettings = InitializationSettings(
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  Fluttertoast.showToast(msg: message.data.toString());
+  // Fluttertoast.showToast(msg: message.data.toString());
 
   NotificationService.handleNotificationPayload(message, navigatorKey);
 }
@@ -79,13 +81,9 @@ void main() async {
   runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatelessWidget with WidgetsBindingObserver {
   // final NavigationService navigationService;
-  const MyApp({
-    super.key,
-  });
-
-  // This widget is the root of your application.
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -94,6 +92,9 @@ class MyApp extends StatelessWidget {
         title: 'Flutter Demo',
         navigatorKey: navigatorKey,
         theme: ThemeData(
+            progressIndicatorTheme: ProgressIndicatorThemeData(
+                color: AppThemeShared.primaryColor,
+                circularTrackColor: Colors.black.withOpacity(0.4)),
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             useMaterial3: true,
             textTheme: TextTheme(
@@ -115,6 +116,15 @@ class MyApp extends StatelessWidget {
         home: const Login());
   }
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    if (state == AppLifecycleState.paused) {
+      print("background///////");
+    }
+  }
+
   Route _routing(RouteSettings settings) {
     switch (settings.name) {
       case '/bottomNav':
@@ -131,9 +141,9 @@ class MyApp extends StatelessWidget {
         return PageTransition(
             child: const ManageCategories(),
             type: PageTransitionType.leftToRight);
-            case '/manageTags':
+      case '/manageTags':
         return PageTransition(
-            child:  ManageTags(
+            child: ManageTags(
               category: settings.arguments as CategoryModel,
             ),
             type: PageTransitionType.leftToRight);
@@ -151,14 +161,16 @@ class MyApp extends StatelessWidget {
             child: ViewProduct(
               product: settings.arguments as ProductModel,
             ),
-            type: PageTransitionType.leftToRight);
+            type: PageTransitionType.scale,
+            duration: const Duration(milliseconds: 700),
+            alignment: Alignment.center);
       case '/viewStory':
         return PageTransition(
             child: StoryPage(
               data: settings.arguments as Map<String, dynamic>,
             ),
             type: PageTransitionType.scale,
-            duration: const Duration(milliseconds: 700),
+            duration: const Duration(milliseconds: 500),
             alignment: Alignment.center);
       case '/viewImages':
         return PageTransition(
@@ -171,8 +183,8 @@ class MyApp extends StatelessWidget {
         return PageTransition(
             child: Wishlist(
               phoneNumber: settings.arguments as String,
-                // imageUris: settings.arguments as List<String>,
-                ),
+              // imageUris: settings.arguments as List<String>,
+            ),
             type: PageTransitionType.scale,
             duration: const Duration(milliseconds: 700),
             alignment: Alignment.center);
@@ -186,6 +198,15 @@ class MyApp extends StatelessWidget {
               category: settings.arguments as CategoryModel,
             ),
             type: PageTransitionType.scale,
+            duration: const Duration(milliseconds: 700),
+            alignment: Alignment.center);
+      case '/displayProductsByTags':
+        return PageTransition(
+            child: DisplayProductsByTags(
+              tags: settings.arguments as List<TagModel>,
+            ),
+            type: PageTransitionType.scale,
+            duration: const Duration(milliseconds: 700),
             alignment: Alignment.center);
       case '/sellerLogin':
         return PageTransition(

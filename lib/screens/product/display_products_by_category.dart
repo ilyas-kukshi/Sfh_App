@@ -7,7 +7,7 @@ import 'package:sfh_app/models/products/product_model.dart';
 import 'package:sfh_app/models/tags/tag_model.dart';
 import 'package:sfh_app/screens/product/product_shimmer.dart';
 import 'package:sfh_app/services/admob_service.dart';
-import 'package:sfh_app/services/product_service.dart';
+import 'package:sfh_app/services/product/product_service.dart';
 import 'package:sfh_app/services/tags_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 import 'package:sfh_app/shared/product_card.dart';
@@ -172,7 +172,11 @@ class _DisplayProductsByCategoryState extends State<DisplayProductsByCategory> {
                           await getProductsByTags(selectedTags);
                         }
                       },
-                      child: const Center(child: CircularProgressIndicator()),
+                      child: Center(
+                          child: CircularProgressIndicator(
+                              // color: AppThemeShared.primaryColor,
+
+                              )),
                     )
             ],
           ),
@@ -210,10 +214,12 @@ class _DisplayProductsByCategoryState extends State<DisplayProductsByCategory> {
     List<ProductModel> newProducts = [];
     Tuple2 data = await ProductServices()
         .getByCategoryAndTag(widget.category.id!, selectedtagIds, currentPage);
-    newProducts = data.item1;
-    // print(data.item2);
-    isLastPage = data.item2;
-    products.addAll(newProducts);
+    if (data.item1.isNotEmpty) {
+      newProducts = data.item1;
+      // print(data.item2);
+      isLastPage = data.item2;
+      products.addAll(newProducts);
+    }
     isLoading = false;
     setState(() {});
     // Navigator.pop(context);

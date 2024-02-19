@@ -7,6 +7,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'dart:convert';
 
+import 'package:sfh_app/models/category/category_model.dart';
+
 part 'tag_model.freezed.dart';
 part 'tag_model.g.dart';
 
@@ -19,7 +21,7 @@ class TagModel with _$TagModel {
   const factory TagModel({
     required String name,
     String? imageUri,
-    required String category,
+    required CategoryModel category,
     @JsonKey(name: '_id') String? id,
     int? v,
   }) = _TagModel;

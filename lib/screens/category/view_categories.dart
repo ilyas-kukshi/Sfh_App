@@ -85,8 +85,11 @@ class _ViewCategoriesState extends ConsumerState<ViewCategories> {
                       //       image: DecorationImage(
                       //           image: imageProvider, fit: BoxFit.cover)),
                       // ),
-                      placeholder: (context, url) =>
-                          const CircularProgressIndicator(),
+                      placeholder: (context, url) => Center(
+                        child: CircularProgressIndicator(
+                          color: AppThemeShared.primaryColor,
+                        ),
+                      ),
                       errorWidget: (context, url, error) =>
                           const Icon(Icons.error),
                     )
