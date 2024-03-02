@@ -5,18 +5,21 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:sfh_app/models/category/category_model.dart';
 import 'package:sfh_app/models/products/product_model.dart';
 import 'package:sfh_app/models/tags/tag_model.dart';
 import 'package:sfh_app/screens/auth/login.dart';
+import 'package:sfh_app/screens/auth/otp.dart';
+import 'package:sfh_app/screens/auth/splash_screen.dart';
 import 'package:sfh_app/screens/category/add_category.dart';
 import 'package:sfh_app/screens/category/manage_categories.dart';
 import 'package:sfh_app/screens/category/manage_tags.dart';
 import 'package:sfh_app/screens/dashboard/bottom_nav.dart';
 import 'package:sfh_app/screens/dashboard/dashboard_main.dart';
+import 'package:sfh_app/screens/dashboard/new_arrivals.dart';
 import 'package:sfh_app/screens/product/add_products.dart';
 import 'package:sfh_app/screens/product/display_products_by_category.dart';
 import 'package:sfh_app/screens/product/display_products_by_tags.dart';
@@ -62,6 +65,8 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 // final NavigationService navigationService = NavigationService();
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
+final globalProviderContainer = ProviderContainer();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -78,7 +83,8 @@ void main() async {
       }
     },
   );
-  runApp(const ProviderScope(child: MyApp()));
+
+  runApp(ProviderScope(parent: globalProviderContainer, child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget with WidgetsBindingObserver {
@@ -98,22 +104,27 @@ class MyApp extends StatelessWidget with WidgetsBindingObserver {
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             useMaterial3: true,
             textTheme: TextTheme(
-              titleLarge: const TextStyle(fontFamily: 'Oswald'),
-              titleMedium: TextStyle(
-                fontFamily: 'Roboto',
-                color: AppThemeShared.primaryColor,
+              titleLarge: GoogleFonts.montserrat(
+                  textStyle: const TextStyle(
+                      color: Color(0xff0D1B2A), fontWeight: FontWeight.w500)),
+              titleMedium: GoogleFonts.roboto(
+                  textStyle: const TextStyle(
+                color: Color(0xff0D1B2A),
                 fontWeight: FontWeight.w600,
-              ),
+              )),
               //use for buttons
-              labelLarge: const TextStyle(
-                fontFamily: 'Roboto',
-                fontWeight: FontWeight.bold,
-              ),
+              labelLarge: GoogleFonts.roboto(
+                  textStyle: const TextStyle(
+                color: Color(0xff0D1B2A),
+                fontWeight: FontWeight.w600,
+              )),
               //use for hint and label texts of textformfields/dropdowns etc
-              labelMedium: const TextStyle(fontFamily: 'Roboto'),
+              labelMedium: GoogleFonts.roboto(
+                  textStyle: const TextStyle(
+                      fontFamily: 'Roboto', color: Color(0xff0D1B2A))),
             )),
         onGenerateRoute: _routing,
-        home: const Login());
+        home: const SplashScreen());
   }
 
   @override
@@ -121,12 +132,20 @@ class MyApp extends StatelessWidget with WidgetsBindingObserver {
     super.didChangeAppLifecycleState(state);
 
     if (state == AppLifecycleState.paused) {
-      print("background///////");
     }
   }
 
   Route _routing(RouteSettings settings) {
     switch (settings.name) {
+      case '/login':
+        return PageTransition(
+            child: const Login(), type: PageTransitionType.leftToRight);
+      case '/otp':
+        return PageTransition(
+            child: Otp(
+              authDetails: settings.arguments as Map<String, String>,
+            ),
+            type: PageTransitionType.leftToRight);
       case '/bottomNav':
         return PageTransition(
             child: const BottomNav(), type: PageTransitionType.leftToRight);
@@ -192,6 +211,12 @@ class MyApp extends StatelessWidget with WidgetsBindingObserver {
         return PageTransition(
             child: const ManageProducts(),
             type: PageTransitionType.leftToRight);
+      case '/newArrivals':
+        return PageTransition(
+            child: const NewArrivals(),
+            type: PageTransitionType.scale,
+            duration: const Duration(milliseconds: 700),
+            alignment: Alignment.center);
       case '/displayProductsByCategory':
         return PageTransition(
             child: DisplayProductsByCategory(

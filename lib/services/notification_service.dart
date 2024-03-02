@@ -7,9 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:sfh_app/main.dart';
 import 'package:sfh_app/models/category/category_model.dart';
-import 'package:sfh_app/models/tags/tag_model.dart';
 import 'package:sfh_app/services/category/category_services.dart';
-import 'package:sfh_app/services/tags_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 import 'package:sfh_app/shared/constants.dart';
 

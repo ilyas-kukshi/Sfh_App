@@ -7,6 +7,7 @@ import 'package:sfh_app/models/user/user_model.dart';
 import 'package:sfh_app/services/auth/auth_service.dart';
 import 'package:sfh_app/services/user_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
+import 'package:sfh_app/shared/utility.dart';
 
 class Wishlist extends ConsumerStatefulWidget {
   final String phoneNumber;
@@ -17,11 +18,22 @@ class Wishlist extends ConsumerStatefulWidget {
 }
 
 class _WishlistState extends ConsumerState<Wishlist> {
-  String? phoneNumber;
+  String? token;
+
+  @override
+  void initState() {
+    super.initState();
+    getToken();
+  }
+
+  getToken() async {
+    token = await Utility().getStringSf("token");
+    // print(phoneNumber);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(getUserByNumberProvider(widget.phoneNumber));
+    final user = ref.watch(getUserByTokenProvider(token!));
     return user.when(
       data: (user) {
         if (user != null) {
@@ -38,7 +50,8 @@ class _WishlistState extends ConsumerState<Wishlist> {
                           .map((product) => wishlistProductCard(product, user))
                           .toList(),
                     )
-                  : const Center(child: Text("You haven't added any products yet")));
+                  : const Center(
+                      child: Text("You haven't added any products yet")));
         } else {
           return const Text("Some Error");
         }
@@ -244,7 +257,7 @@ class _WishlistState extends ConsumerState<Wishlist> {
                 bool updated = await updateWishlist(product.id!, user.id!);
                 if (updated) {
                   // ignore: unused_result
-                  ref.refresh(getUserByNumberProvider(widget.phoneNumber));
+                  ref.refresh(getUserByTokenProvider(widget.phoneNumber));
                   // ignore: use_build_context_synchronously
                   Navigator.pop(context);
                 } else {

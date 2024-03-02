@@ -1,9 +1,15 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sfh_app/main.dart';
+import 'package:sfh_app/services/auth/auth_service.dart';
+import 'package:sfh_app/services/product/product_service.dart';
+import 'package:sfh_app/shared/utility.dart';
 
 class AppLifecycleService with WidgetsBindingObserver {
   // Singleton instance
   static final AppLifecycleService _instance = AppLifecycleService._internal();
-
+  String? phoneNumber;
+  String userId = '';
   factory AppLifecycleService() {
     return _instance;
   }
@@ -21,17 +27,33 @@ class AppLifecycleService with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) {
-      // App is in the background
-      print('App is in the background');
-      // Perform your background action here
       performBackgroundAction();
-    } else if (state == AppLifecycleState.resumed) {
-      // App is in the foreground
-      print('App is in the foreground');
-    }
+    } else if (state == AppLifecycleState.resumed) {}
   }
 
-  void performBackgroundAction() {
-    
+  void performBackgroundAction() async {
+    await getPhoneNumber();
+    // print(phoneNumber);
+    if (phoneNumber != null) {
+      final user =
+          globalProviderContainer.read(getUserByTokenProvider(phoneNumber!));
+      user.whenData((value) {
+        userId = value!.id!;
+      });
+    }
+    final views = globalProviderContainer.read(viewsCounterNotifierProvider);
+    if (views.isNotEmpty) {
+      bool updated = await ProductServices().updateViews(views, userId);
+      if (updated) {
+        globalProviderContainer.read(viewsCounterNotifierProvider).clear();
+      }
+    }
+
+    // print(views);
+  }
+
+  getPhoneNumber() async {
+    phoneNumber = await Utility().getPhoneNumberSF();
+    // print(phoneNumber);
   }
 }

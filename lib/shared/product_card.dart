@@ -10,6 +10,7 @@ import 'package:sfh_app/shared/utility.dart';
 
 class ProductCard extends StatefulWidget {
   final ProductModel product;
+
   const ProductCard({super.key, required this.product});
 
   @override
@@ -17,12 +18,13 @@ class ProductCard extends StatefulWidget {
 }
 
 class _ProductCardState extends State<ProductCard> {
-  String? phoneNumber;
+  String? token;
+  bool updatingWishlist = false;
 
   @override
   void initState() {
     super.initState();
-    getPhoneNumber();
+    getToken();
   }
 
   @override
@@ -115,7 +117,7 @@ class _ProductCardState extends State<ProductCard> {
                     style: Theme.of(context)
                         .textTheme
                         .labelLarge!
-                        .copyWith(fontWeight: FontWeight.bold, fontSize: 18)),
+                        .copyWith(fontWeight: FontWeight.w600, fontSize: 20)),
                 const SizedBox(width: 4),
                 Text(
                   "₹${((widget.product.discount / widget.product.price) * 100).toInt()}% OFF",
@@ -142,12 +144,16 @@ class _ProductCardState extends State<ProductCard> {
                     ? Text(
                         "Free Shipping",
                         overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                            fontWeight: FontWeight.bold, fontSize: 14),
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelLarge!
+                            .copyWith(fontSize: 14),
                       )
                     : Text("Shipping Charges",
-                        style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                            fontWeight: FontWeight.bold, fontSize: 14)),
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelLarge!
+                            .copyWith(fontSize: 14)),
               ],
             ),
             // : const Offstage(),
@@ -184,57 +190,81 @@ class _ProductCardState extends State<ProductCard> {
     );
   }
 
-  Future<String?> getPhoneNumber() async {
-    phoneNumber = await Utility().getPhoneNumberSF();
-    return phoneNumber;
+  Future<String?> getToken() async {
+    token = await Utility().getStringSf("token");
+    return token;
   }
 
   Widget favouriteIcon() {
     return FutureBuilder<String?>(
-        future: getPhoneNumber(),
+        future: getToken(),
         builder: (context, snapshot) {
           return Consumer(
             builder: (context, ref, child) {
-              if (phoneNumber != null) {
-                final user = ref.watch(getUserByNumberProvider(phoneNumber!));
+              if (token != null) {
+                final user = ref.watch(getUserByTokenProvider(token!));
                 return user.when(
                   data: (data) {
                     if (data == null) {
-                      return GestureDetector(
-                        onTap: () {},
-                        child: const Icon(Icons.favorite_border_outlined),
-                      );
+                      return const Offstage();
                     } else if (data.wishlist == null ||
                         !data.wishlist!.contains(widget.product)) {
                       return GestureDetector(
                         onTap: () async {
+                          setState(() {
+                            updatingWishlist = true;
+                          });
                           bool updated = await updateWishlist(
                               widget.product.id!, data.id!);
                           if (updated) {
                             // ignore: unused_result
-                            ref.refresh(getUserByNumberProvider(phoneNumber!));
+                            final update = ref
+                                .refresh(getUserByTokenProvider(token!).future);
+
+                            update.then((value) => setState(() {
+                                  updatingWishlist = false;
+                                }));
                           } else {
                             Fluttertoast.showToast(msg: "Wishlist not updated");
                           }
                         },
-                        child: const Icon(Icons.favorite_border_outlined),
+                        child: updatingWishlist
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator())
+                            : const Icon(Icons.favorite_border_outlined),
                       );
                     } else {
                       return GestureDetector(
                         onTap: () async {
+                          setState(() {
+                            updatingWishlist = true;
+                          });
                           bool updated = await updateWishlist(
                               widget.product.id!, data.id!);
                           if (updated) {
                             // ignore: unused_result
-                            ref.refresh(getUserByNumberProvider(phoneNumber!));
+                            final update = ref
+                                .refresh(getUserByTokenProvider(token!).future);
+                            update.then((value) => setState(() {
+                                  updatingWishlist = false;
+                                }));
                           } else {
                             Fluttertoast.showToast(msg: "Wishlist not updated");
                           }
                         },
-                        child: const Icon(
-                          Icons.favorite,
-                          color: Colors.red,
-                        ),
+                        child: updatingWishlist
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.transparent,
+                                ))
+                            : const Icon(
+                                Icons.favorite,
+                                color: Colors.red,
+                              ),
                       );
                     }
                   },

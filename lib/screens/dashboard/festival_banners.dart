@@ -17,20 +17,21 @@ class _FestivalBannersState extends State<FestivalBanners> {
       onTap: () => Navigator.pushNamed(context, '/displayProductsByTags',
           arguments: widget.festival.tags),
       child: Container(
-        color: Colors.pink.shade100,
+        color: const Color(0xffFCAB64),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.only(left: 10.0, right: 8, top: 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(widget.festival.title,
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelLarge!
-                          .copyWith(fontSize: 22, fontWeight: FontWeight.w500)),
+                      style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w500,
+                            color: const Color(0xff0D1B2A),
+                          )),
                   const CircleAvatar(
                       radius: 15,
                       backgroundColor: Colors.white,
@@ -43,14 +44,14 @@ class _FestivalBannersState extends State<FestivalBanners> {
             ),
             const SizedBox(height: 4),
             SizedBox(
-              height: 460,
+              height: 420,
               child: GridView(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   padding: const EdgeInsets.all(0),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      mainAxisExtent: 220,
+                      mainAxisExtent: 200,
                       mainAxisSpacing: 0,
                       crossAxisSpacing: 0),
                   children: widget.festival.tags != null
@@ -59,26 +60,29 @@ class _FestivalBannersState extends State<FestivalBanners> {
                                 onTap: () => Navigator.pushNamed(
                                     context, '/displayProductsByTags',
                                     arguments: [tag]),
-                                child: Card(
-                                  elevation: 3,
-                                  color: Colors.white,
-                                  child: Column(
-                                    children: [
-                                      CachedNetworkImage(
-                                        imageUrl: tag.imageUri!,
-                                        height: 170,
-                                        alignment: Alignment.center,
-                                        fit: BoxFit.fill,
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        tag.name,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleLarge!
-                                            .copyWith(fontSize: 20),
-                                      ),
-                                    ],
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Card(
+                                    elevation: 3,
+                                    color: Colors.white,
+                                    child: Column(
+                                      children: [
+                                        CachedNetworkImage(
+                                          imageUrl: tag.imageUri!,
+                                          height: 130,
+                                          alignment: Alignment.center,
+                                          fit: BoxFit.fill,
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          tag.name,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleLarge!
+                                              .copyWith(fontSize: 18),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ))

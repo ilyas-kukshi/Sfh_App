@@ -5,6 +5,7 @@ import 'package:sfh_app/services/auth/auth_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 import 'package:sfh_app/shared/constants.dart';
 import 'package:sfh_app/shared/utility.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Settings extends ConsumerStatefulWidget {
@@ -15,30 +16,45 @@ class Settings extends ConsumerStatefulWidget {
 }
 
 class _SettingsState extends ConsumerState<Settings> {
-  String? phoneNumber;
+  String? token;
   UserModel? userProfile;
 
   @override
   void initState() {
     super.initState();
-    getPhoneNumber();
+    getToken();
+  }
+
+  getToken() async {
+    token = await Utility().getStringSf("token");
+  }
+
+  logoutUser() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.clear();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppThemeShared.appBar(
-          title: "Settings", context: context, backButton: false),
+          title: "Settings",
+          context: context,
+          backButton: false,
+          textStyle: Theme.of(context)
+              .textTheme
+              .titleLarge!
+              .copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
       body: FutureBuilder(
-          future: getPhoneNumber(),
+          future: getToken(),
           builder: (context, snapshot) {
-            if (phoneNumber != null) {
-              final user = ref.watch(getUserByNumberProvider(phoneNumber!));
+            if (token != null) {
+              final user = ref.watch(getUserByTokenProvider(token!));
               return user.when(
                 data: (data) {
                   if (data != null) {
                     userProfile = data;
-                    return functions(data.role == Constants.user, true);
+                    return functions(data.role == Constants.user, true, true);
                   } else {
                     return const Text(
                         "Could not find a user on a given credentials, Please Login again.");
@@ -48,31 +64,40 @@ class _SettingsState extends ConsumerState<Settings> {
                 loading: () => const CircularProgressIndicator(),
               );
             } else {
-              return functions(true, false);
+              return functions(true, false, false);
             }
           }),
     );
   }
 
-  Widget functions(bool sellerLogin, wishlist) {
+  Widget functions(bool sellerLogin, wishlist, bool logout) {
     return SingleChildScrollView(
       child: Column(
         children: [
-          sellerLogin
-              ? tile(Icons.person, "Switch to Seller Account",
-                  () => Navigator.pushNamed(context, '/sellerLogin'))
-              : const Offstage(),
-          divider(),
-          tile(Icons.forum, "Feedback & Suggestions",
-              () => launchUrl(Uri.parse(Constants.feedbackUrl))),
-          divider(),
           wishlist
               ? tile(
                   Icons.favorite_outline_outlined,
                   "Wishlist",
                   () => Navigator.pushNamed(context, '/wishlist',
-                      arguments: phoneNumber))
+                      arguments: token))
               : const Offstage(),
+          divider(),
+          tile(Icons.forum, "Feedback & Suggestions",
+              () => launchUrl(Uri.parse(Constants.feedbackUrl))),
+          divider(),
+          sellerLogin
+              ? tile(Icons.person, "Switch to Seller Account",
+                  () => Navigator.pushNamed(context, '/sellerLogin'))
+              : const Offstage(),
+          divider(),
+          logout
+              ? tile(Icons.exit_to_app, "Logout", () {
+                  logoutUser();
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, '/login', (route) => false);
+                })
+              : const Offstage(),
+          divider(),
         ],
       ),
     );
@@ -92,9 +117,5 @@ class _SettingsState extends ConsumerState<Settings> {
       height: 0,
       thickness: 1.5,
     );
-  }
-
-  getPhoneNumber() async {
-    phoneNumber = await Utility().getPhoneNumberSF();
   }
 }

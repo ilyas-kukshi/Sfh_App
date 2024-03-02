@@ -28,9 +28,11 @@ class _ProductDetailsState extends ConsumerState<ViewProduct> {
   double variantScrollPosition = 0;
   double initialScrollOffset = 0;
 
+  bool updatingWishlist = false;
+
   List<ProductModel> similarProducts = [];
 
-  String? phoneNumber;
+  String? token;
 
   @override
   void initState() {
@@ -60,25 +62,26 @@ class _ProductDetailsState extends ConsumerState<ViewProduct> {
                     context, '/displayProductsByCategory',
                     arguments: widget.product.category),
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 4.0),
+                  padding: const EdgeInsets.only(left: 8.0),
                   child: Text(
                     widget.product.category.name,
                     style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                          fontSize: 18,
-                          color: AppThemeShared.primaryColor,
-                        ),
+                        fontSize: 18,
+                        color: AppThemeShared.primaryColor,
+                        decoration: TextDecoration.underline,
+                        decorationColor: AppThemeShared.primaryColor),
                   ),
                 ),
               ),
               const SizedBox(height: 2),
               Padding(
-                padding: const EdgeInsets.only(left: 4.0),
+                padding: const EdgeInsets.only(left: 8.0),
                 child: Text(
                   widget.product.name,
                   style: Theme.of(context)
                       .textTheme
                       .labelMedium!
-                      .copyWith(fontSize: 14, color: Colors.grey.shade600),
+                      .copyWith(fontSize: 16, color: Colors.grey.shade600),
                 ),
               ),
               const SizedBox(height: 4),
@@ -335,47 +338,48 @@ class _ProductDetailsState extends ConsumerState<ViewProduct> {
                   ),
                 ],
               ),
+              const SizedBox(height: 10),
               // const SizedBox(height: 10),
-              const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text(
-                  "Similar Products",
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                ),
-              ),
-              similarProducts.isNotEmpty
-                  ? GridView.builder(
-                      itemCount: similarProducts.length,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      padding: EdgeInsets.only(
-                          left: MediaQuery.of(context).size.width * 0.01),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              mainAxisExtent: 300,
-                              mainAxisSpacing: 0,
-                              crossAxisSpacing: 0),
-                      itemBuilder: (context, index) {
-                        return ProductCard(product: similarProducts[index]);
-                      },
-                    )
-                  : GridView.builder(
-                      itemCount: 20,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      padding: EdgeInsets.only(
-                          left: MediaQuery.of(context).size.width * 0.01),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              mainAxisExtent: 350,
-                              mainAxisSpacing: 0,
-                              crossAxisSpacing: 0),
-                      itemBuilder: (context, index) {
-                        return ProductShimmer().productShimmerVertical(context);
-                      },
-                    )
+              // const Padding(
+              //   padding: EdgeInsets.all(8.0),
+              //   child: Text(
+              //     "Similar Products",
+              //     style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              //   ),
+              // ),
+              // similarProducts.isNotEmpty
+              //     ? GridView.builder(
+              //         itemCount: similarProducts.length,
+              //         shrinkWrap: true,
+              //         physics: const NeverScrollableScrollPhysics(),
+              //         padding: EdgeInsets.only(
+              //             left: MediaQuery.of(context).size.width * 0.01),
+              //         gridDelegate:
+              //             const SliverGridDelegateWithFixedCrossAxisCount(
+              //                 crossAxisCount: 2,
+              //                 mainAxisExtent: 301,
+              //                 mainAxisSpacing: 0,
+              //                 crossAxisSpacing: 0),
+              //         itemBuilder: (context, index) {
+              //           return ProductCard(product: similarProducts[index]);
+              //         },
+              //       )
+              //     : GridView.builder(
+              //         itemCount: 20,
+              //         shrinkWrap: true,
+              //         physics: const NeverScrollableScrollPhysics(),
+              //         padding: EdgeInsets.only(
+              //             left: MediaQuery.of(context).size.width * 0.01),
+              //         gridDelegate:
+              //             const SliverGridDelegateWithFixedCrossAxisCount(
+              //                 crossAxisCount: 2,
+              //                 mainAxisExtent: 350,
+              //                 mainAxisSpacing: 0,
+              //                 crossAxisSpacing: 0),
+              //         itemBuilder: (context, index) {
+              //           return ProductShimmer().productShimmerVertical(context);
+              //         },
+              //       )
             ],
           ),
         ),
@@ -384,67 +388,81 @@ class _ProductDetailsState extends ConsumerState<ViewProduct> {
   }
 
   getProducts(String categoryId) async {
-    similarProducts.clear();
-    similarProducts = await ProductServices().getByCategory(categoryId);
-    similarProducts.remove(widget.product);
-    // print("Products");
-    // print(products);
-    setState(() {});
-    ref.read(viewsCounterNotifierProvider.notifier).add(widget.product.id!);
+    // similarProducts.clear();
+    // similarProducts = await ProductServices().getByCategory(categoryId);
+    // similarProducts.remove(widget.product);
+    // // print("Products");
+    // // print(products);
+    // setState(() {});
+    // ref.read(viewsCounterNotifierProvider.notifier).add(widget.product.id!);
   }
 
   Widget favouriteIcon() {
     return FutureBuilder(
-        future: getPhoneNumber(),
+        future: getToken(),
         builder: (context, snapshot) {
           return Consumer(
             builder: (context, ref, child) {
-              if (phoneNumber != null) {
-                final user = ref.watch(getUserByNumberProvider(phoneNumber!));
+              if (token != null) {
+                final user = ref.watch(getUserByTokenProvider(token!));
                 return user.when(
                   data: (data) {
                     if (data == null) {
-                      return GestureDetector(
-                        onTap: () {},
-                        child: const CircleAvatar(
-                            backgroundColor: Colors.white,
-                            child: Icon(Icons.favorite_border_outlined)),
-                      );
+                      return const Offstage();
                     } else if (data.wishlist == null ||
                         !data.wishlist!.contains(widget.product)) {
                       return GestureDetector(
                         onTap: () async {
+                          setState(() {
+                            updatingWishlist = true;
+                          });
                           bool updated = await updateWishlist(
                               widget.product.id!, data.id!);
                           if (updated) {
-                            // ignore: unused_result
-                            ref.refresh(getUserByNumberProvider(phoneNumber!));
+                            final update = ref
+                                .refresh(getUserByTokenProvider(token!).future);
+                            update.then((value) => {updatingWishlist = false});
                           } else {
                             Fluttertoast.showToast(msg: "Wishlist not updated");
                           }
                         },
-                        child: const CircleAvatar(
+                        child: CircleAvatar(
                             backgroundColor: Colors.white,
-                            child: Icon(Icons.favorite_border_outlined)),
+                            child: updatingWishlist
+                                ? const CircularProgressIndicator()
+                                : const Icon(Icons.favorite_border_outlined)),
                       );
                     } else {
                       return GestureDetector(
                         onTap: () async {
+                          setState(() {
+                            updatingWishlist = true;
+                          });
                           bool updated = await updateWishlist(
                               widget.product.id!, data.id!);
                           if (updated) {
-                            // ignore: unused_result
-                            ref.refresh(getUserByNumberProvider(phoneNumber!));
+                            final update = ref
+                                .refresh(getUserByTokenProvider(token!).future);
+                            update.then((value) => setState(() {
+                                  updatingWishlist = false;
+                                }));
                           } else {
                             Fluttertoast.showToast(msg: "Wishlist not updated");
                           }
                         },
-                        child: const CircleAvatar(
+                        child: CircleAvatar(
                           backgroundColor: Colors.white,
-                          child: Icon(
-                            Icons.favorite,
-                            color: Colors.red,
-                          ),
+                          child: updatingWishlist
+                              ? const Padding(
+                                  padding: EdgeInsets.all(12.0),
+                                  child: CircularProgressIndicator(
+                                    color: Colors.grey,
+                                  ),
+                                )
+                              : const Icon(
+                                  Icons.favorite,
+                                  color: Colors.red,
+                                ),
                         ),
                       );
                     }
@@ -460,9 +478,9 @@ class _ProductDetailsState extends ConsumerState<ViewProduct> {
         });
   }
 
-  Future<String?> getPhoneNumber() async {
-    phoneNumber = await Utility().getPhoneNumberSF();
-    return phoneNumber;
+  Future<String?> getToken() async {
+    token = await Utility().getStringSf("token");
+    return token;
   }
 
   Future<bool> updateWishlist(String productId, String userId) async {

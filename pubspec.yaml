@@ -46,8 +46,10 @@ dependencies:
   firebase_messaging: ^14.7.8
   flutter_local_notifications: ^16.3.2
 
+  sms_autofill: ^2.3.1
 
   page_transition: ^2.0.9
+  google_fonts: ^6.1.0
 
   image_picker: ^1.0.2
   cached_network_image: ^3.2.3
@@ -69,6 +71,7 @@ dependencies:
   tuple: ^2.0.2
 
   app_links: ^3.5.0
+  phonepe_payment_sdk: ^2.0.1
 
   
 
@@ -100,7 +103,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   # assets:
-  #   - images/a_dot_burr.jpeg
+  #   - assets/images/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -119,7 +122,12 @@ flutter:
       fonts:
         - asset: assets/fonts/Oswald-Medium.ttf
         # - asset: fonts/Schyler-Italic.ttf
-          
+    - family: Montserrat
+      fonts:
+        - asset: assets/fonts/Montserrat.ttf 
+        # - asset: assets/fonts/Montserrat-Bold.ttf
+          weight: 900
+    
     - family: Roboto
       fonts:
         - asset: assets/fonts/Roboto-Bold.ttf

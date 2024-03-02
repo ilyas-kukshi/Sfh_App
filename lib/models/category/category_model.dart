@@ -20,6 +20,7 @@ class CategoryModel with _$CategoryModel {
   const factory CategoryModel({
     required String name,
     String? imageUri,
+    bool? popular,
     List<dynamic>? subCategories,
     // List<dynamic>? tags,
     List<dynamic>? products,

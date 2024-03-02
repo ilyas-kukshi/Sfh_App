@@ -29,7 +29,7 @@ class AddProducts extends ConsumerStatefulWidget {
 }
 
 class _AddProductsState extends ConsumerState<AddProducts> {
-  String? phoneNumber;
+  String? token;
 
   List<TagModel> tags = [];
 
@@ -53,7 +53,24 @@ class _AddProductsState extends ConsumerState<AddProducts> {
   void initState() {
     //
     super.initState();
-    getPhoneNumber();
+    getToken();
+  }
+
+  getToken() async {
+    token = await Utility().getStringSf("token");
+    // print(phoneNumber);
+  }
+
+  String getDiscount() {
+    double discountPercent =
+        (int.parse(discount.text) / int.parse(price.text)) * 100;
+    //to remove decimal point toInt is used
+    return "${discountPercent.toInt()}";
+  }
+
+  String getPrice() {
+    int finalPrice = int.parse(price.text) - int.parse(discount.text);
+    return "$finalPrice";
   }
 
   @override
@@ -290,8 +307,7 @@ class _AddProductsState extends ConsumerState<AddProducts> {
           onTap: () {
             final valid = key.currentState!.validate();
             if (valid && croppedFiles.isNotEmpty && selectedCategory != null) {
-              final userProfile =
-                  ref.watch(getUserByNumberProvider(phoneNumber!));
+              final userProfile = ref.watch(getUserByTokenProvider(token!));
 
               DialogShared.loadingDialog(context, 'Adding Product');
               addProduct(userProfile.value!);
@@ -361,7 +377,6 @@ class _AddProductsState extends ConsumerState<AddProducts> {
                 backgroundColor: Colors.transparent),
             IOSUiSettings(
               title: 'Cropper',
-              
             ),
           ],
         );
@@ -371,11 +386,6 @@ class _AddProductsState extends ConsumerState<AddProducts> {
       }
     }
     setState(() {});
-  }
-
-  getPhoneNumber() async {
-    phoneNumber = await Utility().getPhoneNumberSF();
-    // print(phoneNumber);
   }
 
   Widget multipleColorsSection() {
@@ -440,17 +450,5 @@ class _AddProductsState extends ConsumerState<AddProducts> {
         ),
       ),
     );
-  }
-
-  String getDiscount() {
-    double discountPercent =
-        (int.parse(discount.text) / int.parse(price.text)) * 100;
-    //to remove decimal point toInt is used
-    return "${discountPercent.toInt()}";
-  }
-
-  String getPrice() {
-    int finalPrice = int.parse(price.text) - int.parse(discount.text);
-    return "$finalPrice";
   }
 }

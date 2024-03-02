@@ -8,8 +8,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:sfh_app/models/category/category_model.dart';
 import 'package:sfh_app/services/category/category_services.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
-import 'package:sfh_app/shared/carousel.dart';
-import 'package:share_plus/share_plus.dart';
 
 class ManageCategories extends StatefulWidget {
   const ManageCategories({super.key});
@@ -134,7 +132,7 @@ class _ManageCategoriesState extends State<ManageCategories> {
                                       file = null;
                                       Navigator.pop(context);
                                     },
-                                    child: Icon(Icons.close)),
+                                    child: const Icon(Icons.close)),
                               ),
                             ),
                           ),

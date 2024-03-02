@@ -3,6 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:sfh_app/services/auth/auth_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 import 'package:sfh_app/shared/utility.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -33,7 +36,11 @@ class _LoginState extends ConsumerState<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppThemeShared.appBar(
-          title: "Login", context: context, backButton: false),
+          title: "Login",
+          context: context,
+          backButton: false,
+          textStyle: GoogleFonts.montserrat(
+              color: Colors.white, fontWeight: FontWeight.bold)),
       body: Center(
         child: SizedBox(
           width: MediaQuery.of(context).size.width * 0.9,
@@ -44,12 +51,12 @@ class _LoginState extends ConsumerState<Login> {
               children: [
                 // const SizedBox(height: kToolbarHeight + 20),
                 const SizedBox(height: 20),
-                Text("Welcome to Sakina Fashion House",
-                    // textAlign: TextAlign.left,
+                Text("Welcome to\n Sakina Fashion House",
+                    // textAlign: TextAlign.center,
                     style: Theme.of(context)
                         .textTheme
                         .titleLarge!
-                        .copyWith(fontSize: 26)),
+                        .copyWith(fontSize: 26, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 20),
                 Text(
                   "Log in for best experience",
@@ -67,6 +74,7 @@ class _LoginState extends ConsumerState<Login> {
                   validator: Utility.phoneNumberValidator,
                   keyboardType: TextInputType.number,
                   inputFormatters: [LengthLimitingTextInputFormatter(10)],
+                  
                   onChanged: (value) {
                     if (formkey.currentState!.validate()) {
                       setState(() {
@@ -94,24 +102,29 @@ class _LoginState extends ConsumerState<Login> {
                       fontSize: 18,
                       fontWeight: FontWeight.bold),
                   onTap: () async {
-                    // if(phoneNumbe)
-                    // final user = ref.read(
-                    //     getUserByNumberProvider("91${phoneNumber.text}")
-                    //         .future);
-                    // user.then((value) {
-                    //   if (value != null) {
-                    //     Navigator.pushNamed(context, '/bottomNav');
-                    //   }
-                    // });
-                    // user.when(
-                    //   data: (data) {
-                    //     if (data != null) {
-                    //       Navigator.pushNamed(context, '/dashboardMain');
-                    //     }
-                    //   },
-                    //   error: (error, stackTrace) => const Offstage(),
-                    //   loading: () => const Offstage(),
-                    // );
+                    final valid = formkey.currentState!.validate();
+                    if (valid) {
+                      final String? otp =
+                          await AuthService().getOtp(phoneNumber.text);
+
+                      if (otp != null) {
+                        Navigator.pushNamed(context, '/otp', arguments: {
+                          "phoneNumber": phoneNumber.text,
+                          "otp": otp
+                        });
+                      } else {
+                        Fluttertoast.showToast(msg: "Failed");
+                      }
+                      // final user = ref.read(
+                      //     getUserByNumberProvider("91${phoneNumber.text}")
+                      //         .future);
+                      // user.whenComplete(() async {
+                      //   await Utility().setStringSF(
+                      //       "phoneNumber", "91${phoneNumber.text}");
+
+                      //   Navigator.pushNamed(context, '/bottomNav');
+                      // });
+                    }
                   },
                 ),
                 const SizedBox(height: 20),

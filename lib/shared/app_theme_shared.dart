@@ -6,6 +6,8 @@ class AppThemeShared {
   static Color secondaryColor = const Color(0xff62B6B7);
   static Color tertiartyColor = const Color(0xff97DECE);
 
+  static Color textColor = const Color(0xff0D1B2A);
+
   static appBar(
       {required String title,
       required BuildContext context,
@@ -19,7 +21,7 @@ class AppThemeShared {
       Color textColor = Colors.white,
       TextStyle textStyle = const TextStyle(
           fontSize: 18,
-          fontFamily: 'Roboto',
+          fontFamily: 'Montserrat',
           fontWeight: FontWeight.bold,
           color: Colors.white),
       FontWeight fontWeight = FontWeight.w600}) {
@@ -49,7 +51,9 @@ class AppThemeShared {
   static sharedButton({
     required BuildContext context,
     double height = 60,
-    required double width,
+    bool percent = false,
+    double widthPercent = 0.9,
+    double width = 300,
     Color color = const Color(0xff62B6B7),
     required String buttonText,
     required dynamic Function()? onTap,
@@ -64,7 +68,11 @@ class AppThemeShared {
   }) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-          fixedSize: Size(width, height),
+          fixedSize: Size(
+              percent
+                  ? MediaQuery.of(context).size.width * widthPercent
+                  : width,
+              height),
           backgroundColor: color,
           elevation: elevation,
           shape: RoundedRectangleBorder(
@@ -152,7 +160,7 @@ class AppThemeShared {
         onFieldSubmitted: onFieldSubmitted,
         onTap: onTap,
         inputFormatters: inputFormatters,
-        style: Theme.of(context).textTheme.labelMedium!,
+        style: Theme.of(context).textTheme.labelMedium!.copyWith(fontSize: 16),
         decoration: InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.always,
           contentPadding: contentPadding,

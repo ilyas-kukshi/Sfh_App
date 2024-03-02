@@ -77,6 +77,7 @@ class _DisplayProductsByCategoryState extends State<DisplayProductsByCategory> {
                           // spacing: 0,
                           // crossAxisAlignment: WrapCrossAlignment.start,
                           // alignment: WrapAlignment.start,
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
                           controller: tagScroller,
                           children: tags
                               .map((e) => TagSelection(
@@ -138,7 +139,7 @@ class _DisplayProductsByCategoryState extends State<DisplayProductsByCategory> {
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
-                              mainAxisExtent: 300,
+                              mainAxisExtent: 301,
                               mainAxisSpacing: 0,
                               crossAxisSpacing: 0),
                       itemBuilder: (context, index) {
@@ -172,11 +173,7 @@ class _DisplayProductsByCategoryState extends State<DisplayProductsByCategory> {
                           await getProductsByTags(selectedTags);
                         }
                       },
-                      child: Center(
-                          child: CircularProgressIndicator(
-                              // color: AppThemeShared.primaryColor,
-
-                              )),
+                      child: const Center(child: CircularProgressIndicator()),
                     )
             ],
           ),

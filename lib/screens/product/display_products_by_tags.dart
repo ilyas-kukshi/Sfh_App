@@ -46,7 +46,7 @@ class _DisplayProductsByTagsState extends State<DisplayProductsByTags> {
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
-                            mainAxisExtent: 300,
+                            mainAxisExtent: 301,
                             mainAxisSpacing: 0,
                             crossAxisSpacing: 0),
                     itemBuilder: (context, index) {

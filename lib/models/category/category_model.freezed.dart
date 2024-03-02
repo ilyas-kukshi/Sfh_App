@@ -22,6 +22,7 @@ CategoryModel _$CategoryModelFromJson(Map<String, dynamic> json) {
 mixin _$CategoryModel {
   String get name => throw _privateConstructorUsedError;
   String? get imageUri => throw _privateConstructorUsedError;
+  bool? get popular => throw _privateConstructorUsedError;
   List<dynamic>? get subCategories =>
       throw _privateConstructorUsedError; // List<dynamic>? tags,
   List<dynamic>? get products => throw _privateConstructorUsedError;
@@ -44,6 +45,7 @@ abstract class $CategoryModelCopyWith<$Res> {
   $Res call(
       {String name,
       String? imageUri,
+      bool? popular,
       List<dynamic>? subCategories,
       List<dynamic>? products,
       @JsonKey(name: '_id') String? id,
@@ -65,6 +67,7 @@ class _$CategoryModelCopyWithImpl<$Res, $Val extends CategoryModel>
   $Res call({
     Object? name = null,
     Object? imageUri = freezed,
+    Object? popular = freezed,
     Object? subCategories = freezed,
     Object? products = freezed,
     Object? id = freezed,
@@ -79,6 +82,10 @@ class _$CategoryModelCopyWithImpl<$Res, $Val extends CategoryModel>
           ? _value.imageUri
           : imageUri // ignore: cast_nullable_to_non_nullable
               as String?,
+      popular: freezed == popular
+          ? _value.popular
+          : popular // ignore: cast_nullable_to_non_nullable
+              as bool?,
       subCategories: freezed == subCategories
           ? _value.subCategories
           : subCategories // ignore: cast_nullable_to_non_nullable
@@ -110,6 +117,7 @@ abstract class _$$_CategoryModelCopyWith<$Res>
   $Res call(
       {String name,
       String? imageUri,
+      bool? popular,
       List<dynamic>? subCategories,
       List<dynamic>? products,
       @JsonKey(name: '_id') String? id,
@@ -129,6 +137,7 @@ class __$$_CategoryModelCopyWithImpl<$Res>
   $Res call({
     Object? name = null,
     Object? imageUri = freezed,
+    Object? popular = freezed,
     Object? subCategories = freezed,
     Object? products = freezed,
     Object? id = freezed,
@@ -143,6 +152,10 @@ class __$$_CategoryModelCopyWithImpl<$Res>
           ? _value.imageUri
           : imageUri // ignore: cast_nullable_to_non_nullable
               as String?,
+      popular: freezed == popular
+          ? _value.popular
+          : popular // ignore: cast_nullable_to_non_nullable
+              as bool?,
       subCategories: freezed == subCategories
           ? _value._subCategories
           : subCategories // ignore: cast_nullable_to_non_nullable
@@ -169,6 +182,7 @@ class _$_CategoryModel implements _CategoryModel {
   const _$_CategoryModel(
       {required this.name,
       this.imageUri,
+      this.popular,
       final List<dynamic>? subCategories,
       final List<dynamic>? products,
       @JsonKey(name: '_id') this.id,
@@ -183,6 +197,8 @@ class _$_CategoryModel implements _CategoryModel {
   final String name;
   @override
   final String? imageUri;
+  @override
+  final bool? popular;
   final List<dynamic>? _subCategories;
   @override
   List<dynamic>? get subCategories {
@@ -213,7 +229,7 @@ class _$_CategoryModel implements _CategoryModel {
 
   @override
   String toString() {
-    return 'CategoryModel(name: $name, imageUri: $imageUri, subCategories: $subCategories, products: $products, id: $id, v: $v)';
+    return 'CategoryModel(name: $name, imageUri: $imageUri, popular: $popular, subCategories: $subCategories, products: $products, id: $id, v: $v)';
   }
 
   @override
@@ -224,6 +240,7 @@ class _$_CategoryModel implements _CategoryModel {
             (identical(other.name, name) || other.name == name) &&
             (identical(other.imageUri, imageUri) ||
                 other.imageUri == imageUri) &&
+            (identical(other.popular, popular) || other.popular == popular) &&
             const DeepCollectionEquality()
                 .equals(other._subCategories, _subCategories) &&
             const DeepCollectionEquality().equals(other._products, _products) &&
@@ -237,6 +254,7 @@ class _$_CategoryModel implements _CategoryModel {
       runtimeType,
       name,
       imageUri,
+      popular,
       const DeepCollectionEquality().hash(_subCategories),
       const DeepCollectionEquality().hash(_products),
       id,
@@ -260,6 +278,7 @@ abstract class _CategoryModel implements CategoryModel {
   const factory _CategoryModel(
       {required final String name,
       final String? imageUri,
+      final bool? popular,
       final List<dynamic>? subCategories,
       final List<dynamic>? products,
       @JsonKey(name: '_id') final String? id,
@@ -272,6 +291,8 @@ abstract class _CategoryModel implements CategoryModel {
   String get name;
   @override
   String? get imageUri;
+  @override
+  bool? get popular;
   @override
   List<dynamic>? get subCategories;
   @override // List<dynamic>? tags,

@@ -154,32 +154,32 @@ class _SignInProviderElement extends AutoDisposeFutureProviderElement<bool>
   AuthModel get auth => (origin as SignInProvider).auth;
 }
 
-String _$getUserByNumberHash() => r'5fcc3a2126db048835e80a8eaa1ba653c2c8fce6';
+String _$getUserByTokenHash() => r'a7994ffd38e47b8276d0c9d5d85fc8a0c9a1dcdd';
 
-/// See also [getUserByNumber].
-@ProviderFor(getUserByNumber)
-const getUserByNumberProvider = GetUserByNumberFamily();
+/// See also [getUserByToken].
+@ProviderFor(getUserByToken)
+const getUserByTokenProvider = GetUserByTokenFamily();
 
-/// See also [getUserByNumber].
-class GetUserByNumberFamily extends Family<AsyncValue<UserModel?>> {
-  /// See also [getUserByNumber].
-  const GetUserByNumberFamily();
+/// See also [getUserByToken].
+class GetUserByTokenFamily extends Family<AsyncValue<UserModel?>> {
+  /// See also [getUserByToken].
+  const GetUserByTokenFamily();
 
-  /// See also [getUserByNumber].
-  GetUserByNumberProvider call(
-    String phoneNumber,
+  /// See also [getUserByToken].
+  GetUserByTokenProvider call(
+    String token,
   ) {
-    return GetUserByNumberProvider(
-      phoneNumber,
+    return GetUserByTokenProvider(
+      token,
     );
   }
 
   @override
-  GetUserByNumberProvider getProviderOverride(
-    covariant GetUserByNumberProvider provider,
+  GetUserByTokenProvider getProviderOverride(
+    covariant GetUserByTokenProvider provider,
   ) {
     return call(
-      provider.phoneNumber,
+      provider.token,
     );
   }
 
@@ -195,92 +195,92 @@ class GetUserByNumberFamily extends Family<AsyncValue<UserModel?>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'getUserByNumberProvider';
+  String? get name => r'getUserByTokenProvider';
 }
 
-/// See also [getUserByNumber].
-class GetUserByNumberProvider extends AutoDisposeFutureProvider<UserModel?> {
-  /// See also [getUserByNumber].
-  GetUserByNumberProvider(
-    String phoneNumber,
+/// See also [getUserByToken].
+class GetUserByTokenProvider extends AutoDisposeFutureProvider<UserModel?> {
+  /// See also [getUserByToken].
+  GetUserByTokenProvider(
+    String token,
   ) : this._internal(
-          (ref) => getUserByNumber(
-            ref as GetUserByNumberRef,
-            phoneNumber,
+          (ref) => getUserByToken(
+            ref as GetUserByTokenRef,
+            token,
           ),
-          from: getUserByNumberProvider,
-          name: r'getUserByNumberProvider',
+          from: getUserByTokenProvider,
+          name: r'getUserByTokenProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$getUserByNumberHash,
-          dependencies: GetUserByNumberFamily._dependencies,
+                  : _$getUserByTokenHash,
+          dependencies: GetUserByTokenFamily._dependencies,
           allTransitiveDependencies:
-              GetUserByNumberFamily._allTransitiveDependencies,
-          phoneNumber: phoneNumber,
+              GetUserByTokenFamily._allTransitiveDependencies,
+          token: token,
         );
 
-  GetUserByNumberProvider._internal(
+  GetUserByTokenProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.phoneNumber,
+    required this.token,
   }) : super.internal();
 
-  final String phoneNumber;
+  final String token;
 
   @override
   Override overrideWith(
-    FutureOr<UserModel?> Function(GetUserByNumberRef provider) create,
+    FutureOr<UserModel?> Function(GetUserByTokenRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
-      override: GetUserByNumberProvider._internal(
-        (ref) => create(ref as GetUserByNumberRef),
+      override: GetUserByTokenProvider._internal(
+        (ref) => create(ref as GetUserByTokenRef),
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        phoneNumber: phoneNumber,
+        token: token,
       ),
     );
   }
 
   @override
   AutoDisposeFutureProviderElement<UserModel?> createElement() {
-    return _GetUserByNumberProviderElement(this);
+    return _GetUserByTokenProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is GetUserByNumberProvider && other.phoneNumber == phoneNumber;
+    return other is GetUserByTokenProvider && other.token == token;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, phoneNumber.hashCode);
+    hash = _SystemHash.combine(hash, token.hashCode);
 
     return _SystemHash.finish(hash);
   }
 }
 
-mixin GetUserByNumberRef on AutoDisposeFutureProviderRef<UserModel?> {
-  /// The parameter `phoneNumber` of this provider.
-  String get phoneNumber;
+mixin GetUserByTokenRef on AutoDisposeFutureProviderRef<UserModel?> {
+  /// The parameter `token` of this provider.
+  String get token;
 }
 
-class _GetUserByNumberProviderElement
+class _GetUserByTokenProviderElement
     extends AutoDisposeFutureProviderElement<UserModel?>
-    with GetUserByNumberRef {
-  _GetUserByNumberProviderElement(super.provider);
+    with GetUserByTokenRef {
+  _GetUserByTokenProviderElement(super.provider);
 
   @override
-  String get phoneNumber => (origin as GetUserByNumberProvider).phoneNumber;
+  String get token => (origin as GetUserByTokenProvider).token;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

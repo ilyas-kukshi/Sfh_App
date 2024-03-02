@@ -37,7 +37,6 @@ class _BottomNavState extends State<BottomNav> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     appLifecycleService.startObserving();
   }

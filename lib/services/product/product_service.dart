@@ -66,11 +66,11 @@ class ProductServices {
     return products;
   }
 
-  Future<Tuple2> getLatest(int page) async {
+  Future<Tuple2> getLatest(int page, int pageSize) async {
     List<ProductModel> products = [];
     try {
       var response = await http.get(Uri.parse(
-          "${Constants.baseUrl}/product/get/latest?page=$page&pageSize=10"));
+          "${Constants.baseUrl}/product/get/latest?page=$page&pageSize=$pageSize"));
       var data = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
@@ -255,6 +255,28 @@ class ProductServices {
       Fluttertoast.showToast(msg: error.toString());
     }
     return false;
+  }
+
+  Future<bool> updateViews(Map<String, int> views, String userId) async {
+    try {
+      var response = await http.put(
+          Uri.parse(
+            "${Constants.baseUrl}/product/update/views",
+          ),
+          body: {"views": jsonEncode(views), "userId": userId});
+
+      // var data = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      // print(error);
+      Fluttertoast.showToast(msg: error.toString());
+      return false;
+    }
   }
 
   Future<bool> delete(List<String> productIds) async {

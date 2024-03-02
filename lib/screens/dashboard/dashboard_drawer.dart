@@ -15,7 +15,7 @@ class _DashboardDrawerState extends ConsumerState<DashboardDrawer> {
   Widget build(BuildContext context) {
     return Drawer(
       child: Padding(
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.only(top: kToolbarHeight, left: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -25,10 +25,7 @@ class _DashboardDrawerState extends ConsumerState<DashboardDrawer> {
                 },
                 child: Text("Add Category",
                     style: Theme.of(context).textTheme.titleMedium)),
-            Divider(
-              thickness: 2,
-              color: AppThemeShared.secondaryColor,
-            ),
+            divider(),
             GestureDetector(
                 onTap: () {
                   Navigator.pushNamed(context, '/manageCategories',
@@ -36,40 +33,28 @@ class _DashboardDrawerState extends ConsumerState<DashboardDrawer> {
                 },
                 child: Text("Manage Category",
                     style: Theme.of(context).textTheme.titleMedium)),
-            Divider(
-              thickness: 2,
-              color: AppThemeShared.secondaryColor,
-            ),
+            divider(),
             GestureDetector(
                 onTap: () {
                   Navigator.pushNamed(context, '/addProduct');
                 },
                 child: Text("Add Product",
                     style: Theme.of(context).textTheme.titleMedium)),
-            Divider(
-              thickness: 2,
-              color: AppThemeShared.secondaryColor,
-            ),
+            divider(),
             GestureDetector(
                 onTap: () {
                   Navigator.pushNamed(context, '/manageProducts');
                 },
                 child: Text("Manage Products",
                     style: Theme.of(context).textTheme.titleMedium)),
-            Divider(
-              thickness: 2,
-              color: AppThemeShared.secondaryColor,
-            ),
+            divider(),
             GestureDetector(
                 onTap: () {
                   Navigator.pushNamed(context, '/addSeller');
                 },
                 child: Text("Add Seller",
                     style: Theme.of(context).textTheme.titleMedium)),
-            Divider(
-              thickness: 2,
-              color: AppThemeShared.secondaryColor,
-            ),
+            divider(),
             GestureDetector(
                 onTap: () {
                   // Navigator.pushNamed(context, '/addSeller');
@@ -80,6 +65,13 @@ class _DashboardDrawerState extends ConsumerState<DashboardDrawer> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget divider() {
+    return Divider(
+      thickness: 2,
+      color: AppThemeShared.textColor,
     );
   }
 }

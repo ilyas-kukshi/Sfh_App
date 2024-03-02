@@ -14,6 +14,17 @@
 	<key> NSCameraUsageDescription</key>
 	<string>Toclickandproductphotos</string>
 
+	<!-- Phonepe payment gateway -->
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+    <string>ppemerchantsdkv1</string>
+    <string>ppemerchantsdkv2</string>
+    <string>ppemerchantsdkv3</string>
+    <string>paytmmp</string>
+    <string>gpay</string>
+	</array>
+
+
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

@@ -291,11 +291,15 @@ class _StoryPageState extends State<StoryPage> {
                 // Called when the ad showed the full screen content.
                 onAdShowedFullScreenContent: (ad) {},
                 // Called when an impression occurs on the ad.
-                onAdImpression: (ad) {},
+
+                onAdImpression: (ad) {
+                  print("Impression made");
+                },
                 // Called when the ad failed to show full screen content.
                 onAdFailedToShowFullScreenContent: (ad, err) {
                   // Dispose the ad here to free resources.
                   // ad.dispose();
+                  print('Failed to load interstitial ad: $err');
                 },
                 // Called when the ad dismissed full screen content.
                 onAdDismissedFullScreenContent: (ad) {
@@ -310,6 +314,7 @@ class _StoryPageState extends State<StoryPage> {
           onAdFailedToLoad: (LoadAdError error) {
             // debugPrint('InterstitialAd failed to load: $error');
             // print(error.toString());
+            print(error);
             Fluttertoast.showToast(msg: error.toString());
           },
         ));

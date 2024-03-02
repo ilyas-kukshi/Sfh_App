@@ -97,7 +97,6 @@ class Utility {
     return null;
   }
 
-  
   //Image related Utility Methods
 
   Future<List<String>?> uploadImages(List<CroppedFile> images) async {
@@ -244,7 +243,26 @@ class Utility {
     }
   }
 
- 
+  setStringSF(String key, String value) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString(key, value);
+    } catch (error) {
+      Fluttertoast.showToast(msg: error.toString());
+      // print(error);
+    }
+  }
+
+  Future<String?> getStringSf(String key) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      return prefs.getString(key);
+    } catch (error) {
+      Fluttertoast.showToast(msg: error.toString());
+      // print(error);
+    }
+    return null;
+  }
 
   Future<String?> getPhoneNumberSF() async {
     try {

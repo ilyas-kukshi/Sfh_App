@@ -7,13 +7,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:sfh_app/models/category/category_model.dart';
 import 'package:sfh_app/models/festival/festival_banner_model.dart';
+import 'package:sfh_app/models/main_banner/main_banner_model.dart';
 import 'package:sfh_app/models/products/product_model.dart';
 import 'package:sfh_app/models/search_suggestions/search_suggestions_model.dart';
 import 'package:sfh_app/screens/dashboard/dashboard_drawer.dart';
 import 'package:sfh_app/screens/dashboard/festival_banners.dart';
+import 'package:sfh_app/screens/dashboard/main_banner_carousel.dart';
 import 'package:sfh_app/screens/product/product_shimmer.dart';
 import 'package:sfh_app/services/auth/auth_service.dart';
 import 'package:sfh_app/services/category/category_services.dart';
+import 'package:sfh_app/services/dashboard_service.dart';
 import 'package:sfh_app/services/festival_service.dart';
 import 'package:sfh_app/services/notification_service.dart';
 import 'package:sfh_app/services/product/product_service.dart';
@@ -25,7 +28,6 @@ import 'package:sfh_app/shared/product_card.dart';
 import 'package:sfh_app/shared/utility.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:tuple/tuple.dart';
-import 'package:visibility_detector/visibility_detector.dart';
 
 class DashboardMain extends StatefulWidget {
   const DashboardMain({super.key});
@@ -41,12 +43,14 @@ class _DashboardMainState extends State<DashboardMain> {
   TextEditingController search = TextEditingController();
   FocusNode searchFocus = FocusNode();
 
+  List<MainBannerModel> mainBanners = [];
+  List<FestivalBannerModel> festivals = [];
+
   List<CategoryModel> categories = [];
   List<ProductModel> products = [];
-  List<FestivalBannerModel> festivals = [];
   List<SearchSuggestionsModel> searchSuggestions = [];
 
-  String? phoneNumber;
+  String? token;
 
   bool isLoading = false;
   bool isLastPage = false;
@@ -56,9 +60,17 @@ class _DashboardMainState extends State<DashboardMain> {
   void initState() {
     super.initState();
 
-    getPhoneNumber();
+    getToken();
     getProducts();
     getFestivals();
+    getMainBanners();
+
+    searchFocus.addListener(() {
+      if (!searchFocus.hasFocus) {
+        searchSuggestions.clear();
+        setState(() {});
+      }
+    });
 
     // createBannerAd();
 
@@ -67,224 +79,419 @@ class _DashboardMainState extends State<DashboardMain> {
     NotificationService().isTokenRefresh();
   }
 
+  Future<List<ProductModel>> getProducts() async {
+    if (isLoading) {
+      return [];
+    }
+    isLoading = true;
+    currentPage++;
+    Tuple2 data = await ProductServices().getLatest(currentPage, 4);
+    // List<ProductModel> newProducts = data.item1 as List<ProductModel>;
+    if (data.item1.length != 0) {
+      products.addAll(data.item1);
+    }
+
+    isLastPage = data.item2;
+    isLoading = false;
+    // setState(() {
+    //   products.addAll(newProducts);
+    // });
+    setState(() {});
+    return products;
+  }
+
+  getMainBanners() async {
+    mainBanners = await DashboardService().getMainBanners();
+  }
+
   getFestivals() async {
     festivals = await FestivalService().getAll();
   }
 
-  getPhoneNumber() async {
-    phoneNumber = await Utility().getPhoneNumberSF();
-
-    // searchFocus.addListener(() {
-    //   if (!searchFocus.hasFocus) {
-    //     searchSuggestions.clear();
-    //     setState(() {});
-    //   }
-    // });
+  getToken() async {
+    token = await Utility().getStringSf("token");
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-        onWillPop: () {
-          DialogShared.doubleButtonDialog(context, "Are you sure you to exit",
-              () {
-            if (Platform.isAndroid) {
-              SystemNavigator.pop();
-            }
-          }, () {
-            Navigator.pop(context);
-          });
-          return Future.value(false);
-        },
-        child: NestedScrollView(
-          headerSliverBuilder: (context, innerBoxIsScrolled) {
-            return [
-              SliverAppBar(
-                title: Column(
-                  children: [
-                    Text(
-                      "Sakina Fashion House",
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge!
-                          .copyWith(fontSize: 26, color: Colors.white),
+      onWillPop: () {
+        DialogShared.doubleButtonDialog(context, "Are you sure you to exit",
+            () {
+          if (Platform.isAndroid) {
+            SystemNavigator.pop();
+          }
+        }, () {
+          Navigator.pop(context);
+        });
+        return Future.value(false);
+      },
+      child: SafeArea(
+          top: false,
+          child: Scaffold(
+            key: globalKey,
+            drawer: const DashboardDrawer(),
+            body: NestedScrollView(
+              headerSliverBuilder: (context, innerBoxIsScrolled) {
+                return [
+                  SliverAppBar(
+                    title: Column(
+                      children: [
+                        Text("Sakina Fashion House",
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge!
+                                .copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold)),
+                      ],
                     ),
-                  ],
-                ),
-                leading: drawerIcon(),
-                bottom: PreferredSize(
-                    preferredSize: const Size.fromHeight(50),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: searchBar(),
-                    )),
-                backgroundColor: AppThemeShared.primaryColor,
-                pinned: true,
-                // forceElevated: innerBoxIsScrolled,
-              ),
-            ];
-          },
-          body: SafeArea(
-              top: false,
-              child: Scaffold(
-                key: globalKey,
-                drawer: const DashboardDrawer(),
-                body: searchSuggestions.isNotEmpty
-                    ? CustomScrollView(
-                        slivers: [suggestionListView()],
-                      )
-                    : RefreshIndicator(
-                        displacement: 100,
-                        backgroundColor: AppThemeShared.primaryColor,
-                        color: Colors.white,
-                        strokeWidth: 3,
-                        triggerMode: RefreshIndicatorTriggerMode.onEdge,
-                        onRefresh: () async {
-                          setState(() {
-                            products.clear();
+                    leading: drawerIcon(),
+                    bottom: PreferredSize(
+                        preferredSize: const Size.fromHeight(50),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: searchBar(),
+                        )),
+                    backgroundColor: AppThemeShared.primaryColor,
+                    pinned: true,
+                    // forceElevated: innerBoxIsScrolled,
+                  ),
+                ];
+              },
+              body: searchSuggestions.isNotEmpty
+                  ? CustomScrollView(
+                      slivers: [suggestionListView()],
+                    )
+                  : RefreshIndicator(
+                      displacement: 100,
+                      backgroundColor: AppThemeShared.primaryColor,
+                      color: Colors.white,
+                      strokeWidth: 3,
+                      triggerMode: RefreshIndicatorTriggerMode.onEdge,
+                      onRefresh: () async {
+                        setState(() {
+                          products.clear();
 
-                            currentPage = 1;
-                            getProducts();
-                          });
-                          return;
-                        },
-                        child: SingleChildScrollView(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text("Random Picks",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .labelLarge!
-                                        .copyWith(
-                                            fontSize: 22,
-                                            fontWeight: FontWeight.w500)),
-                              ),
-                              Consumer(
-                                builder: (context, ref, child) {
-                                  final allCatgories =
-                                      ref.watch(allCategoriesProvider);
-                                  return allCatgories.when(
-                                    data: (data) => SizedBox(
-                                      height: 125,
-                                      child: ListView.builder(
-                                        shrinkWrap: true,
-                                        itemCount: allCatgories.value!.length,
-                                        scrollDirection: Axis.horizontal,
-                                        padding: const EdgeInsets.only(left: 6),
-                                        itemBuilder: (context, index) {
-                                          categories = allCatgories.value!;
-                                          return categoryCard(
-                                              allCatgories.value![index],
-                                              index);
-                                        },
-                                      ),
-                                    ),
-                                    error: (error, stackTrace) =>
-                                        Center(child: Text(error.toString())),
-                                    loading: () => SizedBox(
-                                      height: 170,
-                                      child: ListView.builder(
-                                        itemCount:
-                                            10, // You can set the number of shimmer items
-                                        scrollDirection: Axis.horizontal,
-                                        itemBuilder: (context, index) {
-                                          return categoryShimmerCard();
-                                        },
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                              FutureBuilder(
-                                future: getFestivals(),
-                                builder: (context, snapshot) {
-                                  if (festivals.isEmpty) {
-                                    return const Offstage();
-                                  } else {
-                                    return ListView.builder(
-                                      shrinkWrap: true,
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                      padding: const EdgeInsets.all(0),
-                                      itemCount: festivals.length,
-                                      itemBuilder: (context, index) =>
-                                          FestivalBanners(
-                                              festival: festivals[index]),
-                                    );
-                                  }
-                                },
-                              ),
-
-                              Padding(
-                                padding: const EdgeInsets.only(left: 8.0),
-                                child: Text("Latest",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .labelLarge!
-                                        .copyWith(
-                                            fontSize: 22,
-                                            fontWeight: FontWeight.w500)),
-                              ),
-                              const SizedBox(height: 4),
-                              products.isNotEmpty
-                                  ? GridView.builder(
-                                      itemCount: products.length,
-                                      shrinkWrap: true,
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 6),
-                                      gridDelegate:
-                                          const SliverGridDelegateWithFixedCrossAxisCount(
-                                              crossAxisCount: 2,
-                                              mainAxisExtent: 304,
-                                              mainAxisSpacing: 0,
-                                              crossAxisSpacing: 0),
-                                      itemBuilder: (context, index) {
-                                        return Padding(
-                                          padding: const EdgeInsets.all(2.0),
-                                          child: Container(
-                                            // width:
-                                            //     MediaQuery.of(context).size.width * 0.47,
-                                            // decoration: BoxDecoration(
-                                            //     border: Border.all(color: Colors.grey)),
-                                            child: ProductCard(
-                                              product: products[index],
-                                            ),
+                          currentPage = 1;
+                          getProducts();
+                        });
+                        return;
+                      },
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            mainBanners.isNotEmpty
+                                ? MainBannerCarousel(mainBanners: mainBanners)
+                                : const Offstage(),
+                            // Image.asset(
+                            //   'assets/images/Deeptex.png',
+                            //   height: 200,
+                            //   width: MediaQuery.of(context).size.width,
+                            //   fit: BoxFit.fill,
+                            // ),
+                            Container(
+                              // color: const Color(0xffFCD29F),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text("Diverse Finds",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelLarge!
+                                            .copyWith(
+                                                color: const Color(0xff0D1B2A),
+                                                fontSize: 22,
+                                                fontWeight: FontWeight.w500)),
+                                  ),
+                                  Consumer(
+                                    builder: (context, ref, child) {
+                                      final allCatgories =
+                                          ref.watch(allCategoriesProvider);
+                                      return allCatgories.when(
+                                        data: (data) => SizedBox(
+                                          height: 125,
+                                          child: ListView.builder(
+                                            shrinkWrap: true,
+                                            itemCount:
+                                                allCatgories.value!.length,
+                                            scrollDirection: Axis.horizontal,
+                                            padding:
+                                                const EdgeInsets.only(left: 6),
+                                            itemBuilder: (context, index) {
+                                              categories = allCatgories.value!;
+                                              return categoryCard(
+                                                  allCatgories.value![index],
+                                                  index);
+                                            },
                                           ),
-                                        );
-                                      },
-                                    )
-                                  : productGridShimmer(context),
-                              isLastPage
-                                  ? const Offstage()
-                                  : VisibilityDetector(
-                                      key: const Key("pagination"),
-                                      onVisibilityChanged: (info) async {
-                                        if (info.visibleFraction > 0.0) {
-                                          // print("visible now");
-                                          await getProducts();
-                                        }
-                                      },
-                                      child: Center(
-                                          child: CircularProgressIndicator(
-                                        color: AppThemeShared.primaryColor,
-                                      )),
-                                    )
-
-                              // const Center(
-                              //     child: Text(
-                              //         "We will bring some products in this category soon!"),
-                              //   )
-                            ],
-                          ),
+                                        ),
+                                        error: (error, stackTrace) => Center(
+                                            child: Text(error.toString())),
+                                        loading: () => SizedBox(
+                                          height: 170,
+                                          child: ListView.builder(
+                                            itemCount:
+                                                10, // You can set the number of shimmer items
+                                            scrollDirection: Axis.horizontal,
+                                            itemBuilder: (context, index) {
+                                              return categoryShimmerCard();
+                                            },
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                            FutureBuilder(
+                              future: getFestivals(),
+                              builder: (context, snapshot) {
+                                if (festivals.isEmpty) {
+                                  return const Offstage();
+                                } else {
+                                  return ListView.builder(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    padding: const EdgeInsets.all(0),
+                                    itemCount: festivals.length,
+                                    itemBuilder: (context, index) =>
+                                        FestivalBanners(
+                                            festival: festivals[index]),
+                                  );
+                                }
+                              },
+                            ),
+                            newArrivals(),
+                            const SizedBox(height: 12),
+                            popularCategories(),
+                            const SizedBox(height: 12),
+                            token != null ? recentlyViewd() : const Offstage()
+                          ],
                         ),
                       ),
-              )),
-        ));
+                    ),
+            ),
+          )),
+    );
+  }
+
+  Widget newArrivals() {
+    return GestureDetector(
+      onTap: () => Navigator.pushNamed(context, '/newArrivals'),
+      child: Container(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("New Arrivals",
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelLarge!
+                          .copyWith(fontSize: 22, fontWeight: FontWeight.w500)),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(context, '/newArrivals');
+                    },
+                    child: const CircleAvatar(
+                        radius: 15,
+                        // backgroundColor: Colors.white,
+                        child: Icon(
+                          Icons.arrow_forward_ios,
+                          size: 18,
+                          color: Color(0xff0D1B2A),
+                        )),
+                  )
+                ],
+              ),
+            ),
+            // const SizedBox(height: 12),
+            products.isNotEmpty
+                ? GridView.builder(
+                    itemCount: products.length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisExtent: 305,
+                            mainAxisSpacing: 0,
+                            crossAxisSpacing: 0),
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.all(2.0),
+                        child: Container(
+                          // width:
+                          //     MediaQuery.of(context).size.width * 0.47,
+                          // decoration: BoxDecoration(
+                          //     border: Border.all(color: Colors.grey)),
+                          child: ProductCard(
+                            product: products[index],
+                          ),
+                        ),
+                      );
+                    },
+                  )
+                : productGridShimmer(context),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget recentlyViewd() {
+    return Consumer(
+      builder: (context, ref, child) {
+        final user = ref.read(getUserByTokenProvider(token!));
+        return user.when(
+          data: (data) {
+            if (data!.recentlyViewed == null || data.recentlyViewed!.isEmpty) {
+              return const Offstage();
+            }
+            // else if (data.recentlyViewed!.length < 5) {
+            //   return const Offstage();
+            // }
+            else {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Recently Viewed",
+                        style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                            fontSize: 22, fontWeight: FontWeight.w500)),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      height: 301,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: data.recentlyViewed!
+                            .map((product) => ProductCard(product: product))
+                            .toList(),
+                      ),
+                    )
+                  ],
+                ),
+              );
+            }
+          },
+          error: (error, stackTrace) => const Text("Error"),
+          loading: () => const Offstage(),
+        );
+      },
+    );
+  }
+
+  Widget popularCategories() {
+    return Container(
+      height: 470,
+      color: const Color(0xffFCD29F),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Popular Categories",
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelLarge!
+                        .copyWith(fontSize: 22, fontWeight: FontWeight.w500)),
+                const CircleAvatar(
+                    radius: 15,
+                    backgroundColor: Colors.white,
+                    child: Icon(
+                      Icons.arrow_forward_ios,
+                      size: 18,
+                      color: Color(0xff0D1B2A),
+                    ))
+              ],
+            ),
+          ),
+          Consumer(
+            builder: (context, ref, child) {
+              final allCatgories = ref.watch(allCategoriesProvider);
+              return allCatgories.when(
+                data: (data) {
+                  List<CategoryModel> popular = [];
+                  for (var category in data) {
+                    if (category.popular != null && category.popular!) {
+                      popular.add(category);
+                    }
+                  }
+
+                  return GridView.builder(
+                    shrinkWrap: true,
+                    itemCount: popular.length,
+                    // scrollDirection: Axis.horizontal,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2, mainAxisExtent: 200),
+                    padding: const EdgeInsets.only(left: 6),
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onTap: () => Navigator.pushNamed(
+                            context, '/displayProductsByCategory',
+                            arguments: popular[index]),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Card(
+                            elevation: 3,
+                            color: Colors.white,
+                            child: Column(
+                              children: [
+                                CachedNetworkImage(
+                                  imageUrl: popular[index].imageUri!,
+                                  height: 130,
+                                  alignment: Alignment.center,
+                                  fit: BoxFit.fill,
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  popular[index].name,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge!
+                                      .copyWith(fontSize: 18),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+                error: (error, stackTrace) =>
+                    Center(child: Text(error.toString())),
+                loading: () => SizedBox(
+                  height: 170,
+                  child: ListView.builder(
+                    itemCount: 10, // You can set the number of shimmer items
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      return categoryShimmerCard();
+                    },
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   Widget searchBar() {
@@ -316,6 +523,19 @@ class _DashboardMainState extends State<DashboardMain> {
             Icons.search,
             color: Colors.white,
           ),
+          suffixIcon: searchSuggestions.isNotEmpty
+              ? GestureDetector(
+                  onTap: () => setState(() {
+                    search.clear();
+                    searchSuggestions.clear();
+                    searchFocus.unfocus();
+                  }),
+                  child: const Icon(
+                    Icons.close,
+                    color: Colors.white,
+                  ),
+                )
+              : const Offstage(),
           contentPadding: const EdgeInsets.all(0),
           border: const OutlineInputBorder(
               borderSide: BorderSide(color: Colors.white)),
@@ -374,74 +594,11 @@ class _DashboardMainState extends State<DashboardMain> {
             Center(
                 child: Text(
               category.name,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleLarge!
-                  .copyWith(fontWeight: FontWeight.w500, fontSize: 18),
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                  color: AppThemeShared.textColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16),
             ))
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<List<ProductModel>> getProducts() async {
-    if (isLoading) {
-      return [];
-    }
-    isLoading = true;
-    currentPage++;
-    Tuple2 data = await ProductServices().getLatest(currentPage);
-    // List<ProductModel> newProducts = data.item1 as List<ProductModel>;
-    if (data.item1.length != 0) {
-      products.addAll(data.item1);
-    }
-
-    isLastPage = data.item2;
-    isLoading = false;
-    // setState(() {
-    //   products.addAll(newProducts);
-    // });
-    setState(() {});
-    return products;
-  }
-
-  Widget productGridShimmer(BuildContext context) {
-    return GridView.builder(
-      itemCount: 20,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.01),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisExtent: 350,
-          mainAxisSpacing: 0,
-          crossAxisSpacing: 0),
-      itemBuilder: (context, index) {
-        return ProductShimmer().productShimmerVertical(context);
-      },
-    );
-  }
-
-  Widget categoryShimmerCard() {
-    return Shimmer.fromColors(
-      baseColor: Colors.grey.shade300,
-      highlightColor: Colors.grey.shade100,
-      enabled: true,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            const CircleAvatar(
-              radius: 60,
-              backgroundColor: Colors.grey,
-            ),
-            const SizedBox(height: 8),
-            Container(
-              width: 100,
-              height: 20,
-              color: Colors.grey,
-            )
           ],
         ),
       ),
@@ -450,12 +607,12 @@ class _DashboardMainState extends State<DashboardMain> {
 
   Widget drawerIcon() {
     return FutureBuilder(
-        future: getPhoneNumber(),
+        future: getToken(),
         builder: (context, snapshot) {
           return Consumer(
             builder: (context, ref, child) {
-              if (phoneNumber != null) {
-                final user = ref.watch(getUserByNumberProvider(phoneNumber!));
+              if (token != null) {
+                final user = ref.watch(getUserByTokenProvider(token!));
                 return user.when(
                   data: (data) {
                     return data != null
@@ -524,20 +681,6 @@ class _DashboardMainState extends State<DashboardMain> {
                 )));
   }
 
-  String getSuggestionName(SearchSuggestionsModel suggestion) {
-    switch (suggestion.type) {
-      case Constants.category:
-        return suggestion.category!.name;
-      case Constants.tag:
-        return suggestion.tag!.name;
-      case Constants.product:
-        return suggestion.product!.name;
-
-      default:
-        return "Error";
-    }
-  }
-
   navigateFromSuggestion(SearchSuggestionsModel suggestion) {
     switch (suggestion.type) {
       case Constants.category:
@@ -555,5 +698,61 @@ class _DashboardMainState extends State<DashboardMain> {
 
       default:
     }
+  }
+
+  String getSuggestionName(SearchSuggestionsModel suggestion) {
+    switch (suggestion.type) {
+      case Constants.category:
+        return suggestion.category!.name;
+      case Constants.tag:
+        return suggestion.tag!.name;
+      case Constants.product:
+        return suggestion.product!.name;
+
+      default:
+        return "Error";
+    }
+  }
+
+  Widget productGridShimmer(BuildContext context) {
+    return GridView.builder(
+      itemCount: 4,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.01),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisExtent: 350,
+          mainAxisSpacing: 0,
+          crossAxisSpacing: 0),
+      itemBuilder: (context, index) {
+        return ProductShimmer().productShimmerVertical(context);
+      },
+    );
+  }
+
+  Widget categoryShimmerCard() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade100,
+      enabled: true,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            const CircleAvatar(
+              radius: 60,
+              backgroundColor: Colors.grey,
+            ),
+            const SizedBox(height: 8),
+            Container(
+              width: 100,
+              height: 20,
+              color: Colors.grey,
+            )
+          ],
+        ),
+      ),
+    );
   }
 }

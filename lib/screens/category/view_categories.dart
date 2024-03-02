@@ -24,11 +24,11 @@ class _ViewCategoriesState extends ConsumerState<ViewCategories> {
             title: "Categories", context: context, backButton: false),
         body: allCategories.when(
           data: (data) => GridView.builder(
-            shrinkWrap: true,
+            // shrinkWrap: true,
             itemCount: data.length,
             itemBuilder: (context, index) => categoryCard(data[index]),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3, mainAxisExtent: 200),
+                crossAxisCount: 2, mainAxisExtent: 160),
           ),
           error: (error, stackTrace) => Text(error.toString()),
           loading: () => GridView.builder(
@@ -51,7 +51,7 @@ class _ViewCategoriesState extends ConsumerState<ViewCategories> {
           child: Column(
             children: [
               Container(
-                height: 130,
+                height: 80,
                 color: Colors.grey,
               ),
               const SizedBox(height: 8),
@@ -71,32 +71,43 @@ class _ViewCategoriesState extends ConsumerState<ViewCategories> {
         onTap: () => Navigator.pushNamed(context, '/displayProductsByCategory',
             arguments: category),
         child: Card(
-          child: Column(
-            children: [
-              category.imageUri != null
-                  ? CachedNetworkImage(
-                      height: 130,
-                      width: double.infinity,
-                      imageUrl: category.imageUri!,
-                      fit: BoxFit.fill,
-                      // imageBuilder: (context, imageProvider) => Container(
-                      //   decoration: BoxDecoration(
-                      //       shape: BoxShape.circle,
-                      //       image: DecorationImage(
-                      //           image: imageProvider, fit: BoxFit.cover)),
-                      // ),
-                      placeholder: (context, url) => Center(
-                        child: CircularProgressIndicator(
-                          color: AppThemeShared.primaryColor,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                category.imageUri != null
+                    ? CachedNetworkImage(
+                        height: 80,
+                        width: double.infinity,
+                        imageUrl: category.imageUri!,
+                        fit: BoxFit.contain,
+                        // imageBuilder: (context, imageProvider) => Container(
+                        //   decoration: BoxDecoration(
+                        //       shape: BoxShape.circle,
+                        //       image: DecorationImage(
+                        //           image: imageProvider, fit: BoxFit.cover)),
+                        // ),
+                        placeholder: (context, url) => Center(
+                          child: CircularProgressIndicator(
+                            color: AppThemeShared.primaryColor,
+                          ),
                         ),
-                      ),
-                      errorWidget: (context, url, error) =>
-                          const Icon(Icons.error),
-                    )
-                  : const Offstage(),
-              const SizedBox(height: 10),
-              Center(child: Text(category.name))
-            ],
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
+                      )
+                    : const Offstage(),
+                const SizedBox(height: 12),
+                Text(
+                  category.name,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleLarge!
+                      .copyWith(fontSize: 16, fontWeight: FontWeight.w700),
+                )
+              ],
+            ),
           ),
         ),
       ),
