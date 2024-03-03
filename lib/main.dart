@@ -19,7 +19,7 @@ import 'package:sfh_app/screens/category/manage_categories.dart';
 import 'package:sfh_app/screens/category/manage_tags.dart';
 import 'package:sfh_app/screens/dashboard/bottom_nav.dart';
 import 'package:sfh_app/screens/dashboard/dashboard_main.dart';
-import 'package:sfh_app/screens/dashboard/new_arrivals.dart';
+import 'package:sfh_app/screens/dashboard/new_arrivals/new_arrivals.dart';
 import 'package:sfh_app/screens/product/add_products.dart';
 import 'package:sfh_app/screens/product/display_products_by_category.dart';
 import 'package:sfh_app/screens/product/display_products_by_tags.dart';

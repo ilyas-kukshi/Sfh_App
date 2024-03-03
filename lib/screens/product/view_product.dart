@@ -5,14 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sfh_app/models/products/product_model.dart';
-import 'package:sfh_app/screens/product/product_shimmer.dart';
 import 'package:sfh_app/screens/product/variants_view.dart';
 import 'package:sfh_app/services/auth/auth_service.dart';
-import 'package:sfh_app/services/product/product_service.dart';
 import 'package:sfh_app/services/user_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 import 'package:sfh_app/shared/carousel.dart';
-import 'package:sfh_app/shared/product_card.dart';
 import 'package:sfh_app/shared/utility.dart';
 import 'package:share_plus/share_plus.dart';
 

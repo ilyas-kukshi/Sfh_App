@@ -33,31 +33,41 @@ class _WishlistState extends ConsumerState<Wishlist> {
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(getUserByTokenProvider(token!));
-    return user.when(
-      data: (user) {
-        if (user != null) {
-          return Scaffold(
-              appBar:
-                  AppThemeShared.appBar(title: "Wishlist", context: context),
-              body: user.wishlist != null || user.wishlist!.isNotEmpty
-                  ? GridView(
-                      padding: const EdgeInsets.all(4),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                              mainAxisExtent: 300, crossAxisCount: 2),
-                      children: user.wishlist!
-                          .map((product) => wishlistProductCard(product, user))
-                          .toList(),
-                    )
-                  : const Center(
-                      child: Text("You haven't added any products yet")));
-        } else {
-          return const Text("Some Error");
-        }
-      },
-      error: (error, stackTrace) => const Text("Some Error"),
-      loading: () => const CircularProgressIndicator(),
+    return Scaffold(
+      appBar: AppThemeShared.appBar(title: "Wishlist", context: context),
+      body: FutureBuilder(
+        future: getToken(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            final user = ref.watch(getUserByTokenProvider(token!));
+            return user.when(
+              data: (user) {
+                if (user != null) {
+                  return user.wishlist != null || user.wishlist!.isNotEmpty
+                      ? GridView(
+                          padding: const EdgeInsets.all(4),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                  mainAxisExtent: 300, crossAxisCount: 2),
+                          children: user.wishlist!
+                              .map((product) =>
+                                  wishlistProductCard(product, user))
+                              .toList(),
+                        )
+                      : const Center(
+                          child: Text("You haven't added any products yet"));
+                } else {
+                  return const Text("Some Error");
+                }
+              },
+              error: (error, stackTrace) => const Text("Some Error"),
+              loading: () => const Center(child: CircularProgressIndicator()),
+            );
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
     );
   }
 

@@ -10,6 +10,7 @@ import 'package:sfh_app/shared/constants.dart';
 
 class SearchService {
   Future<List<SearchSuggestionsModel>> suggestions(String query) async {
+    
     List<SearchSuggestionsModel> suggestions = [];
     try {
       var response = await http.get(

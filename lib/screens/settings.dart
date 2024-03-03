@@ -61,7 +61,7 @@ class _SettingsState extends ConsumerState<Settings> {
                   }
                 },
                 error: (error, stackTrace) => const Offstage(),
-                loading: () => const CircularProgressIndicator(),
+                loading: () => const Center(child: CircularProgressIndicator()),
               );
             } else {
               return functions(true, false, false);

@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,23 +10,21 @@ import 'package:sfh_app/models/main_banner/main_banner_model.dart';
 import 'package:sfh_app/models/products/product_model.dart';
 import 'package:sfh_app/models/search_suggestions/search_suggestions_model.dart';
 import 'package:sfh_app/screens/dashboard/dashboard_drawer.dart';
+import 'package:sfh_app/screens/dashboard/diverse_finds_banner.dart';
 import 'package:sfh_app/screens/dashboard/festival_banners.dart';
 import 'package:sfh_app/screens/dashboard/main_banner_carousel.dart';
-import 'package:sfh_app/screens/product/product_shimmer.dart';
+import 'package:sfh_app/screens/dashboard/new_arrivals/new_arrivals_banner.dart';
+import 'package:sfh_app/screens/dashboard/popular_categories_banner.dart';
+import 'package:sfh_app/screens/product/product_card.dart';
 import 'package:sfh_app/services/auth/auth_service.dart';
-import 'package:sfh_app/services/category/category_services.dart';
 import 'package:sfh_app/services/dashboard_service.dart';
 import 'package:sfh_app/services/festival_service.dart';
 import 'package:sfh_app/services/notification_service.dart';
-import 'package:sfh_app/services/product/product_service.dart';
 import 'package:sfh_app/services/search_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 import 'package:sfh_app/shared/constants.dart';
 import 'package:sfh_app/shared/dialogs.dart';
-import 'package:sfh_app/shared/product_card.dart';
 import 'package:sfh_app/shared/utility.dart';
-import 'package:shimmer/shimmer.dart';
-import 'package:tuple/tuple.dart';
 
 class DashboardMain extends StatefulWidget {
   const DashboardMain({super.key});
@@ -56,13 +53,14 @@ class _DashboardMainState extends State<DashboardMain> {
   bool isLastPage = false;
   int currentPage = 0;
 
+  bool gettingSuggestions = false;
+
   @override
   void initState() {
     super.initState();
 
     getToken();
-    getProducts();
-    getFestivals();
+
     getMainBanners();
 
     searchFocus.addListener(() {
@@ -79,32 +77,11 @@ class _DashboardMainState extends State<DashboardMain> {
     NotificationService().isTokenRefresh();
   }
 
-  Future<List<ProductModel>> getProducts() async {
-    if (isLoading) {
-      return [];
-    }
-    isLoading = true;
-    currentPage++;
-    Tuple2 data = await ProductServices().getLatest(currentPage, 4);
-    // List<ProductModel> newProducts = data.item1 as List<ProductModel>;
-    if (data.item1.length != 0) {
-      products.addAll(data.item1);
-    }
-
-    isLastPage = data.item2;
-    isLoading = false;
-    // setState(() {
-    //   products.addAll(newProducts);
-    // });
-    setState(() {});
-    return products;
-  }
-
   getMainBanners() async {
     mainBanners = await DashboardService().getMainBanners();
   }
 
-  getFestivals() async {
+  Future<void> getFestivals() async {
     festivals = await FestivalService().getAll();
   }
 
@@ -160,121 +137,42 @@ class _DashboardMainState extends State<DashboardMain> {
                   ),
                 ];
               },
-              body: searchSuggestions.isNotEmpty
+              body: search.text.isNotEmpty
                   ? CustomScrollView(
                       slivers: [suggestionListView()],
                     )
-                  : RefreshIndicator(
-                      displacement: 100,
-                      backgroundColor: AppThemeShared.primaryColor,
-                      color: Colors.white,
-                      strokeWidth: 3,
-                      triggerMode: RefreshIndicatorTriggerMode.onEdge,
-                      onRefresh: () async {
-                        setState(() {
-                          products.clear();
-
-                          currentPage = 1;
-                          getProducts();
-                        });
-                        return;
-                      },
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            mainBanners.isNotEmpty
-                                ? MainBannerCarousel(mainBanners: mainBanners)
-                                : const Offstage(),
-                            // Image.asset(
-                            //   'assets/images/Deeptex.png',
-                            //   height: 200,
-                            //   width: MediaQuery.of(context).size.width,
-                            //   fit: BoxFit.fill,
-                            // ),
-                            Container(
-                              // color: const Color(0xffFCD29F),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text("Diverse Finds",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelLarge!
-                                            .copyWith(
-                                                color: const Color(0xff0D1B2A),
-                                                fontSize: 22,
-                                                fontWeight: FontWeight.w500)),
-                                  ),
-                                  Consumer(
-                                    builder: (context, ref, child) {
-                                      final allCatgories =
-                                          ref.watch(allCategoriesProvider);
-                                      return allCatgories.when(
-                                        data: (data) => SizedBox(
-                                          height: 125,
-                                          child: ListView.builder(
-                                            shrinkWrap: true,
-                                            itemCount:
-                                                allCatgories.value!.length,
-                                            scrollDirection: Axis.horizontal,
-                                            padding:
-                                                const EdgeInsets.only(left: 6),
-                                            itemBuilder: (context, index) {
-                                              categories = allCatgories.value!;
-                                              return categoryCard(
-                                                  allCatgories.value![index],
-                                                  index);
-                                            },
-                                          ),
-                                        ),
-                                        error: (error, stackTrace) => Center(
-                                            child: Text(error.toString())),
-                                        loading: () => SizedBox(
-                                          height: 170,
-                                          child: ListView.builder(
-                                            itemCount:
-                                                10, // You can set the number of shimmer items
-                                            scrollDirection: Axis.horizontal,
-                                            itemBuilder: (context, index) {
-                                              return categoryShimmerCard();
-                                            },
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                            FutureBuilder(
-                              future: getFestivals(),
-                              builder: (context, snapshot) {
-                                if (festivals.isEmpty) {
-                                  return const Offstage();
-                                } else {
-                                  return ListView.builder(
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    padding: const EdgeInsets.all(0),
-                                    itemCount: festivals.length,
-                                    itemBuilder: (context, index) =>
-                                        FestivalBanners(
-                                            festival: festivals[index]),
-                                  );
-                                }
-                              },
-                            ),
-                            newArrivals(),
-                            const SizedBox(height: 12),
-                            popularCategories(),
-                            const SizedBox(height: 12),
-                            token != null ? recentlyViewd() : const Offstage()
-                          ],
-                        ),
+                  : SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          mainBanners.isNotEmpty
+                              ? MainBannerCarousel(mainBanners: mainBanners)
+                              : const Offstage(),
+                          const DiverseFindsBanner(),
+                          FutureBuilder<void>(
+                            future: getFestivals(),
+                            builder: (context, snapshot) {
+                              if (festivals.isEmpty) {
+                                return const Offstage();
+                              } else {
+                                return ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  padding: const EdgeInsets.all(0),
+                                  itemCount: festivals.length,
+                                  itemBuilder: (context, index) =>
+                                      FestivalBanners(
+                                          festival: festivals[index]),
+                                );
+                              }
+                            },
+                          ),
+                          const NewArrivalsBanner(),
+                          const SizedBox(height: 12),
+                          const PopularCategoriesBanner(),
+                          const SizedBox(height: 12),
+                          token != null ? recentlyViewd() : const Offstage()
+                        ],
                       ),
                     ),
             ),
@@ -282,72 +180,9 @@ class _DashboardMainState extends State<DashboardMain> {
     );
   }
 
-  Widget newArrivals() {
-    return GestureDetector(
-      onTap: () => Navigator.pushNamed(context, '/newArrivals'),
-      child: Container(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("New Arrivals",
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelLarge!
-                          .copyWith(fontSize: 22, fontWeight: FontWeight.w500)),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, '/newArrivals');
-                    },
-                    child: const CircleAvatar(
-                        radius: 15,
-                        // backgroundColor: Colors.white,
-                        child: Icon(
-                          Icons.arrow_forward_ios,
-                          size: 18,
-                          color: Color(0xff0D1B2A),
-                        )),
-                  )
-                ],
-              ),
-            ),
-            // const SizedBox(height: 12),
-            products.isNotEmpty
-                ? GridView.builder(
-                    itemCount: products.length,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.symmetric(horizontal: 6),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            mainAxisExtent: 305,
-                            mainAxisSpacing: 0,
-                            crossAxisSpacing: 0),
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(2.0),
-                        child: Container(
-                          // width:
-                          //     MediaQuery.of(context).size.width * 0.47,
-                          // decoration: BoxDecoration(
-                          //     border: Border.all(color: Colors.grey)),
-                          child: ProductCard(
-                            product: products[index],
-                          ),
-                        ),
-                      );
-                    },
-                  )
-                : productGridShimmer(context),
-          ],
-        ),
-      ),
-    );
-  }
+  // Widget newArrivals() {
+  //   return
+  // }
 
   Widget recentlyViewd() {
     return Consumer(
@@ -392,107 +227,9 @@ class _DashboardMainState extends State<DashboardMain> {
     );
   }
 
-  Widget popularCategories() {
-    return Container(
-      height: 470,
-      color: const Color(0xffFCD29F),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Popular Categories",
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelLarge!
-                        .copyWith(fontSize: 22, fontWeight: FontWeight.w500)),
-                const CircleAvatar(
-                    radius: 15,
-                    backgroundColor: Colors.white,
-                    child: Icon(
-                      Icons.arrow_forward_ios,
-                      size: 18,
-                      color: Color(0xff0D1B2A),
-                    ))
-              ],
-            ),
-          ),
-          Consumer(
-            builder: (context, ref, child) {
-              final allCatgories = ref.watch(allCategoriesProvider);
-              return allCatgories.when(
-                data: (data) {
-                  List<CategoryModel> popular = [];
-                  for (var category in data) {
-                    if (category.popular != null && category.popular!) {
-                      popular.add(category);
-                    }
-                  }
-
-                  return GridView.builder(
-                    shrinkWrap: true,
-                    itemCount: popular.length,
-                    // scrollDirection: Axis.horizontal,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2, mainAxisExtent: 200),
-                    padding: const EdgeInsets.only(left: 6),
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: () => Navigator.pushNamed(
-                            context, '/displayProductsByCategory',
-                            arguments: popular[index]),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Card(
-                            elevation: 3,
-                            color: Colors.white,
-                            child: Column(
-                              children: [
-                                CachedNetworkImage(
-                                  imageUrl: popular[index].imageUri!,
-                                  height: 130,
-                                  alignment: Alignment.center,
-                                  fit: BoxFit.fill,
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  popular[index].name,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleLarge!
-                                      .copyWith(fontSize: 18),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
-                error: (error, stackTrace) =>
-                    Center(child: Text(error.toString())),
-                loading: () => SizedBox(
-                  height: 170,
-                  child: ListView.builder(
-                    itemCount: 10, // You can set the number of shimmer items
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      return categoryShimmerCard();
-                    },
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget popularCategories() {
+  //   return
+  // }
 
   Widget searchBar() {
     return TextFormField(
@@ -504,13 +241,18 @@ class _DashboardMainState extends State<DashboardMain> {
           .copyWith(color: Colors.white, fontSize: 16),
       onChanged: (query) async {
         Future.delayed(const Duration(milliseconds: 500));
+        setState(() {
+          gettingSuggestions = true;
+        });
         searchSuggestions.clear();
         if (search.text.isNotEmpty) {
           searchSuggestions = await SearchService().suggestions(search.text);
         } else {
           searchSuggestions.clear();
         }
-        setState(() {});
+        setState(() {
+          gettingSuggestions = false;
+        });
       },
       decoration: InputDecoration(
           hintText: "Search for something",
@@ -545,63 +287,6 @@ class _DashboardMainState extends State<DashboardMain> {
               borderSide: BorderSide(color: Colors.white)),
           disabledBorder: const OutlineInputBorder(
               borderSide: BorderSide(color: Colors.white))),
-    );
-  }
-
-  Widget categoryCard(CategoryModel category, int index) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(context, '/viewStory',
-            arguments: {"categories": categories, "currCategoryIndex": index});
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(0),
-        child: Column(
-          children: [
-            category.imageUri != null
-                ? Stack(
-                    clipBehavior: Clip.none,
-                    alignment: AlignmentDirectional.bottomCenter,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border:
-                                Border.all(color: Colors.green, width: 2.5)),
-                        child: CircleAvatar(
-                          radius: 30,
-                          backgroundColor: Colors.green.withOpacity(0.4),
-                        ),
-                      ),
-                      Positioned(
-                        // top: 10,
-                        // bottom: 40,
-                        child: CachedNetworkImage(
-                          height: 80,
-                          width: 80,
-                          imageUrl: category.imageUri!,
-                          fit: BoxFit.fill,
-                          placeholder: (context, url) => const Offstage(),
-                          errorWidget: (context, url, error) =>
-                              const Icon(Icons.error),
-                        ),
-                      ),
-                    ],
-                  )
-                : const Offstage(),
-            const SizedBox(height: 4),
-            Center(
-                child: Text(
-              category.name,
-              style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                  color: AppThemeShared.textColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16),
-            ))
-          ],
-        ),
-      ),
     );
   }
 
@@ -642,43 +327,53 @@ class _DashboardMainState extends State<DashboardMain> {
   }
 
   Widget suggestionListView() {
-    return SliverList(
-        delegate: SliverChildBuilderDelegate(
-            childCount: searchSuggestions.length,
-            (context, index) => GestureDetector(
-                  onTap: () => navigateFromSuggestion(searchSuggestions[index]),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                getSuggestionName(searchSuggestions[index]),
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium!
-                                    .copyWith(),
-                              ),
+    return searchSuggestions.isEmpty
+        ? SliverToBoxAdapter(
+            child: Center(
+                child: gettingSuggestions
+                    ? const SizedBox(
+                        height: 30,
+                        width: 30,
+                        child: CircularProgressIndicator())
+                    : const Text("We have not results matching your search")))
+        : SliverList(
+            delegate: SliverChildBuilderDelegate(
+                childCount: searchSuggestions.length,
+                (context, index) => GestureDetector(
+                      onTap: () =>
+                          navigateFromSuggestion(searchSuggestions[index]),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    getSuggestionName(searchSuggestions[index]),
+                                    overflow: TextOverflow.ellipsis,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium!
+                                        .copyWith(),
+                                  ),
+                                ),
+                                Text(
+                                  searchSuggestions[index].type,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium!
+                                      .copyWith(color: Colors.grey),
+                                ),
+                                const SizedBox(width: 12),
+                                const Icon(Icons.north_west)
+                              ],
                             ),
-                            Text(
-                              searchSuggestions[index].type,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium!
-                                  .copyWith(color: Colors.grey),
-                            ),
-                            const SizedBox(width: 12),
-                            const Icon(Icons.north_west)
-                          ],
-                        ),
+                          ),
+                          const Divider()
+                        ],
                       ),
-                      const Divider()
-                    ],
-                  ),
-                )));
+                    )));
   }
 
   navigateFromSuggestion(SearchSuggestionsModel suggestion) {
@@ -712,47 +407,5 @@ class _DashboardMainState extends State<DashboardMain> {
       default:
         return "Error";
     }
-  }
-
-  Widget productGridShimmer(BuildContext context) {
-    return GridView.builder(
-      itemCount: 4,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.01),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisExtent: 350,
-          mainAxisSpacing: 0,
-          crossAxisSpacing: 0),
-      itemBuilder: (context, index) {
-        return ProductShimmer().productShimmerVertical(context);
-      },
-    );
-  }
-
-  Widget categoryShimmerCard() {
-    return Shimmer.fromColors(
-      baseColor: Colors.grey.shade300,
-      highlightColor: Colors.grey.shade100,
-      enabled: true,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            const CircleAvatar(
-              radius: 60,
-              backgroundColor: Colors.grey,
-            ),
-            const SizedBox(height: 8),
-            Container(
-              width: 100,
-              height: 20,
-              color: Colors.grey,
-            )
-          ],
-        ),
-      ),
-    );
   }
 }

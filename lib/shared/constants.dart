@@ -5,7 +5,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class Constants {
   // static String baseUrl = "https://sfh-api-zlkq.onrender.com";
-  static String baseUrl = 'http://192.168.1.103:8080';
+  static String baseUrl = 'http://192.168.1.105:8080';
   static String otpUrl = 'https://2factor.in/API/V1/a7df023c-d584-11ee-8cbb-0200cd936042/SMS';
   // static String baseUrl = 'http://192.168.205.186:8080'; // phone hotspot
 

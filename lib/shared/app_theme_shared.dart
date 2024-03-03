@@ -19,17 +19,17 @@ class AppThemeShared {
       Color? backgroundColor = const Color(0xff439A97),
       double textSize = 26,
       Color textColor = Colors.white,
-      TextStyle textStyle = const TextStyle(
-          fontSize: 18,
-          fontFamily: 'Montserrat',
-          fontWeight: FontWeight.bold,
-          color: Colors.white),
+      TextStyle? textStyle,
       FontWeight fontWeight = FontWeight.w600}) {
     return AppBar(
       title: Text(
         title,
         overflow: TextOverflow.ellipsis,
-        style: textStyle,
+        style: textStyle ??
+            Theme.of(context)
+                .textTheme
+                .titleLarge!
+                .copyWith(color: Colors.white, fontWeight: FontWeight.bold),
       ),
       automaticallyImplyLeading: false,
       centerTitle: centerTitle,
