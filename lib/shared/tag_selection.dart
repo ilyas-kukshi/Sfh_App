@@ -31,6 +31,7 @@ class _TagSelectionState extends State<TagSelection> {
           });
         },
         child: Container(
+          
           decoration: BoxDecoration(
               color: widget.selected
                   ? AppThemeShared.primaryColor

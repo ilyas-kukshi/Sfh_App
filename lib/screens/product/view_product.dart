@@ -2,6 +2,7 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sfh_app/models/products/product_model.dart';
@@ -329,13 +330,17 @@ class _ProductDetailsState extends ConsumerState<ViewProduct> {
                           .labelLarge!
                           .copyWith(color: Colors.white),
                       onTap: () {
+                        String upiLink =
+                            'upi://pay?pa=ilyaskukshiwala53@okicici&pn=Ilyas Kukshiwala&tn=Payment for Goods&tr=98765&am=50.00&cu=INR';
+                        // &tid=12345&tr=98765
+                        initiateUpiPayment(upiLink);
                         // ProductCard().enquireOnWhatsapp(widget.product);
                       },
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 20),
               // const SizedBox(height: 10),
               // const Padding(
               //   padding: EdgeInsets.all(8.0),
@@ -382,6 +387,17 @@ class _ProductDetailsState extends ConsumerState<ViewProduct> {
         ),
       ),
     );
+  }
+
+  final platform = const MethodChannel('upi_payment/init');
+
+  Future<void> initiateUpiPayment(String upiLink) async {
+    try {
+      final response =
+          await platform.invokeMethod('init', {'upiLink': upiLink});
+    } on PlatformException catch (e) {
+      print("Error: ${e.message}");
+    }
   }
 
   getProducts(String categoryId) async {

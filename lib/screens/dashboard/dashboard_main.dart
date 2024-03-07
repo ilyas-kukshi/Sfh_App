@@ -61,17 +61,6 @@ class _DashboardMainState extends State<DashboardMain> {
 
     getToken();
 
-    getMainBanners();
-
-    searchFocus.addListener(() {
-      if (!searchFocus.hasFocus) {
-        searchSuggestions.clear();
-        setState(() {});
-      }
-    });
-
-    // createBannerAd();
-
     NotificationService().requestPermission();
     NotificationService().getDeviceToken();
     NotificationService().isTokenRefresh();
@@ -87,7 +76,6 @@ class _DashboardMainState extends State<DashboardMain> {
 
   getToken() async {
     token = await Utility().getStringSf("token");
-    setState(() {});
   }
 
   @override
@@ -145,9 +133,17 @@ class _DashboardMainState extends State<DashboardMain> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          mainBanners.isNotEmpty
-                              ? MainBannerCarousel(mainBanners: mainBanners)
-                              : const Offstage(),
+                          FutureBuilder(
+                              future: getMainBanners(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.done) {
+                                  return MainBannerCarousel(
+                                      mainBanners: mainBanners);
+                                } else {
+                                  return const Offstage();
+                                }
+                              }),
                           const DiverseFindsBanner(),
                           FutureBuilder<void>(
                             future: getFestivals(),
@@ -168,10 +164,8 @@ class _DashboardMainState extends State<DashboardMain> {
                             },
                           ),
                           const NewArrivalsBanner(),
-                          const SizedBox(height: 12),
                           const PopularCategoriesBanner(),
-                          const SizedBox(height: 12),
-                          token != null ? recentlyViewd() : const Offstage()
+                          recentlyViewd()
                         ],
                       ),
                     ),
@@ -185,46 +179,60 @@ class _DashboardMainState extends State<DashboardMain> {
   // }
 
   Widget recentlyViewd() {
-    return Consumer(
-      builder: (context, ref, child) {
-        final user = ref.read(getUserByTokenProvider(token!));
-        return user.when(
-          data: (data) {
-            if (data!.recentlyViewed == null || data.recentlyViewed!.isEmpty) {
-              return const Offstage();
-            }
-            // else if (data.recentlyViewed!.length < 5) {
-            //   return const Offstage();
-            // }
-            else {
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Recently Viewed",
-                        style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                            fontSize: 22, fontWeight: FontWeight.w500)),
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      height: 301,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        children: data.recentlyViewed!
-                            .map((product) => ProductCard(product: product))
-                            .toList(),
-                      ),
-                    )
-                  ],
-                ),
-              );
-            }
-          },
-          error: (error, stackTrace) => const Text("Error"),
-          loading: () => const Offstage(),
-        );
-      },
-    );
+    return FutureBuilder(
+        future: getToken(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return Consumer(
+              builder: (context, ref, child) {
+                final user = ref.watch(getUserByTokenProvider(token!));
+                return user.when(
+                  data: (data) {
+                    if (data!.recentlyViewed == null ||
+                        data.recentlyViewed!.isEmpty) {
+                      return const Offstage();
+                    }
+                    // else if (data.recentlyViewed!.length < 5) {
+                    //   return const Offstage();
+                    // }
+                    else {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Recently Viewed",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelLarge!
+                                    .copyWith(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.w500)),
+                            const SizedBox(height: 12),
+                            SizedBox(
+                              height: 301,
+                              child: ListView(
+                                scrollDirection: Axis.horizontal,
+                                children: data.recentlyViewed!
+                                    .map((product) =>
+                                        ProductCard(product: product))
+                                    .toList(),
+                              ),
+                            )
+                          ],
+                        ),
+                      );
+                    }
+                  },
+                  error: (error, stackTrace) => const Text("Error"),
+                  loading: () => const Offstage(),
+                );
+              },
+            );
+          } else {
+            return const Offstage();
+          }
+        });
   }
 
   // Widget popularCategories() {

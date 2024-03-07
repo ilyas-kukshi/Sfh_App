@@ -2,12 +2,15 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sfh_app/models/category/category_model.dart';
 import 'package:sfh_app/models/tags/tag_model.dart';
+import 'package:sfh_app/services/auth/auth_service.dart';
 import 'package:sfh_app/services/tags_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
+import 'package:sfh_app/shared/constants.dart';
 import 'package:sfh_app/shared/utility.dart';
 
 class ManageTags extends StatefulWidget {
@@ -20,10 +23,14 @@ class ManageTags extends StatefulWidget {
 
 class _ManageTagsState extends State<ManageTags> {
   List<TagModel> tags = [];
-  @override
-  void initState() {
-    super.initState();
-    getTags(widget.category.id!);
+
+  String? token;
+  Future<void> getToken() async {
+    token = await Utility().getStringSf("token");
+  }
+
+  Future<void> getTags(String categoryId) async {
+    tags = await TagServices().getByCategory(categoryId);
   }
 
   @override
@@ -31,59 +38,95 @@ class _ManageTagsState extends State<ManageTags> {
     return Scaffold(
       appBar:
           AppThemeShared.appBar(title: widget.category.name, context: context),
-      body: GridView(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3, mainAxisExtent: 190),
-        children: tags
-            .map((tag) => Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Stack(
-                    children: [
-                      Card(
-                        child: Column(
-                          children: [
-                            tag.imageUri != null
-                                ? CachedNetworkImage(
-                                    fit: BoxFit.fill,
-                                    height: 130,
-                                    imageUrl: tag.imageUri!)
-                                : const Offstage(),
-                            const SizedBox(height: 10),
-                            Text(tag.name)
-                          ],
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.topRight,
-                        child: GestureDetector(
-                          onTap: () => showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (context) => UpdateTagDialog(
-                              tag: tag,
-                              updated: () => getTags(widget.category.id!),
+      body: FutureBuilder(
+          future: getTags(widget.category.id!),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return GridView(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3, mainAxisExtent: 190),
+                children: tags
+                    .map((tag) => Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: GestureDetector(
+                            onTap: () => Navigator.pushNamed(
+                                context, '/manageProducts', arguments: {
+                              "categoryId": widget.category.id!,
+                              "tagId": tag.id!
+                            }),
+                            child: Stack(
+                              children: [
+                                Card(
+                                  child: Column(
+                                    children: [
+                                      tag.imageUri != null
+                                          ? CachedNetworkImage(
+                                              fit: BoxFit.fill,
+                                              height: 130,
+                                              imageUrl: tag.imageUri!)
+                                          : const Offstage(),
+                                      const SizedBox(height: 10),
+                                      Text(tag.name)
+                                    ],
+                                  ),
+                                ),
+                                editIcon(context, tag)
+                              ],
                             ),
                           ),
-                          child: CircleAvatar(
-                            backgroundColor: Colors.grey.shade300,
-                            child: const Icon(Icons.edit),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ))
-            .toList(),
-      ),
+                        ))
+                    .toList(),
+              );
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          }),
     );
   }
 
-  getTags(String categoryId) async {
-    tags = await TagServices().getByCategory(categoryId);
-    // getProductsByTags(selectedTags);
-    setState(() {});
-
-    // return data;
+  Widget editIcon(BuildContext context, TagModel tag) {
+    return FutureBuilder(
+        future: getToken(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return Consumer(builder: (context, ref, child) {
+              final user = ref.watch(getUserByTokenProvider(token!));
+              return user.when(
+                data: (data) {
+                  return data!.role == Constants.user
+                      ? const Offstage()
+                      : Align(
+                          alignment: Alignment.topRight,
+                          child: GestureDetector(
+                            onTap: () => showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (context) => UpdateTagDialog(
+                                tag: tag,
+                                updated: () => getTags(widget.category.id!),
+                              ),
+                            ),
+                            child: CircleAvatar(
+                              backgroundColor: Colors.grey.shade300,
+                              child: const Icon(Icons.edit),
+                            ),
+                          ),
+                        );
+                },
+                error: (error, stackTrace) {
+                  return Center(child: Text(error.toString()));
+                },
+                loading: () => const Center(child: CircularProgressIndicator()),
+              );
+            });
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        });
   }
 }
 

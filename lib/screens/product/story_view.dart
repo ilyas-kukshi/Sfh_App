@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:sfh_app/models/category/category_model.dart';
 import 'package:sfh_app/models/products/product_model.dart';
@@ -38,8 +37,9 @@ class _StoryPageState extends State<StoryPage> {
     categories = widget.data["categories"];
     currCategoryIndex = widget.data["currCategoryIndex"];
     _pageController = PageController();
-    getStories();
+
     createInterstitialAd();
+    _startTimer();
   }
 
   void _startTimer() {
@@ -49,14 +49,10 @@ class _StoryPageState extends State<StoryPage> {
           moveForward();
         } else {
           // If it reaches the last story, you can navigate to the next page or close the stories.
-          Navigator.pop(context);
+          if (mounted) {
+            Navigator.pop(context);
+          }
         }
-
-        _pageController.animateToPage(
-          _currentIndex,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeInOut,
-        );
       }
     });
   }
@@ -64,6 +60,7 @@ class _StoryPageState extends State<StoryPage> {
   @override
   void dispose() {
     _timer.cancel();
+
     _pageController.dispose();
     if (interstitialAd != null) {
       interstitialAd!.dispose();
@@ -72,121 +69,181 @@ class _StoryPageState extends State<StoryPage> {
     super.dispose();
   }
 
+  void onTapStory(TapUpDetails tapUpDetails) {
+    double tapPosition = tapUpDetails.globalPosition.dx;
+
+    // Get the width of the screen
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    // Determine whether the tap was on the left or right side
+    bool tapOnLeftSide = tapPosition < screenWidth / 2;
+
+    if (tapOnLeftSide) {
+      // Handle tap on the left side (move back)
+      moveBack();
+      // print('Tapped on the left side');
+      // Add your logic to move back
+    } else {
+      // Handle tap on the right side (move ahead)
+      moveForward();
+      // print('Tapped on the right side');
+      // Add your logic to move ahead
+    }
+  }
+
+  moveBack() async {
+    await checkForAd();
+
+    if (_currentIndex > 0) {
+      // print(_currentIndex);
+      _currentIndex--;
+      _pageController.previousPage(
+        // _currentIndex,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+      _timer.cancel();
+      _startTimer();
+    }
+  }
+
+  moveForward() async {
+    await checkForAd();
+    if (_currentIndex < stories.length - 1) {
+      _currentIndex++;
+      _pageController.nextPage(
+        // _currentIndex,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+
+      if (_timer != null && _timer.isActive) {
+        _timer.cancel();
+      }
+
+      _startTimer();
+    }
+    // print(_currentIndex);
+  }
+
   @override
   Widget build(BuildContext context) {
     // AdmobService().createInterstitialAd();
     return SafeArea(
+        top: true,
         child: Scaffold(
-            // backgroundColor: Colors.black,
-            body: stories.isNotEmpty
-                ? PageView.builder(
-                    controller: _pageController,
-                    itemCount: stories.length,
-                    itemBuilder: (context, index) {
-                      ProductModel currProduct = stories[index];
-                      return Stack(
-                        alignment: Alignment.bottomCenter,
-                        children: [
-                          Center(
-                            child: GestureDetector(
-                                onTapUp: (tapUpDetails) {
-                                  onTapStory(tapUpDetails);
-                                },
-                                onLongPress: () {
-                                  setState(() {
-                                    _isPaused = !_isPaused;
-                                  });
-                                },
-                                // onLongPressCancel: ,
-                                // onVerticalDragDown: (_) {
-                                //   checkForAd();
-                                //   Navigator.pop(context);
-                                // },
-                                // onLongPress: () {
-                                //   setState(() {
-                                //     _isPaused = !_isPaused;
-                                //   });
-                                // },
-                                onHorizontalDragEnd: (details) {
-                                  if (details.primaryVelocity! > 0) {
-                                    //check for if ad is to be shown
+            backgroundColor: const Color(0xff28282B),
+            body: FutureBuilder(
+                future: getStories(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return PageView.builder(
+                        controller: _pageController,
+                        itemCount: stories.length,
+                        itemBuilder: (context, index) {
+                          ProductModel currProduct = stories[index];
+                          return Stack(
+                            alignment: Alignment.bottomCenter,
+                            children: [
+                              Center(
+                                child: GestureDetector(
+                                    onTapUp: (tapUpDetails) {
+                                      onTapStory(tapUpDetails);
+                                    },
+                                    onLongPress: () {
+                                      setState(() {
+                                        _isPaused = !_isPaused;
+                                      });
+                                    },
+                                    // onLongPressCancel: ,
+                                    // onVerticalDragDown: (_) {
+                                    //   checkForAd();
+                                    //   Navigator.pop(context);
+                                    // },
+                                    // onLongPress: () {
+                                    //   setState(() {
+                                    //     _isPaused = !_isPaused;
+                                    //   });
+                                    // },
+                                    onHorizontalDragEnd: (details) {
+                                      if (details.primaryVelocity! > 0) {
+                                        //check for if ad is to be shown
 
-                                    // Swipe right, move to the previous story
-                                    if (_currentIndex > 0) {
-                                      moveBack();
-                                    }
-                                  } else {
-                                    // Swipe left, move to the next story
-                                    if (_currentIndex < stories.length - 1) {
-                                      moveForward();
-                                    }
-                                    // checkForAd();
-                                  }
-                                },
-                                child: FutureBuilder<void>(
-                                  future: precacheImage(
-                                    NetworkImage(currProduct.imageUris.first),
-                                    context,
-                                  ),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      // Image is still loading
-                                      return const CircularProgressIndicator();
-                                    } else if (snapshot.hasError) {
-                                      // Error loading the image
-                                      return const Text('Error loading image');
-                                    } else {
-                                      // Image loaded successfully
-                                      return Image.network(
-                                        currProduct.imageUris.first,
-                                        height:
-                                            MediaQuery.of(context).size.height -
-                                                kToolbarHeight,
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        fit: BoxFit.fill,
-                                      );
-                                    }
-                                  },
-                                )),
-                          ),
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                    margin: const EdgeInsets.only(bottom: 4),
-                                    decoration: BoxDecoration(
-                                      color: Colors.black.withOpacity(0.3),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: List.generate(
-                                        stories.length,
-                                        (index) => StoryProgressBar(
-                                          totalDuration:
-                                              10, // Set the total duration for each story
-                                          currentIndex: _currentIndex,
-                                          storyIndex: index,
-                                        ),
+                                        // Swipe right, move to the previous story
+                                        if (_currentIndex > 0) {
+                                          moveBack();
+                                        }
+                                      } else {
+                                        // Swipe left, move to the next story
+                                        if (_currentIndex <
+                                            stories.length - 1) {
+                                          moveForward();
+                                        }
+                                        // checkForAd();
+                                      }
+                                    },
+                                    child: FutureBuilder<void>(
+                                      future: precacheImage(
+                                        NetworkImage(
+                                            currProduct.imageUris.first),
+                                        context,
                                       ),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          // Image is still loading
+                                          return const CircularProgressIndicator();
+                                        } else if (snapshot.hasError) {
+                                          // Error loading the image
+                                          return const Text(
+                                              'Error loading image');
+                                        } else {
+                                          // Image loaded successfully
+                                          return Image.network(
+                                            currProduct.imageUris.first,
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height -
+                                                kToolbarHeight,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            fit: BoxFit.fill,
+                                          );
+                                        }
+                                      },
                                     )),
-                                GestureDetector(
-                                  onTap: () {
-                                    _timer.cancel();
-                                    Navigator.pushNamed(
-                                        context, '/displayProductsByCategory',
-                                        arguments: currProduct.category);
-                                  },
-                                  child: Container(
-                                      height: 60,
-                                      width: 200,
-                                      padding: const EdgeInsets.all(16.0),
+                              ),
+                              Align(
+                                alignment: Alignment.topLeft,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Container(
+                                    //     margin:
+                                    //         const EdgeInsets.only(bottom: 4),
+                                    //     decoration: BoxDecoration(
+                                    //       color: Colors.black.withOpacity(0.3),
+                                    //       borderRadius:
+                                    //           BorderRadius.circular(12),
+                                    //     ),
+                                    //     child: Row(
+                                    //       mainAxisSize: MainAxisSize.min,
+                                    //       children: List.generate(
+                                    //         stories.length,
+                                    //         (index) => StoryProgressBar(
+                                    //           totalDuration:
+                                    //               10, // Set the total duration for each story
+                                    //           currentIndex: _currentIndex,
+                                    //           storyIndex: index,
+                                    //         ),
+                                    //       ),
+                                    //     )),
+                                    Container(
+                                      height: 50,
                                       decoration: BoxDecoration(
-                                        color: Colors.black.withOpacity(0.5),
+                                        // color:
+                                        //     Colors.black.withOpacity(0.5),
                                         boxShadow: [
                                           BoxShadow(
                                             color:
@@ -197,35 +254,35 @@ class _StoryPageState extends State<StoryPage> {
                                           ),
                                         ],
                                       ),
-                                      child:
-                                          categoryCard(currProduct.category)),
+                                      child: categoryCard(currProduct.category),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ),
-                          Align(
-                              alignment: Alignment.bottomCenter,
-                              // decoration: BoxDecoration(boxShadow: []),
-                              child: productDetails(currProduct)),
-                        ],
-                      );
-                    },
-                    onPageChanged: (index) {
-                      setState(() {
-                        _currentIndex = index;
-                      });
-                    })
-                : const Center(child: CircularProgressIndicator())));
+                              ),
+                              Align(
+                                  alignment: Alignment.bottomCenter,
+                                  // decoration: BoxDecoration(boxShadow: []),
+                                  child: productDetails(currProduct)),
+                            ],
+                          );
+                        },
+                        onPageChanged: (index) {
+                          setState(() {
+                            _currentIndex = index;
+                          });
+                        });
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                })));
   }
 
-  getStories() async {
+  Future<void> getStories() async {
     var fetched = await ProductServices()
         .getForStories(categories[currCategoryIndex].id!);
 
     if (fetched.isNotEmpty) {
       stories = [...fetched];
-      setState(() {});
-      _startTimer();
     }
   }
 
@@ -248,34 +305,132 @@ class _StoryPageState extends State<StoryPage> {
   Widget categoryCard(CategoryModel category) {
     return GestureDetector(
       onTap: () {
-        // Navigator.pushNamed(context, '/viewStory', arguments: products);
+        _timer.cancel();
+        Navigator.pushNamed(context, '/displayProductsByCategory',
+            arguments: category);
       },
+      // Navigator.pushNamed(context, '/viewStory', arguments: products);
+
       child: Row(
         // mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CircleAvatar(
-            radius: 30,
-            backgroundColor: Colors.green.withOpacity(0.4),
-            child: CachedNetworkImage(
-              height: 30,
-              width: 50,
-              imageUrl: category.imageUri!,
-              fit: BoxFit.fill,
-              placeholder: (context, url) => const CircularProgressIndicator(),
-              errorWidget: (context, url, error) => const Icon(Icons.error),
-            ),
+          CachedNetworkImage(
+            height: 50,
+            imageUrl: category.imageUri!,
+            fit: BoxFit.fill,
+            placeholder: (context, url) => const CircularProgressIndicator(),
+            errorWidget: (context, url, error) => const Icon(Icons.error),
           ),
           const SizedBox(width: 8),
           Center(
               child: Text(
             category.name,
-            style: const TextStyle(
-                color: Colors.white, fontWeight: FontWeight.w600, fontSize: 12),
+            style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                fontSize: 18,
+                color: Colors.white,
+                decoration: TextDecoration.underline,
+                decorationColor: Colors.white),
           ))
         ],
       ),
     );
+  }
+
+  Future<int?> getStoryViewCount() async {
+    SharedPreferences sharedPref = await SharedPreferences.getInstance();
+    return sharedPref.getInt('storyView');
+  }
+
+  updateStoryViewCount(int views) async {
+    SharedPreferences sharedPref = await SharedPreferences.getInstance();
+    sharedPref.setInt("storyView", views);
+  }
+
+  productDetails(ProductModel currProduct) {
+    return Container(
+        width: MediaQuery.of(context).size.width,
+        padding: const EdgeInsets.all(16.0),
+        // color: Colors.black.withOpacity(0.5),
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.5),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.3),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(currProduct.name,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge!
+                    .copyWith(fontSize: 20, color: Colors.white)),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "₹${currProduct.price}",
+                  style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                      decoration: TextDecoration.lineThrough,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: Colors.white),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  "₹${currProduct.price - currProduct.discount}",
+                  style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 20,
+                      color: Colors.white),
+                ),
+                const SizedBox(width: 12),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          colors: [Colors.red.withOpacity(0.85), Colors.orange],
+                          stops: const [1, 1],
+                          tileMode: TileMode.clamp,
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomRight)),
+                  child: Text(
+                    "₹${((currProduct.discount / currProduct.price) * 100).toInt()}% OFF",
+                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+            ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    fixedSize:
+                        Size(MediaQuery.of(context).size.width * 0.5, 40),
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero)),
+                onPressed: () {
+                  _timer.cancel();
+                  // enquireOnWhatsapp(product);
+                  Navigator.pushNamed(context, '/viewProduct',
+                      arguments: currProduct);
+                },
+                child: Text(
+                  "View Product",
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(color: AppThemeShared.primaryColor),
+                ))
+          ],
+        ));
   }
 
   void createInterstitialAd() {
@@ -315,158 +470,9 @@ class _StoryPageState extends State<StoryPage> {
             // debugPrint('InterstitialAd failed to load: $error');
             // print(error.toString());
             print(error);
-            Fluttertoast.showToast(msg: error.toString());
+            // Fluttertoast.showToast(msg: error.toString());
           },
         ));
-  }
-
-  Future<int?> getStoryViewCount() async {
-    SharedPreferences sharedPref = await SharedPreferences.getInstance();
-    return sharedPref.getInt('storyView');
-  }
-
-  updateStoryViewCount(int views) async {
-    SharedPreferences sharedPref = await SharedPreferences.getInstance();
-    sharedPref.setInt("storyView", views);
-  }
-
-  productDetails(ProductModel currProduct) {
-    return Container(
-        width: MediaQuery.of(context).size.width,
-        padding: const EdgeInsets.all(16.0),
-        // color: Colors.black.withOpacity(0.5),
-        decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.5),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.3),
-              spreadRadius: 2,
-              blurRadius: 5,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              currProduct.name,
-              style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  overflow: TextOverflow.ellipsis),
-            ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  "₹${currProduct.price}",
-                  style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.white.withOpacity(0.7),
-                      decorationColor: Colors.white,
-                      decoration: TextDecoration.lineThrough),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  "₹${currProduct.price - currProduct.discount}",
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(width: 12),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
-                  decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          colors: [Colors.red.withOpacity(0.85), Colors.orange],
-                          stops: const [1, 1],
-                          tileMode: TileMode.clamp,
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomRight)),
-                  child: Text(
-                    "₹${((currProduct.discount / currProduct.price) * 100).toInt()}% OFF",
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
-            ),
-            ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    fixedSize:
-                        Size(MediaQuery.of(context).size.width * 0.5, 40),
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.zero)),
-                onPressed: () {
-                  _timer.cancel();
-                  // enquireOnWhatsapp(product);
-                  Navigator.pushNamed(context, '/viewProduct',
-                      arguments: currProduct);
-                },
-                child: Text(
-                  "View Product",
-                  style: TextStyle(color: AppThemeShared.primaryColor),
-                ))
-          ],
-        ));
-  }
-
-  void onTapStory(TapUpDetails tapUpDetails) {
-    double tapPosition = tapUpDetails.globalPosition.dx;
-
-    // Get the width of the screen
-    double screenWidth = MediaQuery.of(context).size.width;
-
-    // Determine whether the tap was on the left or right side
-    bool tapOnLeftSide = tapPosition < screenWidth / 2;
-
-    if (tapOnLeftSide) {
-      // Handle tap on the left side (move back)
-      moveBack();
-      // print('Tapped on the left side');
-      // Add your logic to move back
-    } else {
-      // Handle tap on the right side (move ahead)
-      moveForward();
-      // print('Tapped on the right side');
-      // Add your logic to move ahead
-    }
-  }
-
-  moveBack() {
-    checkForAd();
-    if (_currentIndex > 0) {
-      setState(() {
-        _currentIndex--;
-        _pageController.previousPage(
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeInOut,
-        );
-      });
-      _timer.cancel();
-      _startTimer();
-
-      // print(_currentIndex);
-    }
-  }
-
-  moveForward() {
-    checkForAd();
-
-    setState(() {
-      _currentIndex++;
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeInOut,
-      );
-    });
-    _timer.cancel();
-    _startTimer();
-    // print(_currentIndex);
   }
 }
 

@@ -146,57 +146,57 @@ class _EditProductState extends ConsumerState<EditProduct> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                allCategories.when(
-                  data: (data) {
-                    return AppThemeShared.sharedDropDown(
-                      context: context,
-                      value: categoryName,
-                      hint: const Text('Select Category'),
-                      items: data.map((e) => e.name).toList(),
-                      onChanged: (value) async {
-                        tags.clear();
-                        CategoryModel? category =
-                            getModelFromName(data, value!);
-                        if (category != null) {
-                          selectedCategory = category;
-                          getTags(category);
-                          setState(() {});
-                        }
-                      },
-                    );
-                  },
-                  error: (error, stackTrace) => Text(error.toString()),
-                  loading: () => const CircularProgressIndicator(),
-                ),
-                const SizedBox(height: 10),
-                tags.isNotEmpty
-                    ? Column(
-                        children: [
-                          Text(
-                            "Select Tags",
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                          const SizedBox(height: 10),
-                          Wrap(
-                            children: tags
-                                .map((e) => TagSelection(
-                                      tag: e,
-                                      selected:
-                                          selected.contains(e) ? true : false,
-                                      clicked: (tag) {
-                                        if (selected.contains(tag)) {
-                                          selected.remove(tag);
-                                        } else {
-                                          selected.add(tag);
-                                        }
-                                        // print(selected);
-                                      },
-                                    ))
-                                .toList(),
-                          ),
-                        ],
-                      )
-                    : const Offstage(),
+                // allCategories.when(
+                //   data: (data) {
+                //     return AppThemeShared.sharedDropDown(
+                //       context: context,
+                //       value: categoryName,
+                //       hint: const Text('Select Category'),
+                //       items: data.map((e) => e.name).toList(),
+                //       onChanged: (value) async {
+                //         tags.clear();
+                //         CategoryModel? category =
+                //             getModelFromName(data, value!);
+                //         if (category != null) {
+                //           selectedCategory = category;
+                //           getTags(category);
+                //           setState(() {});
+                //         }
+                //       },
+                //     );
+                //   },
+                //   error: (error, stackTrace) => Text(error.toString()),
+                //   loading: () => const CircularProgressIndicator(),
+                // ),
+                // const SizedBox(height: 10),
+                // tags.isNotEmpty
+                //     ? Column(
+                //         children: [
+                //           Text(
+                //             "Select Tags",
+                //             style: Theme.of(context).textTheme.titleMedium,
+                //           ),
+                //           const SizedBox(height: 10),
+                //           Wrap(
+                //             children: tags
+                //                 .map((e) => TagSelection(
+                //                       tag: e,
+                //                       selected:
+                //                           selected.contains(e) ? true : false,
+                //                       clicked: (tag) {
+                //                         if (selected.contains(tag)) {
+                //                           selected.remove(tag);
+                //                         } else {
+                //                           selected.add(tag);
+                //                         }
+                //                         // print(selected);
+                //                       },
+                //                     ))
+                //                 .toList(),
+                //           ),
+                //         ],
+                //       )
+                //     : const Offstage(),
                 const SizedBox(height: 10),
                 AppThemeShared.sharedButton(
                   context: context,

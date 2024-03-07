@@ -14,23 +14,24 @@ import 'package:sfh_app/models/tags/tag_model.dart';
 import 'package:sfh_app/screens/auth/login.dart';
 import 'package:sfh_app/screens/auth/otp.dart';
 import 'package:sfh_app/screens/auth/splash_screen.dart';
-import 'package:sfh_app/screens/category/add_category.dart';
-import 'package:sfh_app/screens/category/manage_categories.dart';
-import 'package:sfh_app/screens/category/manage_tags.dart';
+import 'package:sfh_app/screens/admin/add_category.dart';
+import 'package:sfh_app/screens/admin/manage_categories.dart';
+import 'package:sfh_app/screens/admin/manage_tags.dart';
 import 'package:sfh_app/screens/dashboard/bottom_nav.dart';
 import 'package:sfh_app/screens/dashboard/dashboard_main.dart';
 import 'package:sfh_app/screens/dashboard/new_arrivals/new_arrivals.dart';
-import 'package:sfh_app/screens/product/add_products.dart';
+import 'package:sfh_app/screens/seller/add_products.dart';
 import 'package:sfh_app/screens/product/display_products_by_category.dart';
 import 'package:sfh_app/screens/product/display_products_by_tags.dart';
-import 'package:sfh_app/screens/product/edit_product.dart';
-import 'package:sfh_app/screens/product/manage_products.dart';
+import 'package:sfh_app/screens/seller/edit_product.dart';
+import 'package:sfh_app/screens/seller/manage_products.dart';
 import 'package:sfh_app/screens/product/story_view.dart';
 import 'package:sfh_app/screens/product/view_images.dart';
 import 'package:sfh_app/screens/product/view_product.dart';
-import 'package:sfh_app/screens/seller/add_seller.dart';
+import 'package:sfh_app/screens/admin/add_seller.dart';
 import 'package:sfh_app/screens/seller/seller_login.dart';
-import 'package:sfh_app/screens/seller/seller_register.dart';
+import 'package:sfh_app/screens/user/manage_address.dart';
+import 'package:sfh_app/screens/user/seller_register.dart';
 import 'package:sfh_app/screens/user/wishlist.dart';
 import 'package:sfh_app/services/notification_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
@@ -131,8 +132,7 @@ class MyApp extends StatelessWidget with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
 
-    if (state == AppLifecycleState.paused) {
-    }
+    if (state == AppLifecycleState.paused) {}
   }
 
   Route _routing(RouteSettings settings) {
@@ -209,7 +209,9 @@ class MyApp extends StatelessWidget with WidgetsBindingObserver {
             alignment: Alignment.center);
       case '/manageProducts':
         return PageTransition(
-            child: const ManageProducts(),
+            child: ManageProducts(
+              filters: settings.arguments as Map<String, String>,
+            ),
             type: PageTransitionType.leftToRight);
       case '/newArrivals':
         return PageTransition(

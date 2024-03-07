@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sfh_app/models/seller_register/seller_register_model.dart';
-import 'package:sfh_app/services/seller_service.dart';
+import 'package:sfh_app/services/seller/seller_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 import 'package:sfh_app/shared/dialogs.dart';
 import 'package:sfh_app/shared/utility.dart';

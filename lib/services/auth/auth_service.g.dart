@@ -154,7 +154,7 @@ class _SignInProviderElement extends AutoDisposeFutureProviderElement<bool>
   AuthModel get auth => (origin as SignInProvider).auth;
 }
 
-String _$getUserByTokenHash() => r'a7994ffd38e47b8276d0c9d5d85fc8a0c9a1dcdd';
+String _$getUserByTokenHash() => r'8d5696db68fbee69aa90f8d9451572be7f50cfe6';
 
 /// See also [getUserByToken].
 @ProviderFor(getUserByToken)

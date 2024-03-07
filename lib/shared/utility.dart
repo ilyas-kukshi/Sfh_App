@@ -122,7 +122,9 @@ class Utility {
 
     if (compressed != null) {
       try {
-        await ref.putFile(File(compressed.path));
+        await ref
+            
+            .putFile(File(compressed.path));
       } on FirebaseException catch (error) {
         Fluttertoast.showToast(msg: error.toString());
         // print(error);

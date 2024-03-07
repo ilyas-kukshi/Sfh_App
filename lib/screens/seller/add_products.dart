@@ -31,7 +31,6 @@ class AddProducts extends ConsumerStatefulWidget {
 class _AddProductsState extends ConsumerState<AddProducts> {
   String? token;
 
-  List<TagModel> tags = [];
 
   ImagePicker picker = ImagePicker();
   List<XFile> files = [];
@@ -44,6 +43,8 @@ class _AddProductsState extends ConsumerState<AddProducts> {
   CategoryModel? selectedCategory;
   String categoryName = '';
   List<TagModel> selectedTags = [];
+  List<TagModel> tags = [];
+
   List<String> selectedColors = [];
   bool isFreeShipping = false;
   bool multipleColors = false;
