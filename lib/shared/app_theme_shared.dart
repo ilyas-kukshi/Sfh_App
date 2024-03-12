@@ -173,7 +173,7 @@ class AppThemeShared {
           labelStyle: Theme.of(context)
               .textTheme
               .labelMedium!
-              .copyWith(color: AppThemeShared.primaryColor),
+              .copyWith(fontSize: 16, color: AppThemeShared.primaryColor),
           suffix: suffix,
           suffixText: suffixText,
           suffixIcon: suffixIcon,

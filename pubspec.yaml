@@ -69,11 +69,11 @@ dependencies:
   shared_preferences: ^2.2.2
   visibility_detector: ^0.4.0+2
   tuple: ^2.0.2
+  country_state_city_pro: ^0.0.6
 
   app_links: ^3.5.0
   phonepe_payment_sdk: ^2.0.1
 
- 
 
   
 

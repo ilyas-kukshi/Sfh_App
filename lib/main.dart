@@ -30,7 +30,8 @@ import 'package:sfh_app/screens/product/view_images.dart';
 import 'package:sfh_app/screens/product/view_product.dart';
 import 'package:sfh_app/screens/admin/add_seller.dart';
 import 'package:sfh_app/screens/seller/seller_login.dart';
-import 'package:sfh_app/screens/user/manage_address.dart';
+import 'package:sfh_app/screens/user/address/add_address.dart';
+import 'package:sfh_app/screens/user/address/manage_address.dart';
 import 'package:sfh_app/screens/user/seller_register.dart';
 import 'package:sfh_app/screens/user/wishlist.dart';
 import 'package:sfh_app/services/notification_service.dart';
@@ -206,6 +207,22 @@ class MyApp extends StatelessWidget with WidgetsBindingObserver {
             ),
             type: PageTransitionType.scale,
             duration: const Duration(milliseconds: 700),
+            alignment: Alignment.center);
+      case '/manageAddress':
+        return PageTransition(
+            child: ManageAddress(
+              selectAddress: settings.arguments as bool,
+            ),
+            type: PageTransitionType.scale,
+            duration: const Duration(milliseconds: 700),
+            alignment: Alignment.center);
+      case '/addAddress':
+        return PageTransition(
+            child: const AddAddress(
+                // onAddressAdded: settings.arguments as AddAddressCallback,
+                ),
+            type: PageTransitionType.bottomToTop,
+            duration: const Duration(milliseconds: 400),
             alignment: Alignment.center);
       case '/manageProducts':
         return PageTransition(

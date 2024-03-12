@@ -330,10 +330,13 @@ class _ProductDetailsState extends ConsumerState<ViewProduct> {
                           .labelLarge!
                           .copyWith(color: Colors.white),
                       onTap: () {
-                        String upiLink =
-                            'upi://pay?pa=ilyaskukshiwala53@okicici&pn=Ilyas Kukshiwala&tn=Payment for Goods&tr=98765&am=50.00&cu=INR';
+                        Navigator.pushNamed(context, '/manageAddress',
+                            arguments: true);
+
+                        // String upiLink =
+                        //     'upi://pay?pa=ilyaskukshiwala53@okicici&pn=Ilyas Kukshiwala&tn=Payment for Goods&tr=98765&am=50.00&cu=INR';
                         // &tid=12345&tr=98765
-                        initiateUpiPayment(upiLink);
+                        // initiateUpiPayment(upiLink);
                         // ProductCard().enquireOnWhatsapp(widget.product);
                       },
                     ),

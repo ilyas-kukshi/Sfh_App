@@ -29,6 +29,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   navigateTo() async {
     String? token = await Utility().getStringSf("token");
+    print(token);
     if (token == null) {
       Navigator.pushNamed(context, '/login');
     } else {

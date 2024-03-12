@@ -16,6 +16,15 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 
 class Utility {
+
+static String? emptyValidator(String? name) {
+    if (name!.isEmpty) {
+      return " This field cannot be empty";
+    }
+    return null;
+  }
+
+
   static String? nameValidator(String? name) {
     if (name!.isEmpty) {
       return " Please enter your name";
