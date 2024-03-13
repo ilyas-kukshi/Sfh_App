@@ -116,7 +116,7 @@ class _SellerLoginState extends ConsumerState<SellerLogin> {
             "phoneNumber", "91${phoneNumber.text}");
         Fluttertoast.showToast(msg: "logged in successfully");
         Navigator.pushNamedAndRemoveUntil(
-            context, '/bottomNav', (route) => false);
+            context, '/bottomNav', arguments: 0, (route) => false);
       }
     });
   }

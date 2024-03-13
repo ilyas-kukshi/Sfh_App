@@ -26,6 +26,7 @@ mixin _$UserModel {
   String? get name => throw _privateConstructorUsedError;
   List<String>? get categoryAccess => throw _privateConstructorUsedError;
   List<ProductModel>? get wishlist => throw _privateConstructorUsedError;
+  List<ProductModel>? get mycart => throw _privateConstructorUsedError;
   List<ProductModel>? get recentlyViewed => throw _privateConstructorUsedError;
   @JsonKey(name: '_id')
   String? get id => throw _privateConstructorUsedError;
@@ -52,6 +53,7 @@ abstract class $UserModelCopyWith<$Res> {
       String? name,
       List<String>? categoryAccess,
       List<ProductModel>? wishlist,
+      List<ProductModel>? mycart,
       List<ProductModel>? recentlyViewed,
       @JsonKey(name: '_id') String? id,
       DateTime? createdAt,
@@ -78,6 +80,7 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
     Object? name = freezed,
     Object? categoryAccess = freezed,
     Object? wishlist = freezed,
+    Object? mycart = freezed,
     Object? recentlyViewed = freezed,
     Object? id = freezed,
     Object? createdAt = freezed,
@@ -108,6 +111,10 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
       wishlist: freezed == wishlist
           ? _value.wishlist
           : wishlist // ignore: cast_nullable_to_non_nullable
+              as List<ProductModel>?,
+      mycart: freezed == mycart
+          ? _value.mycart
+          : mycart // ignore: cast_nullable_to_non_nullable
               as List<ProductModel>?,
       recentlyViewed: freezed == recentlyViewed
           ? _value.recentlyViewed
@@ -147,6 +154,7 @@ abstract class _$$_UserModelCopyWith<$Res> implements $UserModelCopyWith<$Res> {
       String? name,
       List<String>? categoryAccess,
       List<ProductModel>? wishlist,
+      List<ProductModel>? mycart,
       List<ProductModel>? recentlyViewed,
       @JsonKey(name: '_id') String? id,
       DateTime? createdAt,
@@ -171,6 +179,7 @@ class __$$_UserModelCopyWithImpl<$Res>
     Object? name = freezed,
     Object? categoryAccess = freezed,
     Object? wishlist = freezed,
+    Object? mycart = freezed,
     Object? recentlyViewed = freezed,
     Object? id = freezed,
     Object? createdAt = freezed,
@@ -201,6 +210,10 @@ class __$$_UserModelCopyWithImpl<$Res>
       wishlist: freezed == wishlist
           ? _value._wishlist
           : wishlist // ignore: cast_nullable_to_non_nullable
+              as List<ProductModel>?,
+      mycart: freezed == mycart
+          ? _value._mycart
+          : mycart // ignore: cast_nullable_to_non_nullable
               as List<ProductModel>?,
       recentlyViewed: freezed == recentlyViewed
           ? _value._recentlyViewed
@@ -236,6 +249,7 @@ class _$_UserModel implements _UserModel {
       this.name,
       final List<String>? categoryAccess,
       final List<ProductModel>? wishlist,
+      final List<ProductModel>? mycart,
       final List<ProductModel>? recentlyViewed,
       @JsonKey(name: '_id') this.id,
       this.createdAt,
@@ -243,6 +257,7 @@ class _$_UserModel implements _UserModel {
       @JsonKey(name: '__v') this.v})
       : _categoryAccess = categoryAccess,
         _wishlist = wishlist,
+        _mycart = mycart,
         _recentlyViewed = recentlyViewed;
 
   factory _$_UserModel.fromJson(Map<String, dynamic> json) =>
@@ -276,6 +291,16 @@ class _$_UserModel implements _UserModel {
     return EqualUnmodifiableListView(value);
   }
 
+  final List<ProductModel>? _mycart;
+  @override
+  List<ProductModel>? get mycart {
+    final value = _mycart;
+    if (value == null) return null;
+    if (_mycart is EqualUnmodifiableListView) return _mycart;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   final List<ProductModel>? _recentlyViewed;
   @override
   List<ProductModel>? get recentlyViewed {
@@ -299,7 +324,7 @@ class _$_UserModel implements _UserModel {
 
   @override
   String toString() {
-    return 'UserModel(phoneNumber: $phoneNumber, role: $role, productLimit: $productLimit, name: $name, categoryAccess: $categoryAccess, wishlist: $wishlist, recentlyViewed: $recentlyViewed, id: $id, createdAt: $createdAt, updatedAt: $updatedAt, v: $v)';
+    return 'UserModel(phoneNumber: $phoneNumber, role: $role, productLimit: $productLimit, name: $name, categoryAccess: $categoryAccess, wishlist: $wishlist, mycart: $mycart, recentlyViewed: $recentlyViewed, id: $id, createdAt: $createdAt, updatedAt: $updatedAt, v: $v)';
   }
 
   @override
@@ -316,6 +341,7 @@ class _$_UserModel implements _UserModel {
             const DeepCollectionEquality()
                 .equals(other._categoryAccess, _categoryAccess) &&
             const DeepCollectionEquality().equals(other._wishlist, _wishlist) &&
+            const DeepCollectionEquality().equals(other._mycart, _mycart) &&
             const DeepCollectionEquality()
                 .equals(other._recentlyViewed, _recentlyViewed) &&
             (identical(other.id, id) || other.id == id) &&
@@ -336,6 +362,7 @@ class _$_UserModel implements _UserModel {
       name,
       const DeepCollectionEquality().hash(_categoryAccess),
       const DeepCollectionEquality().hash(_wishlist),
+      const DeepCollectionEquality().hash(_mycart),
       const DeepCollectionEquality().hash(_recentlyViewed),
       id,
       createdAt,
@@ -364,6 +391,7 @@ abstract class _UserModel implements UserModel {
       final String? name,
       final List<String>? categoryAccess,
       final List<ProductModel>? wishlist,
+      final List<ProductModel>? mycart,
       final List<ProductModel>? recentlyViewed,
       @JsonKey(name: '_id') final String? id,
       final DateTime? createdAt,
@@ -385,6 +413,8 @@ abstract class _UserModel implements UserModel {
   List<String>? get categoryAccess;
   @override
   List<ProductModel>? get wishlist;
+  @override
+  List<ProductModel>? get mycart;
   @override
   List<ProductModel>? get recentlyViewed;
   @override

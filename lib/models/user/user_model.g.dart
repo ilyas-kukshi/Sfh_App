@@ -17,6 +17,9 @@ _$_UserModel _$$_UserModelFromJson(Map<String, dynamic> json) => _$_UserModel(
       wishlist: (json['wishlist'] as List<dynamic>?)
           ?.map((e) => ProductModel.fromJson(e as Map<String, dynamic>))
           .toList(),
+      mycart: (json['mycart'] as List<dynamic>?)
+          ?.map((e) => ProductModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
       recentlyViewed: (json['recentlyViewed'] as List<dynamic>?)
           ?.map((e) => ProductModel.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -38,6 +41,7 @@ Map<String, dynamic> _$$_UserModelToJson(_$_UserModel instance) =>
       'name': instance.name,
       'categoryAccess': instance.categoryAccess,
       'wishlist': instance.wishlist,
+      'mycart': instance.mycart,
       'recentlyViewed': instance.recentlyViewed,
       '_id': instance.id,
       'createdAt': instance.createdAt?.toIso8601String(),

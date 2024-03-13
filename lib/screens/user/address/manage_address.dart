@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sfh_app/models/address/address_model.dart';
 import 'package:sfh_app/services/address/address_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
@@ -64,105 +65,135 @@ class _ManageAddressState extends State<ManageAddress> {
           }
         },
       ),
-      bottomNavigationBar: GestureDetector(
-        onTap: () {
-          Navigator.pushNamed(context, '/addAddress');
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            height: 50,
-            decoration: BoxDecoration(
-                border:
-                    Border.all(width: 2, color: AppThemeShared.primaryColor)),
-            child: Center(
-                child: Text(
-              "Add Address",
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium!
-                  .copyWith(fontSize: 18, color: AppThemeShared.primaryColor),
-            )),
+      bottomNavigationBar: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(context, '/addAddress');
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                height: 50,
+                width: MediaQuery.of(context).size.width * 0.45,
+                decoration: BoxDecoration(
+                    border: Border.all(
+                        width: 2, color: AppThemeShared.primaryColor)),
+                child: Center(
+                    child: Text(
+                  "Add Address",
+                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                      fontSize: 18, color: AppThemeShared.primaryColor),
+                )),
+              ),
+            ),
           ),
-        ),
+          AppThemeShared.sharedButton(
+            height: 50,
+            widthPercent: 0.45,
+            percent: true,
+            color: const Color(0xffFF6347),
+            // width: 100,
+            context: context,
+            buttonText: "Deliver Here",
+            textStyle: Theme.of(context)
+                .textTheme
+                .titleMedium!
+                .copyWith(fontSize: 18, color: Colors.white),
+            onTap: () {
+              if (selectedAddress != null) {
+                Navigator.pushNamed(context, '/orderSummary',
+                    arguments: selectedAddress);
+              } else {
+                Fluttertoast.showToast(msg: "Please select an address");
+              }
+            },
+          )
+        ],
       ),
     );
   }
 
   Widget addressCard(WidgetRef ref, AddressModel address) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Stack(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  address.name,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 4),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.75,
-                  child: Text(
-                      "${address.houseNo}, ${address.roadName}, ${address.landmark ?? ''}, ${address.city}, ${address.state} - ${address.pincode}"),
-                ),
-                const SizedBox(height: 4),
-                Text("+${address.phoneNumber}"),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 6, horizontal: 20),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                            width: 2, color: AppThemeShared.primaryColor),
-                      ),
-                      child: const Text("Edit"),
-                    ),
-                    const SizedBox(width: 8),
-                    GestureDetector(
-                      onTap: () async {
-                        DialogShared.loadingDialog(context, "Delete");
-                        final deleted =
-                            await AddressService().delete(address.id!, token!);
-                        if (deleted) {
-                          final update =
-                              ref.refresh(getAddressesProvider(token!).future);
-                          update.whenComplete(() => Navigator.pop(context));
-                        }
-                      },
-                      child: Container(
+    return GestureDetector(
+      onTap: () => setState(() {
+        selectedAddress = address;
+      }),
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Stack(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    address.name,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 4),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.75,
+                    child: Text(
+                        "${address.houseNo}, ${address.roadName}, ${address.landmark ?? ''}, ${address.city}, ${address.state} - ${address.pincode}"),
+                  ),
+                  const SizedBox(height: 4),
+                  Text("+${address.phoneNumber}"),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Container(
                         padding: const EdgeInsets.symmetric(
                             vertical: 6, horizontal: 20),
                         decoration: BoxDecoration(
-                          border: Border.all(width: 2, color: Colors.red),
+                          border: Border.all(
+                              width: 2, color: AppThemeShared.primaryColor),
                         ),
-                        child: const Text("Delete"),
+                        child: const Text("Edit"),
+                      ),
+                      const SizedBox(width: 8),
+                      GestureDetector(
+                        onTap: () async {
+                          DialogShared.loadingDialog(context, "Delete");
+                          final deleted = await AddressService()
+                              .delete(address.id!, token!);
+                          if (deleted) {
+                            final update = ref
+                                .refresh(getAddressesProvider(token!).future);
+                            update.whenComplete(() => Navigator.pop(context));
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 6, horizontal: 20),
+                          decoration: BoxDecoration(
+                            border: Border.all(width: 2, color: Colors.red),
+                          ),
+                          child: const Text("Delete"),
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              ),
+              widget.selectAddress
+                  ? Align(
+                      alignment: Alignment.topRight,
+                      child: Radio<AddressModel>(
+                        activeColor: AppThemeShared.primaryColor,
+                        value: address,
+                        groupValue: selectedAddress,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedAddress = value;
+                          });
+                        },
                       ),
                     )
-                  ],
-                )
-              ],
-            ),
-            widget.selectAddress
-                ? Align(
-                    alignment: Alignment.topRight,
-                    child: Radio<AddressModel>(
-                      activeColor: AppThemeShared.primaryColor,
-                      value: address,
-                      groupValue: selectedAddress,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedAddress = value;
-                        });
-                      },
-                    ),
-                  )
-                : const Offstage()
-          ],
+                  : const Offstage()
+            ],
+          ),
         ),
       ),
     );

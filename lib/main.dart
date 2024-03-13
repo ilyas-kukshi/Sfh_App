@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:sfh_app/models/address/address_model.dart';
 import 'package:sfh_app/models/category/category_model.dart';
 import 'package:sfh_app/models/products/product_model.dart';
 import 'package:sfh_app/models/tags/tag_model.dart';
@@ -20,6 +21,7 @@ import 'package:sfh_app/screens/admin/manage_tags.dart';
 import 'package:sfh_app/screens/dashboard/bottom_nav.dart';
 import 'package:sfh_app/screens/dashboard/dashboard_main.dart';
 import 'package:sfh_app/screens/dashboard/new_arrivals/new_arrivals.dart';
+import 'package:sfh_app/screens/order/order_summary.dart';
 import 'package:sfh_app/screens/seller/add_products.dart';
 import 'package:sfh_app/screens/product/display_products_by_category.dart';
 import 'package:sfh_app/screens/product/display_products_by_tags.dart';
@@ -32,6 +34,7 @@ import 'package:sfh_app/screens/admin/add_seller.dart';
 import 'package:sfh_app/screens/seller/seller_login.dart';
 import 'package:sfh_app/screens/user/address/add_address.dart';
 import 'package:sfh_app/screens/user/address/manage_address.dart';
+import 'package:sfh_app/screens/user/my_cart.dart';
 import 'package:sfh_app/screens/user/seller_register.dart';
 import 'package:sfh_app/screens/user/wishlist.dart';
 import 'package:sfh_app/services/notification_service.dart';
@@ -149,7 +152,10 @@ class MyApp extends StatelessWidget with WidgetsBindingObserver {
             type: PageTransitionType.leftToRight);
       case '/bottomNav':
         return PageTransition(
-            child: const BottomNav(), type: PageTransitionType.leftToRight);
+            child: BottomNav(
+              screen: settings.arguments as int,
+            ),
+            type: PageTransitionType.leftToRight);
       case '/dashboardMain':
         return PageTransition(
             child: const DashboardMain(), type: PageTransitionType.leftToRight);
@@ -208,6 +214,12 @@ class MyApp extends StatelessWidget with WidgetsBindingObserver {
             type: PageTransitionType.scale,
             duration: const Duration(milliseconds: 700),
             alignment: Alignment.center);
+      case '/mycart':
+        return PageTransition(
+            child: const MyCart(),
+            type: PageTransitionType.scale,
+            duration: const Duration(milliseconds: 700),
+            alignment: Alignment.center);
       case '/manageAddress':
         return PageTransition(
             child: ManageAddress(
@@ -224,6 +236,12 @@ class MyApp extends StatelessWidget with WidgetsBindingObserver {
             type: PageTransitionType.bottomToTop,
             duration: const Duration(milliseconds: 400),
             alignment: Alignment.center);
+      case '/orderSummary':
+        return PageTransition(
+            child: OrderSummary(
+              address: settings.arguments as AddressModel,
+            ),
+            type: PageTransitionType.leftToRight);
       case '/manageProducts':
         return PageTransition(
             child: ManageProducts(

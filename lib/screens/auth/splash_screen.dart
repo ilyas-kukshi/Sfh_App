@@ -36,7 +36,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       final user = ref.read(getUserByTokenProvider(token).future);
       user.then((value) {
         if (value != null) {
-          Navigator.pushNamed(context, '/bottomNav');
+          Navigator.pushNamed(context, '/bottomNav',arguments: 0);
         }
       });
     }

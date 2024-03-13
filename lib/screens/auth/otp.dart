@@ -77,7 +77,7 @@ class _OtpState extends ConsumerState<Otp> {
 
     if (token != null) {
       await Utility().setStringSF("token", token);
-      Navigator.pushNamed(context, '/bottomNav');
+      Navigator.pushNamed(context, '/bottomNav', arguments: 0);
     } else {
       Fluttertoast.showToast(msg: "Authentication Failed");
     }

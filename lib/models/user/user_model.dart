@@ -25,6 +25,7 @@ class UserModel with _$UserModel {
     String? name,
     List<String>? categoryAccess,
     List<ProductModel>? wishlist,
+    List<ProductModel>? mycart,
     List<ProductModel>? recentlyViewed,
     @JsonKey(name: '_id') String? id,
     DateTime? createdAt,

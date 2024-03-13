@@ -28,4 +28,31 @@ class UserService {
       return false;
     }
   }
+
+  Future<bool> updateCart(
+    String productId,
+    String token
+  ) async {
+   
+
+    try {
+      var response =
+          await http.put(Uri.parse("${Constants.baseUrl}/user/cart"), headers: {
+        'Authorization': 'Bearer $token',
+      }, body: {
+        "productId": productId
+      });
+      // var data = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      // print(error);
+      Fluttertoast.showToast(msg: error.toString());
+      return false;
+    }
+  }
 }

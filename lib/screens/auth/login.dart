@@ -145,7 +145,7 @@ class _LoginState extends ConsumerState<Login> {
                       fontSize: 18,
                       fontWeight: FontWeight.bold),
                   onTap: () {
-                    Navigator.pushNamed(context, '/bottomNav');
+                    Navigator.pushNamed(context, '/bottomNav', arguments: 0);
                   },
                 )
               ],
@@ -159,7 +159,7 @@ class _LoginState extends ConsumerState<Login> {
   checkUser() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     if (pref.getString("phoneNumber") != null) {
-      Navigator.pushNamed(context, '/bottomNav');
+      Navigator.pushNamed(context, '/bottomNav', arguments: 0);
     }
   }
 
