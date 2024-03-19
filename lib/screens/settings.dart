@@ -54,7 +54,8 @@ class _SettingsState extends ConsumerState<Settings> {
                 data: (data) {
                   if (data != null) {
                     userProfile = data;
-                    return functions(data.role == Constants.user, true, true);
+                    return functions(
+                        false, data.role == Constants.user, true, true, true);
                   } else {
                     return const Text(
                         "Could not find a user on a given credentials, Please Login again.");
@@ -64,16 +65,24 @@ class _SettingsState extends ConsumerState<Settings> {
                 loading: () => const Center(child: CircularProgressIndicator()),
               );
             } else {
-              return functions(true, false, false);
+              return functions(true, true, false, false, false);
             }
           }),
     );
   }
 
-  Widget functions(bool sellerLogin, wishlist, bool logout) {
+  Widget functions(
+      bool login, bool sellerLogin, wishlist, bool orders, bool logout) {
     return SingleChildScrollView(
       child: Column(
         children: [
+          login
+              ? tile(
+                  Icons.login,
+                  "Login",
+                  () =>
+                      Navigator.pushNamed(context, '/login', arguments: token))
+              : const Offstage(),
           wishlist
               ? tile(
                   Icons.favorite_outline_outlined,
@@ -82,13 +91,21 @@ class _SettingsState extends ConsumerState<Settings> {
                       arguments: token))
               : const Offstage(),
           divider(),
-          tile(Icons.forum, "Feedback & Suggestions",
-              () => launchUrl(Uri.parse(Constants.feedbackUrl))),
+          orders
+              ? tile(
+                  Icons.inventory_2,
+                  "Orders",
+                  () =>
+                      Navigator.pushNamed(context, '/orders', arguments: token))
+              : const Offstage(),
           divider(),
           sellerLogin
               ? tile(Icons.person, "Switch to Seller Account",
                   () => Navigator.pushNamed(context, '/sellerLogin'))
               : const Offstage(),
+          divider(),
+          tile(Icons.forum, "Feedback & Suggestions",
+              () => launchUrl(Uri.parse(Constants.feedbackUrl))),
           divider(),
           logout
               ? tile(Icons.exit_to_app, "Logout", () {

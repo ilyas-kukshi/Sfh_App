@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -172,7 +170,12 @@ class _MyCartState extends State<MyCart> {
                 },
               );
             } else {
-              return const Text("Login for best experience");
+              return Center(
+                child: Text(
+                  "Login for best experience",
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              );
             }
           } else {
             return const Center(

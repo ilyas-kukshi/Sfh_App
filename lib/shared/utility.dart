@@ -16,14 +16,12 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 
 class Utility {
-
-static String? emptyValidator(String? name) {
+  static String? emptyValidator(String? name) {
     if (name!.isEmpty) {
       return " This field cannot be empty";
     }
     return null;
   }
-
 
   static String? nameValidator(String? name) {
     if (name!.isEmpty) {
@@ -131,9 +129,7 @@ static String? emptyValidator(String? name) {
 
     if (compressed != null) {
       try {
-        await ref
-            
-            .putFile(File(compressed.path));
+        await ref.putFile(File(compressed.path));
       } on FirebaseException catch (error) {
         Fluttertoast.showToast(msg: error.toString());
         // print(error);
@@ -238,12 +234,14 @@ static String? emptyValidator(String? name) {
   }
 
   // To use with enquire button
-  enquireOnWhatsapp(ProductModel product) async {
+  enquireOnWhatsapp(ProductModel product, String? text) async {
     try {
       Uri deeplink =
           Utility().buildDeepLink('/product', {"productId": product.id!});
       String whatsappUrl =
-          "https://wa.me/${Constants.whatsappNumber}?text=${Uri.encodeQueryComponent('Product: $deeplink\n Name: ${product.name},\n Price: ${product.price - product.discount}\n Discount given: ${product.discount}(${((product.discount / product.price) * 100).toInt()}%})')}";
+          "https://wa.me/${Constants.whatsappNumber}?text=${Uri.encodeQueryComponent('Product: $deeplink\n Name: ${product.name},\n Price: ${product.price - product.discount}\n Discount given: ${product.discount}(${((product.discount / product.price) * 100).toInt()}%})\n${text ?? ''}')}";
+
+      // "https://wa.me/${Constants.whatsappNumber}?text=${Uri.encodeQueryComponent('Product: $deeplink\n Name: ${product.name},\n Price: ${product.price - product.discount}\n Discount given: ${product.discount}(${((product.discount / product.price) * 100).toInt()}%})')}";
 
       if (await canLaunchUrl(Uri.parse(whatsappUrl))) {
         await launchUrl(Uri.parse(whatsappUrl));

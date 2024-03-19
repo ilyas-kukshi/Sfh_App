@@ -29,12 +29,7 @@ class UserService {
     }
   }
 
-  Future<bool> updateCart(
-    String productId,
-    String token
-  ) async {
-   
-
+  Future<bool> updateCart(String productId, String token) async {
     try {
       var response =
           await http.put(Uri.parse("${Constants.baseUrl}/user/cart"), headers: {

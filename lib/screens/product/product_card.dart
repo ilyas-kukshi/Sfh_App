@@ -59,11 +59,11 @@ class _ProductCardState extends State<ProductCard> {
                       fit: BoxFit.fill,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: Align(
-                        alignment: Alignment.topRight, child: favouriteIcon()),
-                  )
+                  // Padding(
+                  //   padding: const EdgeInsets.all(2.0),
+                  //   child: Align(
+                  //       alignment: Alignment.topRight, child: favouriteIcon()),
+                  // )
                 ],
               ),
             ),
@@ -164,7 +164,7 @@ class _ProductCardState extends State<ProductCard> {
                     shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero)),
                 onPressed: () {
-                  Utility().enquireOnWhatsapp(widget.product);
+                  Utility().enquireOnWhatsapp(widget.product, '');
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -272,7 +272,7 @@ class _ProductCardState extends State<ProductCard> {
                   loading: () => const Offstage(),
                 );
               } else {
-                return const Icon(Icons.favorite_border_outlined);
+                return const Offstage();
               }
             },
           );

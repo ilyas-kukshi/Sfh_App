@@ -4,10 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sfh_app/models/address/address_model.dart';
 import 'package:sfh_app/models/products/product_model.dart';
-import 'package:sfh_app/services/address/address_service.dart';
 import 'package:sfh_app/services/order/order_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
-import 'package:sfh_app/shared/dialogs.dart';
+import 'package:sfh_app/shared/constants.dart';
+import 'package:sfh_app/shared/utility.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class OrderSummary extends ConsumerStatefulWidget {
   final AddressModel address;
@@ -22,6 +23,32 @@ class _OrderSummaryState extends ConsumerState<OrderSummary> {
   int price = 0;
   int discount = 0;
   int finalPrice = 0;
+  String finalAddress = '';
+
+  String getTotalPrice() {
+    price = 0;
+    for (var element in products) {
+      price += element.price;
+    }
+    return price.toString();
+  }
+
+  int getDiscount() {
+    discount = 0;
+    for (var element in products) {
+      discount += element.discount;
+    }
+    return discount;
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    finalAddress =
+        '${widget.address.houseNo}, ${widget.address.roadName}, ${widget.address.landmark ?? ''}, ${widget.address.city}, ${widget.address.state} - ${widget.address.pincode}';
+  }
+
   @override
   Widget build(BuildContext context) {
     // final products = ref.read(orderListNotifierProvider);
@@ -81,31 +108,31 @@ class _OrderSummaryState extends ConsumerState<OrderSummary> {
               ),
               const SizedBox(height: 12),
               const Divider(color: Colors.grey),
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Text(
-                  "Payment Type:",
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-              ),
-              Row(
-                children: [
-                  Radio(
-                    value: true,
-                    groupValue: true,
-                    activeColor: AppThemeShared.primaryColor,
-                    onChanged: (value) {},
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    "UPI",
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium!
-                        .copyWith(fontSize: 18),
-                  )
-                ],
-              )
+              // Padding(
+              //   padding: const EdgeInsets.all(12.0),
+              //   child: Text(
+              //     "Payment Type:",
+              //     style: Theme.of(context).textTheme.titleLarge,
+              //   ),
+              // ),
+              // Row(
+              //   children: [
+              //     Radio(
+              //       value: true,
+              //       groupValue: true,
+              //       activeColor: AppThemeShared.primaryColor,
+              //       onChanged: (value) {},
+              //     ),
+              //     const SizedBox(width: 12),
+              //     Text(
+              //       "UPI",
+              //       style: Theme.of(context)
+              //           .textTheme
+              //           .titleMedium!
+              //           .copyWith(fontSize: 18),
+              //     )
+              //   ],
+              // )
             ],
           ),
         ),
@@ -149,12 +176,25 @@ class _OrderSummaryState extends ConsumerState<OrderSummary> {
                   height: 45,
                   context: context,
                   buttonText: "Pay",
-                  onTap: () {
-                    String upiLink =
-                        'upi://pay?pa=ilyaskukshiwala53@okicici&pn=Ilyas Kukshiwala&tn=Payment for Goods&tr=98765&am=${price - discount}&cu=INR';
+                  onTap: () async {
+                    // String upiLink =
+                    //     'upi://pay?pa=ilyaskukshiwala53@okicici&pn=Ilyas Kukshiwala&mc=5411&tn=Payment for Goods&tr=98765&am=${price - discount}&cu=INR';
                     // &tid=12345&tr=98765
-                    initiateUpiPayment(upiLink);
+                    // initiateUpiPayment(upiLink);
                     // ProductCard().enquireOnWhatsapp(widget.product);
+                    List<Uri> deepLinks = [];
+
+                    for (var product in products) {
+                      deepLinks.add(Utility().buildDeepLink(
+                          "/product", {"productId": product.id!}));
+
+                      String whatsappUrl =
+                          "https://wa.me/${Constants.whatsappNumber}?text=${Uri.encodeQueryComponent('Products: $deepLinks\n Address:$finalAddress\n Final Price: ${price - discount}\n Total Discount: $discount \n\n I would like to buy these products')}";
+
+                      if (await canLaunchUrl(Uri.parse(whatsappUrl))) {
+                        await launchUrl(Uri.parse(whatsappUrl));
+                      }
+                    }
                   },
                 )
               ],
@@ -174,31 +214,16 @@ class _OrderSummaryState extends ConsumerState<OrderSummary> {
     }
   }
 
-  String getTotalPrice() {
-    price = 0;
-    for (var element in products) {
-      price += element.price;
-    }
-    return price.toString();
-  }
-
-  int getDiscount() {
-    discount = 0;
-    for (var element in products) {
-      discount += element.discount;
-    }
-    return discount;
-  }
-
   Widget productCard(ProductModel product) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(8.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CachedNetworkImage(
               height: 100,
+              width: 120,
               // width: MediaQuery.of(context).size.width * 0.25,
               imageUrl: product.imageUris.first,
               fit: BoxFit.fill,

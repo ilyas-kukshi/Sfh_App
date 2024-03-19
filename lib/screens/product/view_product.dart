@@ -276,7 +276,7 @@ class _ProductDetailsState extends ConsumerState<ViewProduct> {
                             side: BorderSide(
                                 color: AppThemeShared.primaryColor, width: 2)),
                         onPressed: () =>
-                            Utility().enquireOnWhatsapp(widget.product),
+                            Utility().enquireOnWhatsapp(widget.product, ''),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -323,12 +323,17 @@ class _ProductDetailsState extends ConsumerState<ViewProduct> {
                               .labelLarge!
                               .copyWith(color: Colors.white),
                           onTap: () {
-                            ref.read(orderListNotifierProvider).clear();
-                            ref
-                                .read(orderListNotifierProvider)
-                                .add(widget.product);
-                            Navigator.pushNamed(context, '/manageAddress',
-                                arguments: true);
+                            if (token == null) {
+                              Utility().enquireOnWhatsapp(widget.product,
+                                  "I would like to buy this product");
+                            } else {
+                              ref.read(orderListNotifierProvider).clear();
+                              ref
+                                  .read(orderListNotifierProvider)
+                                  .add(widget.product);
+                              Navigator.pushNamed(context, '/manageAddress',
+                                  arguments: true);
+                            }
                           },
                         ),
                       ),
@@ -471,7 +476,12 @@ class _ProductDetailsState extends ConsumerState<ViewProduct> {
                         } else {
                           Fluttertoast.showToast(msg: "Cart not updated");
                         }
-                      } else {}
+                      } else {
+                        Fluttertoast.showToast(
+                            msg: "Login for best experience");
+                        Navigator.pushNamed(context, '/bottomNav',
+                            arguments: 3);
+                      }
 
                       // ProductCard().enquireOnWhatsapp(widget.product);
                     },

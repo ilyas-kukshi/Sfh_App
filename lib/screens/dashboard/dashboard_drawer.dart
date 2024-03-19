@@ -43,13 +43,6 @@ class _DashboardDrawerState extends ConsumerState<DashboardDrawer> {
             divider(),
             GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, '/manageProducts');
-                },
-                child: Text("Manage Products",
-                    style: Theme.of(context).textTheme.titleMedium)),
-            divider(),
-            GestureDetector(
-                onTap: () {
                   Navigator.pushNamed(context, '/addSeller');
                 },
                 child: Text("Add Seller",

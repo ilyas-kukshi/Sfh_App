@@ -22,7 +22,7 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) {
 mixin _$UserModel {
   String get phoneNumber => throw _privateConstructorUsedError;
   String get role => throw _privateConstructorUsedError;
-  int get productLimit => throw _privateConstructorUsedError;
+  int? get productLimit => throw _privateConstructorUsedError;
   String? get name => throw _privateConstructorUsedError;
   List<String>? get categoryAccess => throw _privateConstructorUsedError;
   List<ProductModel>? get wishlist => throw _privateConstructorUsedError;
@@ -49,7 +49,7 @@ abstract class $UserModelCopyWith<$Res> {
   $Res call(
       {String phoneNumber,
       String role,
-      int productLimit,
+      int? productLimit,
       String? name,
       List<String>? categoryAccess,
       List<ProductModel>? wishlist,
@@ -76,7 +76,7 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
   $Res call({
     Object? phoneNumber = null,
     Object? role = null,
-    Object? productLimit = null,
+    Object? productLimit = freezed,
     Object? name = freezed,
     Object? categoryAccess = freezed,
     Object? wishlist = freezed,
@@ -96,10 +96,10 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
           ? _value.role
           : role // ignore: cast_nullable_to_non_nullable
               as String,
-      productLimit: null == productLimit
+      productLimit: freezed == productLimit
           ? _value.productLimit
           : productLimit // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -150,7 +150,7 @@ abstract class _$$_UserModelCopyWith<$Res> implements $UserModelCopyWith<$Res> {
   $Res call(
       {String phoneNumber,
       String role,
-      int productLimit,
+      int? productLimit,
       String? name,
       List<String>? categoryAccess,
       List<ProductModel>? wishlist,
@@ -175,7 +175,7 @@ class __$$_UserModelCopyWithImpl<$Res>
   $Res call({
     Object? phoneNumber = null,
     Object? role = null,
-    Object? productLimit = null,
+    Object? productLimit = freezed,
     Object? name = freezed,
     Object? categoryAccess = freezed,
     Object? wishlist = freezed,
@@ -195,10 +195,10 @@ class __$$_UserModelCopyWithImpl<$Res>
           ? _value.role
           : role // ignore: cast_nullable_to_non_nullable
               as String,
-      productLimit: null == productLimit
+      productLimit: freezed == productLimit
           ? _value.productLimit
           : productLimit // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -245,7 +245,7 @@ class _$_UserModel implements _UserModel {
   const _$_UserModel(
       {required this.phoneNumber,
       required this.role,
-      required this.productLimit,
+      this.productLimit,
       this.name,
       final List<String>? categoryAccess,
       final List<ProductModel>? wishlist,
@@ -268,7 +268,7 @@ class _$_UserModel implements _UserModel {
   @override
   final String role;
   @override
-  final int productLimit;
+  final int? productLimit;
   @override
   final String? name;
   final List<String>? _categoryAccess;
@@ -387,7 +387,7 @@ abstract class _UserModel implements UserModel {
   const factory _UserModel(
       {required final String phoneNumber,
       required final String role,
-      required final int productLimit,
+      final int? productLimit,
       final String? name,
       final List<String>? categoryAccess,
       final List<ProductModel>? wishlist,
@@ -406,7 +406,7 @@ abstract class _UserModel implements UserModel {
   @override
   String get role;
   @override
-  int get productLimit;
+  int? get productLimit;
   @override
   String? get name;
   @override

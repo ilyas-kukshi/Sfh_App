@@ -21,7 +21,7 @@ class UserModel with _$UserModel {
   const factory UserModel({
     required String phoneNumber,
     required String role,
-    required int productLimit,
+    int? productLimit,
     String? name,
     List<String>? categoryAccess,
     List<ProductModel>? wishlist,

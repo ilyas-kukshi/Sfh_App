@@ -165,7 +165,7 @@ class _DashboardMainState extends State<DashboardMain> {
                           ),
                           const NewArrivalsBanner(),
                           const PopularCategoriesBanner(),
-                          recentlyViewd()
+                          token != null ? recentlyViewd() : const Offstage()
                         ],
                       ),
                     ),

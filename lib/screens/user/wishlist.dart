@@ -206,23 +206,35 @@ class _WishlistState extends ConsumerState<Wishlist> {
                         Size(MediaQuery.of(context).size.width * 0.48, 40),
                     shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero)),
-                onPressed: () {
+                onPressed: () async {
                   // Utility().enquireOnWhatsapp(widget.product);
+                  bool updated =
+                      await UserService().updateCart(product.id!, token!);
+                  if (updated) {
+                    final update =
+                        ref.refresh(getUserByTokenProvider(token!).future);
+                  } else {
+                    Fluttertoast.showToast(msg: "Cart not updated");
+                  }
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.add_shopping_cart,
-                      color: AppThemeShared.primaryColor,
+                    Expanded(
+                      child: Text(
+                        user.mycart == null || !user.mycart!.contains(product)
+                            ? "Add to "
+                            : "Remove from ",
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelLarge!
+                            .copyWith(color: AppThemeShared.primaryColor),
+                      ),
                     ),
-                    const SizedBox(width: 4),
-                    Text(
-                      "Add to cart",
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelLarge!
-                          .copyWith(color: AppThemeShared.primaryColor),
+                    Icon(
+                      Icons.shopping_bag,
+                      color: AppThemeShared.primaryColor,
                     ),
                   ],
                 ))

@@ -9,7 +9,7 @@ part of 'user_model.dart';
 _$_UserModel _$$_UserModelFromJson(Map<String, dynamic> json) => _$_UserModel(
       phoneNumber: json['phoneNumber'] as String,
       role: json['role'] as String,
-      productLimit: json['productLimit'] as int,
+      productLimit: json['productLimit'] as int?,
       name: json['name'] as String?,
       categoryAccess: (json['categoryAccess'] as List<dynamic>?)
           ?.map((e) => e as String)

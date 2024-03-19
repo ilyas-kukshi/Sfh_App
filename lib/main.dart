@@ -22,6 +22,7 @@ import 'package:sfh_app/screens/dashboard/bottom_nav.dart';
 import 'package:sfh_app/screens/dashboard/dashboard_main.dart';
 import 'package:sfh_app/screens/dashboard/new_arrivals/new_arrivals.dart';
 import 'package:sfh_app/screens/order/order_summary.dart';
+import 'package:sfh_app/screens/order/orders.dart';
 import 'package:sfh_app/screens/seller/add_products.dart';
 import 'package:sfh_app/screens/product/display_products_by_category.dart';
 import 'package:sfh_app/screens/product/display_products_by_tags.dart';
@@ -242,6 +243,15 @@ class MyApp extends StatelessWidget with WidgetsBindingObserver {
               address: settings.arguments as AddressModel,
             ),
             type: PageTransitionType.leftToRight);
+      case '/orders':
+        return PageTransition(
+            child: Orders(
+              token: settings.arguments as String,
+            ),
+            type: PageTransitionType.scale,
+            duration: const Duration(milliseconds: 700),
+            alignment: Alignment.center);
+
       case '/manageProducts':
         return PageTransition(
             child: ManageProducts(
