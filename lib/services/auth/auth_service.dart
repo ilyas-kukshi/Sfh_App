@@ -108,9 +108,8 @@ Future<bool> signIn(SignInRef signInRef, AuthModel auth) async {
 Future<UserModel?> getUserByToken(
     GetUserByTokenRef getUserByNumberRef, String token) async {
   try {
-    var respose =await http
+    var respose = await http
         .get(Uri.parse("${Constants.baseUrl}/user/getByToken"), headers: {
-      'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
     });
     var data = jsonDecode(respose.body);
