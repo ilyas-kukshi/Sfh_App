@@ -43,7 +43,6 @@ class _OrderSummaryState extends ConsumerState<OrderSummary> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     finalAddress =
         '${widget.address.houseNo}, ${widget.address.roadName}, ${widget.address.landmark ?? ''}, ${widget.address.city}, ${widget.address.state} - ${widget.address.pincode}';
