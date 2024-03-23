@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
@@ -124,6 +125,10 @@ Future<UserModel?> getUserByToken(
       Fluttertoast.showToast(msg: data["error"]);
       return null;
     }
+  } on SocketException catch (e) {
+    // Handle HTTP client exceptions, including SocketException
+    Fluttertoast.showToast(msg: 'Failed to connect to the server: $e');
+    return null;
   } catch (error) {
     Fluttertoast.showToast(msg: error.toString());
     // print(error);

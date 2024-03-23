@@ -49,7 +49,7 @@ dependencies:
   sms_autofill: ^2.3.1
 
   page_transition: ^2.0.9
-  google_fonts: ^6.1.0
+  google_fonts: ^6.2.1
 
   image_picker: ^1.0.2
   cached_network_image: ^3.2.3
@@ -60,21 +60,19 @@ dependencies:
   http: ^1.1.0
   fluttertoast: ^8.2.2
   shimmer: ^3.0.0
-  upgrader: ^8.4.0
   widget_zoom: ^0.0.3
 
-  url_launcher: ^6.2.1
+  url_launcher: ^6.1.10
   share_plus: ^7.2.2
   google_mobile_ads: ^4.0.0
   shared_preferences: ^2.2.2
   visibility_detector: ^0.4.0+2
   tuple: ^2.0.2
-  country_state_city_pro: ^0.0.6
-
+  
   app_links: ^3.5.0
-  phonepe_payment_sdk: ^2.0.1
 
-  qr_flutter: ^4.1.0
+
+
   
 
 
