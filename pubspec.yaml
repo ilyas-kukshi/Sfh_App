@@ -44,7 +44,7 @@ dependencies:
   firebase_core: ^2.15.1
   firebase_storage: ^11.2.6
   firebase_messaging: ^14.7.8
-  flutter_local_notifications: ^16.3.2
+  flutter_local_notifications: ^17.0.0
 
   sms_autofill: ^2.3.1
 
@@ -52,7 +52,7 @@ dependencies:
   google_fonts: ^6.1.0
 
   image_picker: ^1.0.2
-  cached_network_image: ^3.2.3
+  cached_network_image: ^3.3.1
   image_cropper: ^5.0.1
   flutter_image_compress: ^2.1.0
 
@@ -60,18 +60,18 @@ dependencies:
   http: ^1.1.0
   fluttertoast: ^8.2.2
   shimmer: ^3.0.0
-  upgrader: ^8.4.0
+  upgrader: ^10.0.1
   widget_zoom: ^0.0.3
 
   url_launcher: ^6.2.1
-  share_plus: ^7.2.2
-  google_mobile_ads: ^4.0.0
+  share_plus: ^8.0.2
+  google_mobile_ads: ^5.0.0
   shared_preferences: ^2.2.2
   visibility_detector: ^0.4.0+2
   tuple: ^2.0.2
   country_state_city_pro: ^0.0.6
 
-  app_links: ^3.5.0
+  app_links: ^4.0.1
   phonepe_payment_sdk: ^2.0.1
 
   qr_flutter: ^4.1.0
@@ -87,10 +87,16 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.1
   build_runner: ^2.4.6
   json_serializable: ^6.7.1
   riverpod_generator: ^2.3.9
+  flutter_launcher_icons: ^0.13.1
+  
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/logo.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

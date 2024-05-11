@@ -13,7 +13,9 @@ class AuthService {
   Future<String?> getOtp(String phoneNumber) async {
     try {
       var response = await http
-          .get(Uri.parse('${Constants.otpUrl}/+91$phoneNumber/AUTOGEN2'));
+          // .get(Uri.parse("https://2factor.in/API/V1/a7df023c-d584-11ee-8cbb-0200cd936042/SMS/9987655052/12345/SFH+OTP"));
+          .get(Uri.parse(
+              '${Constants.otpUrl}/+91$phoneNumber/AUTOGEN2/SFHOTP1'));
 
       var data = jsonDecode(response.body);
       if (response.statusCode == 200) {

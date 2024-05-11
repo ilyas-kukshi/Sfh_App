@@ -1,4 +1,4 @@
-package com.example.sfh_app
+package com.nexsolve.sfh
 
 import android.content.Context
 import android.content.Intent

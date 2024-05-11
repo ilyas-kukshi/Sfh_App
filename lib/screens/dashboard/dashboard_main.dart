@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ import 'package:sfh_app/shared/app_theme_shared.dart';
 import 'package:sfh_app/shared/constants.dart';
 import 'package:sfh_app/shared/dialogs.dart';
 import 'package:sfh_app/shared/utility.dart';
+import 'package:sms_autofill/sms_autofill.dart';
 
 class DashboardMain extends StatefulWidget {
   const DashboardMain({super.key});
@@ -60,6 +62,7 @@ class _DashboardMainState extends State<DashboardMain> {
     super.initState();
 
     getToken();
+    signature();
 
     NotificationService().requestPermission();
     NotificationService().getDeviceToken();
@@ -80,6 +83,7 @@ class _DashboardMainState extends State<DashboardMain> {
 
   @override
   Widget build(BuildContext context) {
+    signature();
     return WillPopScope(
       onWillPop: () {
         DialogShared.doubleButtonDialog(context, "Are you sure you to exit",
@@ -415,5 +419,9 @@ class _DashboardMainState extends State<DashboardMain> {
       default:
         return "Error";
     }
+  }
+
+  void signature() async {
+    print(await SmsAutoFill().getAppSignature);
   }
 }

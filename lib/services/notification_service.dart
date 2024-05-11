@@ -24,7 +24,7 @@ class NotificationService {
 
   void displayForegroundNotification(RemoteMessage message) {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      'com.com.example.sfh_app.notifications.general',
+      'com.com.nexsolve.sfh.notifications.general',
       'General Notifications',
       color: AppThemeShared.primaryColor,
       importance: Importance.max,
