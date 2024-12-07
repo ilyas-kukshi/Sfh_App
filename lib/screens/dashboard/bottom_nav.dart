@@ -24,7 +24,7 @@ class _BottomNavState extends State<BottomNav> {
   List<Widget> screens = [
     const DashboardMain(),
     const ViewCategories(),
-    const MyCart(),
+    // const MyCart(),
     const Settings()
   ];
 
@@ -67,8 +67,8 @@ class _BottomNavState extends State<BottomNav> {
                 BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
                 BottomNavigationBarItem(
                     icon: Icon(Icons.view_cozy), label: "Categories"),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.shopping_bag), label: "My Cart"),
+                // BottomNavigationBarItem(
+                //     icon: Icon(Icons.shopping_bag), label: "My Cart"),
                 BottomNavigationBarItem(
                     icon: Icon(Icons.settings), label: "Settings")
               ]),

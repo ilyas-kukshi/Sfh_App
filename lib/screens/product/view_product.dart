@@ -56,293 +56,312 @@ class _ProductDetailsState extends ConsumerState<ViewProduct> {
     return SafeArea(
         // bottom: false,
         child: Scaffold(
-            appBar: AppThemeShared.appBar(
-                title: widget.product.name,
-                context: context,
-                textStyle: Theme.of(context)
+      appBar: AppThemeShared.appBar(
+          title: widget.product.name,
+          context: context,
+          textStyle: Theme.of(context)
+              .textTheme
+              .titleLarge!
+              .copyWith(color: Colors.white),
+          actions: [
+            // GestureDetector(
+            //   onTap: () =>
+            //       Navigator.pushNamed(context, '/bottomNav', arguments: 2),
+            //   child: const Padding(
+            //     padding: EdgeInsets.all(8.0),
+            //     child: Icon(
+            //       Icons.shopping_bag,
+            //       color: Colors.white,
+            //     ),
+            //   ),
+            // )
+          ]),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 8),
+            GestureDetector(
+              onTap: () => Navigator.pushNamed(
+                  context, '/displayProductsByCategory',
+                  arguments: widget.product.category),
+              child: Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Text(
+                  widget.product.category.name,
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      fontSize: 18,
+                      color: AppThemeShared.primaryColor,
+                      decoration: TextDecoration.underline,
+                      decorationColor: AppThemeShared.primaryColor),
+                ),
+              ),
+            ),
+            const SizedBox(height: 2),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Text(
+                widget.product.name,
+                style: Theme.of(context)
                     .textTheme
-                    .titleLarge!
-                    .copyWith(color: Colors.white),
-                actions: [
-                  GestureDetector(
-                    onTap: () => Navigator.pushNamed(context, '/bottomNav',
-                        arguments: 2),
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Icon(
-                        Icons.shopping_bag,
-                        color: Colors.white,
-                      ),
-                    ),
-                  )
-                ]),
-            body: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 8),
-                  GestureDetector(
-                    onTap: () => Navigator.pushNamed(
-                        context, '/displayProductsByCategory',
-                        arguments: widget.product.category),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
-                      child: Text(
-                        widget.product.category.name,
-                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                            fontSize: 18,
-                            color: AppThemeShared.primaryColor,
-                            decoration: TextDecoration.underline,
-                            decorationColor: AppThemeShared.primaryColor),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: Text(
-                      widget.product.name,
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelMedium!
-                          .copyWith(fontSize: 16, color: Colors.grey.shade600),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Stack(
-                    children: [
-                      Carousel(
-                        height: 350,
-                        isUrl: true,
-                        imageUrls: widget.product.imageUris,
-                        files: const [],
-                        productId: widget.product.id,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Uri deeplink = Utility().buildDeepLink(
-                              '/product', {"productId": widget.product.id!});
-                          Share.share("$deeplink");
-                        },
-                        child: Align(
-                          alignment: Alignment.topRight,
-                          child: Column(
-                            children: [
-                              const SizedBox(height: 4),
-                              favouriteIcon(),
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: CircleAvatar(
-                                  backgroundColor: Colors.white,
-                                  child: Padding(
-                                    padding: EdgeInsets.all(8.0),
-                                    child: Align(
-                                        alignment: Alignment.topRight,
-                                        child: Icon(Icons.share)),
-                                  ),
-                                ),
-                              ),
-                            ],
+                    .labelMedium!
+                    .copyWith(fontSize: 16, color: Colors.grey.shade600),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Stack(
+              children: [
+                Carousel(
+                  height: 330,
+                  isUrl: true,
+                  imageUrls: widget.product.imageUris,
+                  files: const [],
+                  productId: widget.product.id,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Uri deeplink = Utility().buildDeepLink(
+                        '/product', {"productId": widget.product.id!});
+                    Share.share("$deeplink");
+                  },
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 4),
+                        favouriteIcon(),
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: CircleAvatar(
+                            backgroundColor: Colors.white,
+                            child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Align(
+                                  alignment: Alignment.topRight,
+                                  child: Icon(Icons.share)),
+                            ),
                           ),
                         ),
-                      )
-                    ],
-                  ),
-                  widget.product.variantGroup != null
-                      ? VariantsView(
-                          product: widget.product,
-                          initialScrollOffset: initialScrollOffset,
-                          onTap: (selectedProduct, scrollOffset) {
-                            widget.product = selectedProduct;
-                            initialScrollOffset = scrollOffset;
-                            setState(() {});
-                          },
-                        )
-                      : const Offstage(),
-                  const Divider(),
-
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "${((widget.product.discount / widget.product.price) * 100).toInt()}% OFF",
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleLarge!
-                              .copyWith(fontSize: 26, color: Colors.redAccent),
-                        ),
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 4.0),
-                              child: Text("₹${widget.product.price}",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .labelLarge!
-                                      .copyWith(
-                                          fontSize: 20,
-                                          color: Colors.grey.shade600,
-                                          decoration:
-                                              TextDecoration.lineThrough)),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                                "₹${widget.product.price - widget.product.discount}",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleLarge!
-                                    .copyWith(
-                                      fontSize: 32,
-                                    )),
-                            const SizedBox(width: 12),
-                          ],
-                        ),
-                        const SizedBox(height: 6),
-                        Row(
-                          children: [
-                            widget.product.freeShipping
-                                ? const Offstage()
-                                : const Icon(Icons.add),
-                            Icon(
-                              Icons.local_shipping,
-                              color: AppThemeShared.primaryColor,
-                            ),
-                            const SizedBox(width: 6),
-                            widget.product.freeShipping
-                                ? Text("Free Shipping",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleLarge!
-                                        .copyWith(
-                                          fontSize: 14,
-                                        ))
-                                : Text("Shipping Charges",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .labelLarge!
-                                        .copyWith(
-                                          fontSize: 14,
-                                        )),
-                          ],
-                        ),
-                        widget.product.colors != null &&
-                                widget.product.colors!.isNotEmpty
-                            ? Row(
-                                children: [
-                                  const Text(
-                                    "Colors: ",
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  Wrap(
-                                    children: widget.product.colors!
-                                        .map((e) => Padding(
-                                              padding:
-                                                  const EdgeInsets.all(4.0),
-                                              child: Container(
-                                                height: 35,
-                                                width: 25,
-                                                decoration: BoxDecoration(
-                                                    color: Color(
-                                                        int.parse("0xff$e")),
-                                                    shape: BoxShape.circle),
-                                              ),
-                                            ))
-                                        .toList(),
-                                  )
-                                ],
-                              )
-                            : const Offstage(),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 10),
+                )
+              ],
+            ),
+            widget.product.variantGroup != null
+                ? VariantsView(
+                    product: widget.product,
+                    initialScrollOffset: initialScrollOffset,
+                    onTap: (selectedProduct, scrollOffset) {
+                      widget.product = selectedProduct;
+                      initialScrollOffset = scrollOffset;
+                      setState(() {});
+                    },
+                  )
+                : const Offstage(),
+            const Divider(),
+
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "${((widget.product.discount / widget.product.price) * 100).toInt()}% OFF",
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleLarge!
+                        .copyWith(fontSize: 26, color: Colors.redAccent),
+                  ),
+                  const SizedBox(height: 4),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            fixedSize: Size(
-                              MediaQuery.of(context).size.width * 0.96,
-                              50,
-                            ),
-                            backgroundColor: Colors.white,
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            side: BorderSide(
-                                color: AppThemeShared.primaryColor, width: 2)),
-                        onPressed: () =>
-                            Utility().enquireOnWhatsapp(widget.product, ''),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Enquire",
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: Text("₹${widget.product.price}",
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelLarge!
+                                .copyWith(
+                                    fontSize: 20,
+                                    color: Colors.grey.shade600,
+                                    decoration: TextDecoration.lineThrough)),
+                      ),
+                      const SizedBox(width: 8),
+                      Text("₹${widget.product.price - widget.product.discount}",
+                          style:
+                              Theme.of(context).textTheme.titleLarge!.copyWith(
+                                    fontSize: 32,
+                                  )),
+                      const SizedBox(width: 12),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      widget.product.freeShipping
+                          ? const Offstage()
+                          : const Icon(Icons.add),
+                      Icon(
+                        Icons.local_shipping,
+                        color: AppThemeShared.primaryColor,
+                      ),
+                      const SizedBox(width: 6),
+                      widget.product.freeShipping
+                          ? Text("Free Shipping",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge!
+                                  .copyWith(
+                                    fontSize: 14,
+                                  ))
+                          : Text("Shipping Charges",
                               style: Theme.of(context)
                                   .textTheme
                                   .labelLarge!
                                   .copyWith(
-                                      color: AppThemeShared.primaryColor,
-                                      fontSize: 16,
-                                      letterSpacing: 1.1),
+                                    fontSize: 14,
+                                  )),
+                    ],
+                  ),
+                  widget.product.colors != null &&
+                          widget.product.colors!.isNotEmpty
+                      ? Row(
+                          children: [
+                            const Text(
+                              "Colors: ",
+                              style: TextStyle(fontSize: 20),
                             ),
-                            const SizedBox(width: 8),
-                            CachedNetworkImage(
-                                height: 30,
-                                width: 25,
-                                imageUrl:
-                                    "https://e7.pngegg.com/pngimages/551/579/png-clipart-whats-app-logo-whatsapp-logo-whatsapp-cdr-leaf-thumbnail.png")
+                            Wrap(
+                              children: widget.product.colors!
+                                  .map((e) => Padding(
+                                        padding: const EdgeInsets.all(4.0),
+                                        child: Container(
+                                          height: 35,
+                                          width: 25,
+                                          decoration: BoxDecoration(
+                                              color: Color(int.parse("0xff$e")),
+                                              shape: BoxShape.circle),
+                                        ),
+                                      ))
+                                  .toList(),
+                            )
                           ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-
-                  // const SizedBox(height: 4),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      addToCartButton(),
-                      Center(
-                        child: AppThemeShared.sharedButton(
-                          context: context,
-                          height: 50,
-                          width: MediaQuery.of(context).size.width * 0.48,
-                          borderRadius: 12,
-                          elevation: 5,
-                          // borderWidth: 2,
-                          color: const Color(0xffFF6347),
-                          buttonText: "Buy Now",
-                          textStyle: Theme.of(context)
-                              .textTheme
-                              .labelLarge!
-                              .copyWith(color: Colors.white),
-                          onTap: () {
-                            if (token == null) {
-                              Utility().enquireOnWhatsapp(widget.product,
-                                  "I would like to buy this product");
-                            } else {
-                              ref.read(orderListNotifierProvider).clear();
-                              ref
-                                  .read(orderListNotifierProvider)
-                                  .add(widget.product);
-                              Navigator.pushNamed(context, '/manageAddress',
-                                  arguments: true);
-                            }
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
+                        )
+                      : const Offstage(),
                 ],
               ),
-            )));
+            ),
+            const SizedBox(height: 10),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            //   children: [
+            //     ElevatedButton(
+            //       style: ElevatedButton.styleFrom(
+            //           fixedSize: Size(
+            //             MediaQuery.of(context).size.width * 0.96,
+            //             50,
+            //           ),
+            //           backgroundColor: Colors.white,
+            //           elevation: 0,
+            //           shape: RoundedRectangleBorder(
+            //             borderRadius: BorderRadius.circular(12),
+            //           ),
+            //           side: BorderSide(
+            //               color: AppThemeShared.primaryColor, width: 2)),
+            //       onPressed: () =>
+            //           Utility().enquireOnWhatsapp(widget.product, ''),
+            //       child: Row(
+            //         mainAxisAlignment: MainAxisAlignment.center,
+            //         children: [
+            //           Text(
+            //             "Enquire",
+            //             style: Theme.of(context)
+            //                 .textTheme
+            //                 .labelLarge!
+            //                 .copyWith(
+            //                     color: AppThemeShared.primaryColor,
+            //                     fontSize: 16,
+            //                     letterSpacing: 1.1),
+            //           ),
+            //           const SizedBox(width: 8),
+            //           CachedNetworkImage(
+            //               height: 30,
+            //               width: 25,
+            //               imageUrl:
+            //                   "https://e7.pngegg.com/pngimages/551/579/png-clipart-whats-app-logo-whatsapp-logo-whatsapp-cdr-leaf-thumbnail.png")
+            //         ],
+            //       ),
+            //     ),
+            //   ],
+            // ),
+            // const SizedBox(height: 10),
+
+            // const SizedBox(height: 4),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            //   children: [
+            //     addToCartButton(),
+            // Center(
+            //   child: AppThemeShared.sharedButton(
+            //     context: context,
+            //     height: 50,
+            //     width: MediaQuery.of(context).size.width * 0.48,
+            //     borderRadius: 12,
+            //     elevation: 5,
+            //     // borderWidth: 2,
+            //     color: const Color(0xffFF6347),
+            //     buttonText: "Buy Now",
+            //     textStyle: Theme.of(context)
+            //         .textTheme
+            //         .labelLarge!
+            //         .copyWith(color: Colors.white),
+            //     onTap: () {
+            //       if (token == null) {
+            //         Utility().enquireOnWhatsapp(widget.product,
+            //             "I would like to buy this product");
+            //       } else {
+            //         ref.read(orderListNotifierProvider).clear();
+            //         ref
+            //             .read(orderListNotifierProvider)
+            //             .add(widget.product);
+            //         Navigator.pushNamed(context, '/manageAddress',
+            //             arguments: true);
+            //       }
+            //     },
+            //   ),
+            // ),
+            //   ],
+            // ),
+            // const SizedBox(height: 20),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: Colors.white,
+        onPressed: () => Utility().enquireOnWhatsapp(widget.product, ''),
+        label: Column(
+          children: [
+            Image.asset(
+              "assets/images/whatsapp-logo.png",
+              width: 60,
+              height: 50,
+            ),
+            // CachedNetworkImage(
+            //     // height: 50,
+            //     width: 30,
+            //     imageUrl:
+            //         "https://e7.pngegg.com/pngimages/551/579/png-clipart-whats-app-logo-whatsapp-logo-whatsapp-cdr-leaf-thumbnail.png"),
+            // Text(
+            //   "Enquire",
+            //   style: Theme.of(context).textTheme.labelLarge!.copyWith(
+            //       color: AppThemeShared.primaryColor,
+            //       fontWeight: FontWeight.bold),
+            // )
+          ],
+        ),
+      ),
+    ));
   }
 
   final platform = const MethodChannel('upi_payment/init');
@@ -451,7 +470,7 @@ class _ProductDetailsState extends ConsumerState<ViewProduct> {
                   return AppThemeShared.sharedButton(
                     context: context,
                     height: 50,
-                    width: MediaQuery.of(context).size.width * 0.48,
+                    width: MediaQuery.of(context).size.width * 0.96,
                     borderRadius: 12,
                     elevation: 5,
                     // borderWidth: 2,

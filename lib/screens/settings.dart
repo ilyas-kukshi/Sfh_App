@@ -91,13 +91,13 @@ class _SettingsState extends ConsumerState<Settings> {
                       arguments: token))
               : const Offstage(),
           divider(),
-          orders
-              ? tile(
-                  Icons.inventory_2,
-                  "Orders",
-                  () =>
-                      Navigator.pushNamed(context, '/orders', arguments: token))
-              : const Offstage(),
+          // orders
+          //     ? tile(
+          //         Icons.inventory_2,
+          //         "Orders",
+          //         () =>
+          //             Navigator.pushNamed(context, '/orders', arguments: token))
+          //     : const Offstage(),
           divider(),
           sellerLogin
               ? tile(Icons.person, "Switch to Seller Account",
