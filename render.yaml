@@ -1,9 +1,9 @@
 services:
   - type: web
-    name: sfh_app
-    env: docker
-    repo: https://github.com/ilyas-kukshi/Sfh_App
-    region: central India
-    branch: main
-    rootDir: .
-    plan: free
+    name: sfh-web-app
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    buildCommand: |
+      docker build -t sfh-web-app .
+    startCommand: nginx -g "daemon off;"
+    staticPublishPath: /usr/share/nginx/html

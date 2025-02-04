@@ -1,20 +1,24 @@
-# Use an official Flutter image from DockerHub
-FROM flutter/flutter:stable
+# Use a base image with Dart and Flutter pre-installed
+FROM cirrusci/flutter:stable AS build
 
-# Set the working directory inside the container
+# Set the working directory
 WORKDIR /app
 
-# Copy all project files into the container
-COPY . .
+# Copy the pubspec files to the container
+COPY pubspec.yaml .
+COPY pubspec.lock .
 
-# Enable web support
-RUN flutter config --enable-web
-
-# Get dependencies
+# Install dependencies
 RUN flutter pub get
+
+# Copy the rest of the application code
+COPY . .
 
 # Build the Flutter web app
 RUN flutter build web
 
-# Set the command to run after the container starts
-CMD ["cp", "-r", "build/web/.", "/app"]
+# Use a lightweight web server to serve the app
+FROM nginx:alpine
+COPY --from=build /app/build/web /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
