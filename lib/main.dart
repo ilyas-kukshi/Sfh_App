@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -43,22 +44,22 @@ import 'package:sfh_app/shared/app_theme_shared.dart';
 
 const AndroidInitializationSettings initializationSettingsAndroid =
     AndroidInitializationSettings('@mipmap/ic_launcher');
-final DarwinInitializationSettings initializationSettingsDarwin =
-    DarwinInitializationSettings(
-  onDidReceiveLocalNotification: (id, title, body, payload) {
-    if (payload != null) {
-      firebaseMessagingBackgroundHandler(
-          RemoteMessage(data: jsonDecode(payload)));
-    }
-    // print("Darwin: $title");
-  },
-);
+// final DarwinInitializationSettings initializationSettingsDarwin =
+//     DarwinInitializationSettings(
+//   onDidReceiveLocalNotification: (id, title, body, payload) {
+//     if (payload != null) {
+//       firebaseMessagingBackgroundHandler(
+//           RemoteMessage(data: jsonDecode(payload)));
+//     }
+//     // print("Darwin: $title");
+//   },
+// );
 
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 final InitializationSettings initializationSettings = InitializationSettings(
   android: initializationSettingsAndroid,
-  iOS: initializationSettingsDarwin,
+  // iOS: initializationSettingsDarwin,
 );
 
 @pragma('vm:entry-point')
@@ -75,8 +76,21 @@ final globalProviderContainer = ProviderContainer();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  await MobileAds.instance.initialize();
+  if (kIsWeb) {
+    await Firebase.initializeApp(
+        options: const FirebaseOptions(
+            apiKey: "AIzaSyDsTC15ivIJvphUZeu5YjZyIFk80vDuKKY",
+            authDomain: "sakina-fashion-house.firebaseapp.com",
+            projectId: "sakina-fashion-house",
+            storageBucket: "sakina-fashion-house.appspot.com",
+            messagingSenderId: "16266303128",
+            appId: "1:16266303128:web:30c3136c4338777346e2ed",
+            measurementId: "G-3HG4DRX5MM"));
+  } else {
+    await Firebase.initializeApp();
+    await MobileAds.instance.initialize();
+  }
+
   NotificationService().catchNotification();
 
   flutterLocalNotificationsPlugin.initialize(

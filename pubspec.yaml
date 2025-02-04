@@ -44,16 +44,16 @@ dependencies:
   firebase_core: ^2.15.1
   firebase_storage: ^11.2.6
   firebase_messaging: ^14.7.8
-  flutter_local_notifications: ^17.0.0
+  flutter_local_notifications: ^18.0.0
 
   sms_autofill: ^2.3.1
 
   page_transition: ^2.0.9
   google_fonts: ^6.1.0
 
-  image_picker: ^1.0.2
+  image_picker: ^1.1.2
   cached_network_image: ^3.3.1
-  image_cropper: ^5.0.1
+  image_cropper: ^9.0.0
   flutter_image_compress: ^2.1.0
 
   uuid: ^4.2.1
@@ -64,6 +64,8 @@ dependencies:
   widget_zoom: ^0.0.3
 
   url_launcher: ^6.2.1
+  url_launcher_ios: ^6.3.2
+
   share_plus: ^8.0.2
   google_mobile_ads: ^5.0.0
   shared_preferences: ^2.2.2
@@ -92,6 +94,9 @@ dev_dependencies:
   json_serializable: ^6.7.1
   riverpod_generator: ^2.3.9
   flutter_launcher_icons: ^0.13.1
+
+dependency_overrides:
+  win32: ^5.10.1 
   
 flutter_launcher_icons:
   android: "launcher_icon"

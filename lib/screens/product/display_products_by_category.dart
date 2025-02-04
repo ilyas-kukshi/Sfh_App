@@ -44,7 +44,7 @@ class _DisplayProductsByCategoryState extends State<DisplayProductsByCategory> {
   void initState() {
     super.initState();
     // getProducts(widget.category.id!);
-    createBannerAd();
+    // createBannerAd();
   }
 
   @override

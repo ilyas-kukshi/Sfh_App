@@ -194,9 +194,6 @@ class _ManageCategoriesState extends State<ManageCategories> {
       // print(file!.path);
       croppedFile = await ImageCropper().cropImage(
         sourcePath: file!.path,
-        aspectRatioPresets: [
-          CropAspectRatioPreset.square,
-        ],
         compressFormat: ImageCompressFormat.png,
         uiSettings: [
           AndroidUiSettings(

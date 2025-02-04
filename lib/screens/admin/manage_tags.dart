@@ -245,9 +245,6 @@ class _UpdateTagDialogState extends State<UpdateTagDialog> {
       // print(file!.path);
       croppedFile = await ImageCropper().cropImage(
         sourcePath: file!.path,
-        aspectRatioPresets: [
-          CropAspectRatioPreset.square,
-        ],
         compressFormat: ImageCompressFormat.png,
         uiSettings: [
           AndroidUiSettings(

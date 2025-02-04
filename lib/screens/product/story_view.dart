@@ -38,7 +38,7 @@ class _StoryPageState extends State<StoryPage> {
     currCategoryIndex = widget.data["currCategoryIndex"];
     _pageController = PageController();
 
-    createInterstitialAd();
+    // createInterstitialAd();
     _startTimer();
   }
 
@@ -92,7 +92,7 @@ class _StoryPageState extends State<StoryPage> {
   }
 
   moveBack() async {
-    await checkForAd();
+    // await checkForAd();
 
     if (_currentIndex > 0) {
       // print(_currentIndex);
@@ -108,7 +108,7 @@ class _StoryPageState extends State<StoryPage> {
   }
 
   moveForward() async {
-    await checkForAd();
+    // await checkForAd();
     if (_currentIndex < stories.length - 1) {
       _currentIndex++;
       _pageController.nextPage(
@@ -286,21 +286,21 @@ class _StoryPageState extends State<StoryPage> {
     }
   }
 
-  checkForAd() async {
-    int? views = await getStoryViewCount();
-    if (views != null) {
-      if (views >= 8) {
-        if (interstitialAd != null) {
-          interstitialAd!.show();
-          updateStoryViewCount(0);
-        }
-      } else {
-        updateStoryViewCount(++views);
-      }
-    } else {
-      updateStoryViewCount(1);
-    }
-  }
+  // checkForAd() async {
+  //   int? views = await getStoryViewCount();
+  //   if (views != null) {
+  //     if (views >= 8) {
+  //       if (interstitialAd != null) {
+  //         interstitialAd!.show();
+  //         updateStoryViewCount(0);
+  //       }
+  //     } else {
+  //       updateStoryViewCount(++views);
+  //     }
+  //   } else {
+  //     updateStoryViewCount(1);
+  //   }
+  // }
 
   Widget categoryCard(CategoryModel category) {
     return GestureDetector(

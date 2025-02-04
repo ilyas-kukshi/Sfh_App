@@ -31,7 +31,6 @@ class AddProducts extends ConsumerStatefulWidget {
 class _AddProductsState extends ConsumerState<AddProducts> {
   String? token;
 
-
   ImagePicker picker = ImagePicker();
   List<XFile> files = [];
   List<CroppedFile> croppedFiles = [];
@@ -365,7 +364,6 @@ class _AddProductsState extends ConsumerState<AddProducts> {
       for (var file in files) {
         CroppedFile? curr = await ImageCropper().cropImage(
           sourcePath: file.path,
-          aspectRatioPresets: [CropAspectRatioPreset.original],
           compressFormat: ImageCompressFormat.png,
           uiSettings: [
             AndroidUiSettings(

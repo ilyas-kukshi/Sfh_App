@@ -85,13 +85,13 @@ class _WishlistState extends ConsumerState<Wishlist> {
               width: MediaQuery.of(context).size.width * 0.48,
               child: Stack(
                 children: [
-                  Center(
-                    child: CachedNetworkImage(
-                        width: MediaQuery.of(context).size.width,
-                        fit: BoxFit.fill,
-                        imageUrl:
-                            "https://img.freepik.com/free-photo/clear-empty-photographer-studio-background-abstract-background-texture-beauty-dark-light-clear-blue-cold-gray-snowy-white-gradient-flat-wall-floor-empty-spacious-room-winter-interior_1258-53070.jpg?size=626&ext=jpg&ga=GA1.1.834066242.1705652128&semt=ais"),
-                  ),
+                  // Center(
+                  //   child: CachedNetworkImage(
+                  //       width: MediaQuery.of(context).size.width,
+                  //       fit: BoxFit.fill,
+                  //       imageUrl:
+                  //           "https://img.freepik.com/free-photo/clear-empty-photographer-studio-background-abstract-background-texture-beauty-dark-light-clear-blue-cold-gray-snowy-white-gradient-flat-wall-floor-empty-spacious-room-winter-interior_1258-53070.jpg?size=626&ext=jpg&ga=GA1.1.834066242.1705652128&semt=ais"),
+                  // ),
                   Center(
                     child: CachedNetworkImage(
                       imageUrl: product.imageUris.first,

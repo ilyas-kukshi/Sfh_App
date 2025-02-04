@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -17,6 +18,8 @@ class Otp extends ConsumerStatefulWidget {
 class _OtpState extends ConsumerState<Otp> {
   bool otpIncorrect = false;
   bool otpMatched = false;
+
+  TextEditingController otpController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,12 +46,14 @@ class _OtpState extends ConsumerState<Otp> {
               ),
               PinFieldAutoFill(
                   autoFocus: true,
+                  controller: otpController,
                   // cursor: Cursor(height: 20, width: 4, color: Colors.black),
                   decoration: UnderlineDecoration(
                       errorText: otpIncorrect ? "Otp is wrong" : "",
                       colorBuilder: FixedColorBuilder(AppThemeShared
                           .primaryColor)), // UnderlineDecoration, BoxLooseDecoration or BoxTightDecoration see https://github.com/TinoGuo/pin_input_text_field for more info,
                   currentCode: "", // prefill with a code
+
                   onCodeSubmitted: (otp) async {
                     if (otp == widget.authDetails["otp"]) {
                       setState(() {
@@ -63,6 +68,22 @@ class _OtpState extends ConsumerState<Otp> {
                   codeLength: 6 //code length, default 6
                   ),
               const SizedBox(height: 30),
+              kIsWeb
+                  ? AppThemeShared.sharedButton(
+                      context: context,
+                      buttonText: "Submit",
+                      onTap: () async {
+                        if (otpController.text == widget.authDetails["otp"]) {
+                          setState(() {
+                            otpMatched = true;
+                          });
+                          await checIfUserExists();
+                        } else {
+                          Fluttertoast.showToast(msg: "Otp is incorrect");
+                        }
+                      },
+                    )
+                  : const Offstage(),
               otpMatched ? const CircularProgressIndicator() : const Offstage()
             ],
           ),
