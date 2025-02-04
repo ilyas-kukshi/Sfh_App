@@ -1,5 +1,5 @@
 # Use an official Flutter image from DockerHub
-FROM cirrusci/flutter:latest
+FROM flutter/flutter:stable
 
 # Set the working directory inside the container
 WORKDIR /app
