@@ -1,6 +1,9 @@
 services:
   - type: web
-    name: flutter-web-app
-    runtime: static
-    buildCommand: flutter build web
-    staticPublishPath: ./build/web
+    name: sfh_app
+    env: docker
+    repo: https://github.com/ilyas-kukshi/Sfh_App
+    region: central India
+    branch: main
+    rootDir: .
+    plan: free
