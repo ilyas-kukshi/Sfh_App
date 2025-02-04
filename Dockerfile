@@ -1,5 +1,5 @@
 # Use a base image with Dart and Flutter pre-installed
-FROM cirrusci/flutter:stable AS build
+FROM ghcr.io/cirruslabs/flutter:3.10.6 AS build
 
 # Set the working directory
 WORKDIR /app
