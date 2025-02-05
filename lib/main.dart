@@ -41,6 +41,7 @@ import 'package:sfh_app/screens/user/seller_register.dart';
 import 'package:sfh_app/screens/user/wishlist.dart';
 import 'package:sfh_app/services/notification_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
+import 'package:sfh_app/shared/utility.dart';
 
 const AndroidInitializationSettings initializationSettingsAndroid =
     AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -103,6 +104,7 @@ void main() async {
       }
     },
   );
+
 
   runApp(ProviderScope(parent: globalProviderContainer, child: const MyApp()));
 }

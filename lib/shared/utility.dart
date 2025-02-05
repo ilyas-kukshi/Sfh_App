@@ -189,9 +189,7 @@ class Utility {
     if (kIsWeb) {
       final Uri currentUri = Uri.base;
       if (currentUri.hasQuery) {
-        // For example, if your deep link URL is:
-        // https://sfh-app.onrender.com/#/product?productId=123
-        // Then currentUri will have a fragment or query parameters.
+        print("WEB Deep Link Detected: $currentUri");
         Utility().extractParameters(currentUri, context);
       }
     } else {
@@ -235,9 +233,9 @@ class Utility {
     final path = deepLink.path;
     final queryParams = deepLink.queryParameters;
     // Fluttertoast.showToast(msg: queryParams.toString());
-    // print(queryParams);
+    print(queryParams);
 
-    if (path == '/product') {
+    if (path == '/dynamiclink/product') {
       // Fluttertoast.showToast(msg: queryParams["productId"].toString());
       ProductModel? product =
           await ProductServices().getById(queryParams["productId"] ?? '');

@@ -17,6 +17,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     super.initState();
     Future.delayed(const Duration(seconds: 1), () {
       navigateTo();
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Utility().catchDeepLinks(context);
+      });
     });
   }
 
@@ -36,7 +40,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       final user = ref.read(getUserByTokenProvider(token).future);
       user.then((value) {
         if (value != null) {
-          Navigator.pushNamed(context, '/bottomNav',arguments: 0);
+          Navigator.pushNamed(context, '/bottomNav', arguments: 0);
         }
       });
     }
