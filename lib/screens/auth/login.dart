@@ -36,6 +36,7 @@ class _LoginState extends ConsumerState<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppThemeShared.appBar(
           title: "Login",
           context: context,

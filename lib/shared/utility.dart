@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:app_links/app_links.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -185,44 +186,59 @@ class Utility {
   //deep links related Utility methods
 
   catchDeepLinks(BuildContext context) async {
-    final appLinks = AppLinks();
-
-    appLinks.getInitialAppLink().then((deeplink) {
-      if (deeplink != null) {
-        Utility().extractParameters(deeplink, context);
+    if (kIsWeb) {
+      final Uri currentUri = Uri.base;
+      if (currentUri.hasQuery) {
+        // For example, if your deep link URL is:
+        // https://sfh-app.onrender.com/#/product?productId=123
+        // Then currentUri will have a fragment or query parameters.
+        Utility().extractParameters(currentUri, context);
       }
-    });
+    } else {
+      final appLinks = AppLinks();
 
-    appLinks.uriLinkStream.listen((uri) {
-      // Do something (navigation, ...)
-      // print("/////////////////DynamicLinks: $uri");
-      Fluttertoast.showToast(msg: "Dynamic Links: $uri");
-      Utility().extractParameters(uri, context);
-      // print(uri);
-    });
+      appLinks.getInitialAppLink().then((deeplink) {
+        if (deeplink != null) {
+          Utility().extractParameters(deeplink, context);
+        }
+      });
 
-    // Maybe later. Get the latest link.
-    // final uri = await _appLinks.getLatestAppLink();
+      appLinks.uriLinkStream.listen((uri) {
+        // Do something (navigation, ...)
+        // print("/////////////////DynamicLinks: $uri");
+        Fluttertoast.showToast(msg: "Dynamic Links: $uri");
+        Utility().extractParameters(uri, context);
+        // print(uri);
+      });
+
+      // Maybe later. Get the latest link.
+      // final uri = await _appLinks.getLatestAppLink();
+    }
   }
 
   Uri buildDeepLink(String path, Map<String, String> queryParams) {
-    final uri = Uri(
+    Uri uri = Uri(
       scheme: 'https',
       host: 'sfh-api-zlkq.onrender.com',
-      path: path,
-      queryParameters: queryParams,
+      path: 'dynamiclink/product',
+      queryParameters: {
+        'productId': queryParams["productId"],
+        // 'webUrl':
+        //     'https://sfh-app.onrender.com/product?productId=${queryParams["productId"]}',
+      },
     );
+
     return uri;
   }
 
   Future<void> extractParameters(Uri deepLink, BuildContext context) async {
     final path = deepLink.path;
     final queryParams = deepLink.queryParameters;
-    Fluttertoast.showToast(msg: queryParams.toString());
+    // Fluttertoast.showToast(msg: queryParams.toString());
     // print(queryParams);
 
     if (path == '/product') {
-      Fluttertoast.showToast(msg: queryParams["productId"].toString());
+      // Fluttertoast.showToast(msg: queryParams["productId"].toString());
       ProductModel? product =
           await ProductServices().getById(queryParams["productId"] ?? '');
       if (product != null) {

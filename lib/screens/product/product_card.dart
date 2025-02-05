@@ -57,6 +57,10 @@ class _ProductCardState extends State<ProductCard> {
                       width: MediaQuery.of(context).size.width * 0.35,
                       alignment: Alignment.center,
                       fit: BoxFit.fill,
+                      placeholder: (context, url) => const SizedBox(
+                          height: 150,
+                          width: 150,
+                          child: CircularProgressIndicator()),
                     ),
                   ),
                   // Padding(
@@ -177,11 +181,11 @@ class _ProductCardState extends State<ProductCard> {
                           .copyWith(color: AppThemeShared.primaryColor),
                     ),
                     const SizedBox(width: 8),
-                    CachedNetworkImage(
-                        height: 30,
-                        width: 25,
-                        imageUrl:
-                            "https://e7.pngegg.com/pngimages/551/579/png-clipart-whats-app-logo-whatsapp-logo-whatsapp-cdr-leaf-thumbnail.png")
+                    // CachedNetworkImage(
+                    //     height: 30,
+                    //     width: 25,
+                    //     imageUrl:
+                    //         "https://e7.pngegg.com/pngimages/551/579/png-clipart-whats-app-logo-whatsapp-logo-whatsapp-cdr-leaf-thumbnail.png")
                   ],
                 ))
           ],

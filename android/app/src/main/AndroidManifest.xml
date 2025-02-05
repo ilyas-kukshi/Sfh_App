@@ -54,7 +54,7 @@
                 <data android:scheme="https" />
             </intent-filter> -->
 
-            
+            <!-- Dynamic link intent -->
            <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -63,9 +63,9 @@
                 <data android:scheme="https" />
                 <data android:host="sfh-api-zlkq.onrender.com" />
             </intent-filter>
-            <meta-data
+            <!-- <meta-data
                 android:name="flutter_deeplinking_enabled"
-                android:value="true" />
+                android:value="true" /> -->
 
         </activity>
         <activity
