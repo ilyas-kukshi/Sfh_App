@@ -107,6 +107,7 @@ class _DashboardMainState extends State<DashboardMain> {
                   SliverAppBar(
                     title: Column(
                       children: [
+                        const SizedBox(height: 10),
                         Text("Sakina Fashion House",
                             style: Theme.of(context)
                                 .textTheme
