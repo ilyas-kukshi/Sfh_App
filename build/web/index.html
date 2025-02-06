@@ -41,13 +41,20 @@
 
   <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = "1884271781";
+    const serviceWorkerVersion = "2881672840";
   </script>
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
 </head>
 
 <body>
+  <script>
+    // Change the title dynamically after the page has loaded
+    window.onload = function () {
+      document.title = "Sakina Fashion House"; // Ensure the title matches your app's name
+    };
+  </script>
+
   <script>
     window.addEventListener('load', function (ev) {
       // Download main.dart.js
