@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -86,14 +87,17 @@ class _DashboardMainState extends State<DashboardMain> {
     signature();
     return WillPopScope(
       onWillPop: () {
-        DialogShared.doubleButtonDialog(context, "Are you sure you to exit",
-            () {
-          if (Platform.isAndroid) {
-            SystemNavigator.pop();
-          }
-        }, () {
-          Navigator.pop(context);
-        });
+        if (!kIsWeb) {
+          DialogShared.doubleButtonDialog(context, "Are you sure you to exit",
+              () {
+            if (Platform.isAndroid) {
+              SystemNavigator.pop();
+            }
+          }, () {
+            Navigator.pop(context);
+          });
+        }
+
         return Future.value(false);
       },
       child: SafeArea(
