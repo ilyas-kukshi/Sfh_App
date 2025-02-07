@@ -172,7 +172,7 @@ class Utility {
     return null;
   }
 
-  deleteImageFromRef(List<String> imageUrls) async {
+  deleteImageFromRef(List<dynamic> imageUrls) async {
     for (String imageUrl in imageUrls) {
       await FirebaseStorage.instance.refFromURL(imageUrl).delete();
     }

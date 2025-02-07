@@ -33,7 +33,7 @@ class _BottomNavState extends State<BottomNav> {
   @override
   void initState() {
     super.initState();
-    createBannerAd();
+    // createBannerAd();
     selected = widget.screen;
     appLifecycleService.startObserving();
   }
@@ -51,9 +51,9 @@ class _BottomNavState extends State<BottomNav> {
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          banner != null
-              ? SizedBox(height: 55, child: AdWidget(ad: banner!))
-              : const Offstage(),
+          // banner != null
+          //     ? SizedBox(height: 55, child: AdWidget(ad: banner!))
+          //     : const Offstage(),
           BottomNavigationBar(
               unselectedItemColor: Colors.grey,
               selectedItemColor: AppThemeShared.primaryColor,

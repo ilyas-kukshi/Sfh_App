@@ -427,6 +427,6 @@ class _DashboardMainState extends State<DashboardMain> {
   }
 
   void signature() async {
-    print(await SmsAutoFill().getAppSignature);
+    await SmsAutoFill().getAppSignature;
   }
 }

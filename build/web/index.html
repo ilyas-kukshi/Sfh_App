@@ -39,9 +39,12 @@
   <title>Sakina Fashion House</title>
   <link rel="manifest" href="manifest.json">
 
-  <script>
+  <!-- <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = "2881672840";
+    const serviceWorkerVersion = "698675741";
+  </script> -->
+  <script>
+    var serviceWorkerVersion = '"698675741"'; // Use template token
   </script>
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
@@ -57,6 +60,19 @@
 
   <script>
     window.addEventListener('load', function (ev) {
+      // New method
+      FlutterLoader.load({
+        serviceWorker: {
+          serviceWorkerVersion: serviceWorkerVersion,
+        },
+      }).then(function (engine) {
+        return engine.runApp();
+      });
+    });
+  </script>
+
+  <!-- <script>
+    window.addEventListener('load', function (ev) {
       // Download main.dart.js
       _flutter.loader.loadEntrypoint({
         serviceWorker: {
@@ -69,7 +85,7 @@
         }
       });
     });
-  </script>
+  </script> -->
 </body>
 
 </html>

@@ -10,7 +10,7 @@ import 'package:sfh_app/shared/constants.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sfh_app/shared/utility.dart';
 
-part 'seller_service.g.dart';
+// part 'seller_service.g.dart';
 
 class SellerService {
   Future<bool> register(SellerRegisterModel sellerRegister) async {
@@ -100,6 +100,30 @@ class SellerService {
     return null;
   }
 
+  Future<List<ProductModel>> getSellerProductsByTag(
+      String categoryId, String tagId, String token, int page) async {
+    List<ProductModel> products = [];
+    try {
+      var response = await http.get(
+          Uri.parse(
+              "${Constants.baseUrl}/seller/product/byTag?categoryId=$categoryId&tagId=$tagId&page=$page&pageSize=10"),
+          headers: {'Authorization': 'Bearer $token'});
+      var data = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        for (var product in data["products"]) {
+          products.add(ProductModel.fromJson(product));
+        }
+        return products;
+      } else {
+        return [];
+      }
+    } catch (error) {
+      Fluttertoast.showToast(msg: error.toString());
+      // print(error);
+      return [];
+    }
+  }
+
   Future<bool> moveProducts(
       List<String> products, String category, List<String> tags) async {
     try {
@@ -124,34 +148,5 @@ class SellerService {
       // print(error);
       return false;
     }
-  }
-}
-
-@riverpod
-Future<List<ProductModel>> getSellerProductsByTag(
-    GetSellerProductsByTagRef getSellerProductsByTagRef,
-    String categoryId,
-    String tagId,
-    String token,
-    int page) async {
-  List<ProductModel> products = [];
-  try {
-    var response = await http.get(
-        Uri.parse(
-            "${Constants.baseUrl}/seller/product/byTag?categoryId=$categoryId&tagId=$tagId&page=$page&pageSize=10"),
-        headers: {'Authorization': 'Bearer $token'});
-    var data = jsonDecode(response.body);
-    if (response.statusCode == 200) {
-      for (var product in data["products"]) {
-        products.add(ProductModel.fromJson(product));
-      }
-      return products;
-    } else {
-      return [];
-    }
-  } catch (error) {
-    Fluttertoast.showToast(msg: error.toString());
-    // print(error);
-    return [];
   }
 }

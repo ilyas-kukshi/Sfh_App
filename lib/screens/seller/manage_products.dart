@@ -43,8 +43,6 @@ class _ManageProductsState extends ConsumerState<ManageProducts> {
 
   @override
   Widget build(BuildContext context) {
-    // final allCatgories = ref.watch(allCategoriesProvider);
-
     return Scaffold(
       appBar: AppThemeShared.appBar(
           title: "Manage Products",
@@ -108,56 +106,64 @@ class _ManageProductsState extends ConsumerState<ManageProducts> {
               future: getToken(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
-                  return Consumer(
-                    builder: (context, ref, child) {
-                      final productsProvider = ref.watch(
-                          getSellerProductsByTagProvider(
-                              widget.filters["categoryId"]!,
-                              widget.filters["tagId"]!,
-                              token!,
-                              currentPage));
-                      return productsProvider.when(
-                        data: (products) {
-                          return GridView.builder(
-                            itemCount: products.length,
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            padding: EdgeInsets.only(
-                                left: MediaQuery.of(context).size.width * 0.01),
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2,
-                                    mainAxisExtent: 380,
-                                    mainAxisSpacing: 0,
-                                    crossAxisSpacing: 0),
-                            itemBuilder: (context, index) {
-                              return ManageProductCard(
-                                product: products[index],
-                                available: products[index].available,
-                                selected: selectedProductIds
-                                    .contains(products[index].id),
-                                selection: (selected, product) {
-                                  if (selected) {
-                                    selectedProductIds.add(product.id!);
-                                  } else {
-                                    selectedProductIds.remove(product.id!);
-                                  }
-                                  setState(() {});
-                                },
-                                availability: (available, product) {
-                                  products[index] =
-                                      product.copyWith(available: available);
-                                  setState(() {});
-                                },
-                              );
-                            },
+                  return FutureBuilder<List<ProductModel>>(
+                    future: SellerService().getSellerProductsByTag(
+                        widget.filters["categoryId"]!,
+                        widget.filters["tagId"]!,
+                        token!,
+                        currentPage),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        if (snapshot.data != null) {
+                          products = snapshot.data!;
+                          return products.isNotEmpty
+                              ? GridView.builder(
+                                  itemCount: products.length,
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  padding: EdgeInsets.only(
+                                      left: MediaQuery.of(context).size.width *
+                                          0.01),
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 3,
+                                          mainAxisExtent: 340,
+                                          mainAxisSpacing: 0,
+                                          crossAxisSpacing: 0),
+                                  itemBuilder: (context, index) {
+                                    return ManageProductCard(
+                                      product: products[index],
+                                      available: products[index].available,
+                                      selected: selectedProductIds
+                                          .contains(products[index].id),
+                                      selection: (selected, product) {
+                                        if (selected) {
+                                          selectedProductIds.add(product.id!);
+                                        } else {
+                                          selectedProductIds
+                                              .remove(product.id!);
+                                        }
+                                        setState(() {});
+                                      },
+                                      availability: (available, product) {
+                                        products[index] = product.copyWith(
+                                            available: available);
+                                        setState(() {});
+                                      },
+                                    );
+                                  },
+                                )
+                              : const Center(child: Text("No Products Here."));
+                        } else {
+                          return const Center(
+                            child: Text("No data"),
                           );
-                        },
-                        error: (error, stackTrace) => Center(
-                          child: Text(error.toString()),
-                        ),
-                        loading: () => const Offstage(),
-                      );
+                        }
+                      } else {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
                     },
                   );
                 } else {
@@ -178,6 +184,7 @@ class _ManageProductsState extends ConsumerState<ManageProducts> {
     if (deleted) {
       Navigator.pop(context);
       Fluttertoast.showToast(msg: "Products Deleted");
+      setState(() {});
     } else {
       Fluttertoast.showToast(msg: "Not deleted");
     }

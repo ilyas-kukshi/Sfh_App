@@ -46,18 +46,18 @@ class _ManageProductCardState extends State<ManageProductCard> {
             children: [
               CachedNetworkImage(
                 imageUrl: widget.product.imageUris.first,
-                height: 220,
-                width: MediaQuery.of(context).size.width * 0.48,
+                height: 180,
+                width: MediaQuery.of(context).size.width * 0.33,
                 fit: BoxFit.fill,
               ),
               SizedBox(
                 height: 30,
-                width: MediaQuery.of(context).size.width * 0.48,
+                width: MediaQuery.of(context).size.width * 0.3,
                 child: Text(
                   widget.product.name,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    fontSize: 18,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                     overflow: TextOverflow.clip,
                   ),
@@ -75,15 +75,15 @@ class _ManageProductCardState extends State<ManageProductCard> {
                   Text(
                     "₹${widget.product.price - widget.product.discount}",
                     style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
+                        fontSize: 14, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    "₹${((widget.product.discount / widget.product.price) * 100).toInt()}% OFF",
+                    "₹${((widget.product.discount / widget.product.price) * 100).toInt()}%OFF",
                     style: const TextStyle(
-                        color: Colors.orange,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold),
+                      color: Colors.orange,
+                      fontSize: 12,
+                    ),
                   ),
                 ],
               ),
@@ -164,9 +164,4 @@ class _ManageProductCardState extends State<ManageProductCard> {
       Fluttertoast.showToast(msg: "Not Updated");
     }
   }
-
-  
 }
-
-
-
