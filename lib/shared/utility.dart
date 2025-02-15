@@ -195,7 +195,7 @@ class Utility {
     } else {
       final appLinks = AppLinks();
 
-      appLinks.getInitialAppLink().then((deeplink) {
+      appLinks.getInitialLink().then((deeplink) {
         if (deeplink != null) {
           Utility().extractParameters(deeplink, context);
         }

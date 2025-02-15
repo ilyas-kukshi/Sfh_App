@@ -125,7 +125,8 @@ class _LoginState extends ConsumerState<Login> {
                             "otp": otp
                           });
                         } else {
-                          Fluttertoast.showToast(msg: "Failed");
+                          Fluttertoast.showToast(
+                              msg: "Failed to fetch OTP. Please try again.");
                         }
                       }
 
