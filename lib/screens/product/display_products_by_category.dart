@@ -1,3 +1,6 @@
+// Get tags -> add tagIds to selectedTags and get all products initially
+// If tag changes -> add/remove tagIds from selectedTags and again get products according to selectedTags
+
 // ignore_for_file: must_be_immutable, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
@@ -11,6 +14,7 @@ import 'package:sfh_app/services/product/product_service.dart';
 import 'package:sfh_app/services/tags_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 import 'package:sfh_app/screens/product/product_card.dart';
+import 'package:sfh_app/shared/no_products_alert.dart';
 import 'package:sfh_app/shared/tag_selection.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:tuple/tuple.dart';
@@ -34,6 +38,7 @@ class _DisplayProductsByCategoryState extends State<DisplayProductsByCategory> {
   bool isLoading = false;
   bool isLastPage = false;
   int currentPage = 1;
+  bool noProductsHere = false;
 
   BannerAd? banner;
 
@@ -104,27 +109,7 @@ class _DisplayProductsByCategoryState extends State<DisplayProductsByCategory> {
                       return const Offstage();
                     }
                   } else {
-                    return Wrap(
-                      runSpacing: 0,
-                      spacing: 0,
-                      crossAxisAlignment: WrapCrossAlignment.start,
-                      children: List.generate(
-                          6,
-                          (index) => Shimmer.fromColors(
-                                baseColor: Colors.grey.shade300,
-                                highlightColor: Colors.grey.shade100,
-                                enabled: true,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(4.0),
-                                  child: Container(
-                                    height: 20,
-                                    width: MediaQuery.of(context).size.width *
-                                        0.25,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              )),
-                    );
+                    return tagShimmerWidget();
                   }
                 },
               ),
@@ -146,22 +131,25 @@ class _DisplayProductsByCategoryState extends State<DisplayProductsByCategory> {
                         return ProductCard(product: products[index]);
                       },
                     )
-                  : GridView.builder(
-                      itemCount: 20,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      padding: EdgeInsets.only(
-                          left: MediaQuery.of(context).size.width * 0.01),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              mainAxisExtent: 350,
-                              mainAxisSpacing: 0,
-                              crossAxisSpacing: 0),
-                      itemBuilder: (context, index) {
-                        return ProductShimmer().productShimmerVertical(context);
-                      },
-                    ),
+                  : noProductsHere
+                      ? NoProductsAlert()
+                      : GridView.builder(
+                          itemCount: 20,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          padding: EdgeInsets.only(
+                              left: MediaQuery.of(context).size.width * 0.01),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  mainAxisExtent: 350,
+                                  mainAxisSpacing: 0,
+                                  crossAxisSpacing: 0),
+                          itemBuilder: (context, index) {
+                            return ProductShimmer()
+                                .productShimmerVertical(context);
+                          },
+                        ),
               isLastPage
                   ? const Offstage()
                   : VisibilityDetector(
@@ -171,6 +159,10 @@ class _DisplayProductsByCategoryState extends State<DisplayProductsByCategory> {
                           // print("visible now");
                           currentPage++;
                           await getProductsByTags(selectedTags);
+                        }
+                        if (products.isEmpty) {
+                          isLastPage = true;
+                          setState(() {});
                         }
                       },
                       child: const Center(child: CircularProgressIndicator()),
@@ -216,6 +208,8 @@ class _DisplayProductsByCategoryState extends State<DisplayProductsByCategory> {
       // print(data.item2);
       isLastPage = data.item2;
       products.addAll(newProducts);
+    } else {
+      noProductsHere = true;
     }
     isLoading = false;
     setState(() {});
@@ -224,5 +218,28 @@ class _DisplayProductsByCategoryState extends State<DisplayProductsByCategory> {
 
   void createBannerAd() {
     banner = AdmobService().createBannerAd();
+  }
+
+  Widget tagShimmerWidget() {
+    return Wrap(
+      runSpacing: 0,
+      spacing: 0,
+      crossAxisAlignment: WrapCrossAlignment.start,
+      children: List.generate(
+          6,
+          (index) => Shimmer.fromColors(
+                baseColor: Colors.grey.shade300,
+                highlightColor: Colors.grey.shade100,
+                enabled: true,
+                child: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Container(
+                    height: 20,
+                    width: MediaQuery.of(context).size.width * 0.25,
+                    color: Colors.grey,
+                  ),
+                ),
+              )),
+    );
   }
 }

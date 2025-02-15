@@ -5,6 +5,7 @@ import 'package:sfh_app/screens/product/product_shimmer.dart';
 import 'package:sfh_app/services/product/product_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 import 'package:sfh_app/screens/product/product_card.dart';
+import 'package:sfh_app/shared/no_products_alert.dart';
 import 'package:tuple/tuple.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -23,6 +24,8 @@ class _DisplayProductsByTagsState extends State<DisplayProductsByTags> {
   bool isLastPage = false;
   bool isLoading = false;
   int currentPage = 1;
+
+  bool noProductsHere = false;
 
   @override
   void initState() {
@@ -53,22 +56,25 @@ class _DisplayProductsByTagsState extends State<DisplayProductsByTags> {
                       return ProductCard(product: products[index]);
                     },
                   )
-                : GridView.builder(
-                    itemCount: 20,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    padding: EdgeInsets.only(
-                        left: MediaQuery.of(context).size.width * 0.01),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            mainAxisExtent: 350,
-                            mainAxisSpacing: 0,
-                            crossAxisSpacing: 0),
-                    itemBuilder: (context, index) {
-                      return ProductShimmer().productShimmerVertical(context);
-                    },
-                  ),
+                : noProductsHere
+                    ? NoProductsAlert()
+                    : GridView.builder(
+                        itemCount: 20,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        padding: EdgeInsets.only(
+                            left: MediaQuery.of(context).size.width * 0.01),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                mainAxisExtent: 350,
+                                mainAxisSpacing: 0,
+                                crossAxisSpacing: 0),
+                        itemBuilder: (context, index) {
+                          return ProductShimmer()
+                              .productShimmerVertical(context);
+                        },
+                      ),
             isLastPage
                 ? const Offstage()
                 : VisibilityDetector(
@@ -78,6 +84,10 @@ class _DisplayProductsByTagsState extends State<DisplayProductsByTags> {
                         // print("visible now");
                         currentPage++;
                         await getProducts();
+                      }
+                      if (products.isEmpty) {
+                        isLastPage = true;
+                        setState(() {});
                       }
                     },
                     child: const Center(child: CircularProgressIndicator()),
@@ -104,7 +114,9 @@ class _DisplayProductsByTagsState extends State<DisplayProductsByTags> {
       products.addAll(data.item1);
       isLastPage = data.item2;
       isLoading = false;
-      setState(() {});
+    } else {
+      noProductsHere = true;
     }
+    setState(() {});
   }
 }
