@@ -206,38 +206,66 @@ class _WishlistState extends ConsumerState<Wishlist> {
                         Size(MediaQuery.of(context).size.width * 0.48, 40),
                     shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero)),
-                onPressed: () async {
-                  // Utility().enquireOnWhatsapp(widget.product);
-                  bool updated =
-                      await UserService().updateCart(product.id!, token!);
-                  if (updated) {
-                    final update =
-                        ref.refresh(getUserByTokenProvider(token!).future);
-                  } else {
-                    Fluttertoast.showToast(msg: "Cart not updated");
-                  }
+                onPressed: () {
+                  Utility().enquireOnWhatsapp(product, '');
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Expanded(
-                      child: Text(
-                        user.mycart == null || !user.mycart!.contains(product)
-                            ? "Add to "
-                            : "Remove from ",
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context)
-                            .textTheme
-                            .labelLarge!
-                            .copyWith(color: AppThemeShared.primaryColor),
-                      ),
+                    Text(
+                      "Enquire",
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelLarge!
+                          .copyWith(color: AppThemeShared.primaryColor),
                     ),
-                    Icon(
-                      Icons.shopping_bag,
-                      color: AppThemeShared.primaryColor,
-                    ),
+                    const SizedBox(width: 8),
+                    // CachedNetworkImage(
+                    //     height: 30,
+                    //     width: 25,
+                    //     imageUrl:
+                    //         "https://e7.pngegg.com/pngimages/551/579/png-clipart-whats-app-logo-whatsapp-logo-whatsapp-cdr-leaf-thumbnail.png")
                   ],
                 ))
+
+            // ElevatedButton(
+            //     style: ElevatedButton.styleFrom(
+            //         fixedSize:
+            //             Size(MediaQuery.of(context).size.width * 0.48, 40),
+            //         shape: const RoundedRectangleBorder(
+            //             borderRadius: BorderRadius.zero)),
+            //     onPressed: () async {
+            //       // Utility().enquireOnWhatsapp(widget.product);
+            //       bool updated =
+            //           await UserService().updateCart(product.id!, token!);
+            //       if (updated) {
+            //         final update =
+            //             ref.refresh(getUserByTokenProvider(token!).future);
+            //       } else {
+            //         Fluttertoast.showToast(msg: "Cart not updated");
+            //       }
+            //     },
+            //     child: Row(
+            //       mainAxisAlignment: MainAxisAlignment.center,
+            //       children: [
+            //         Expanded(
+            //           child: Text(
+            //             user.mycart == null || !user.mycart!.contains(product)
+            //                 ? "Add to "
+            //                 : "Remove from ",
+            //             textAlign: TextAlign.center,
+            //             style: Theme.of(context)
+            //                 .textTheme
+            //                 .labelLarge!
+            //                 .copyWith(color: AppThemeShared.primaryColor),
+            //           ),
+            //         ),
+            //         Icon(
+            //           Icons.shopping_bag,
+            //           color: AppThemeShared.primaryColor,
+            //         ),
+            //       ],
+            //     ))
           ],
         ),
       ),
