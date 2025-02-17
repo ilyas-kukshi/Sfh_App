@@ -134,54 +134,58 @@ class _ManageCategoriesState extends State<ManageCategories> {
       barrierDismissible: false,
       context: context,
       builder: (context) {
-        return Dialog(
-          child: Stack(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    GestureDetector(
-                      onTap: () => pickImage(),
-                      child: croppedFile != null
-                          ? Image.file(height: 150, File(croppedFile!.path))
-                          : CachedNetworkImage(
-                              height: 150,
-                              imageUrl: category.imageUri!,
-                              fit: BoxFit.contain,
-                            ),
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Dialog(
+              child: Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        GestureDetector(
+                          onTap: () => pickImage(),
+                          child: croppedFile != null
+                              ? Image.file(height: 150, File(croppedFile!.path))
+                              : CachedNetworkImage(
+                                  height: 150,
+                                  imageUrl: category.imageUri!,
+                                  fit: BoxFit.contain,
+                                ),
+                        ),
+                        const SizedBox(height: 10),
+                        AppThemeShared.textFormField(
+                            context: context, controller: name),
+                        AppThemeShared.sharedButton(
+                          context: context,
+                          height: 35,
+                          width: MediaQuery.of(context).size.width,
+                          buttonText: "Update",
+                          onTap: () {},
+                        )
+                      ],
                     ),
-                    const SizedBox(height: 10),
-                    AppThemeShared.textFormField(
-                        context: context, controller: name),
-                    AppThemeShared.sharedButton(
-                      context: context,
-                      height: 35,
-                      width: MediaQuery.of(context).size.width,
-                      buttonText: "Update",
-                      onTap: () {},
-                    )
-                  ],
-                ),
-              ),
-              Align(
-                alignment: Alignment.topRight,
-                child: Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: CircleAvatar(
-                    child: GestureDetector(
-                        onTap: () {
-                          croppedFile = null;
-                          file = null;
-                          Navigator.pop(context);
-                        },
-                        child: const Icon(Icons.close)),
                   ),
-                ),
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: CircleAvatar(
+                        child: GestureDetector(
+                            onTap: () {
+                              croppedFile = null;
+                              file = null;
+                              Navigator.pop(context);
+                            },
+                            child: const Icon(Icons.close)),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         );
       },
     );

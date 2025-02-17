@@ -3,6 +3,7 @@
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -60,12 +61,14 @@ class _AddCategoryState extends State<AddCategory> {
                             child: Center(
                               child: SizedBox(
                                 height: 150,
-                                child: Image.file(
-                                  File(
-                                    croppedFile!.path,
-                                  ),
-                                  fit: BoxFit.fill,
-                                ),
+                                child: kIsWeb
+                                    ? Image.network(croppedFile!.path)
+                                    : Image.file(
+                                        File(
+                                          croppedFile!.path,
+                                        ),
+                                        fit: BoxFit.fill,
+                                      ),
                               ),
                             ),
                           ),
@@ -214,6 +217,10 @@ class _AddCategoryState extends State<AddCategory> {
           IOSUiSettings(
             title: 'Cropper',
           ),
+          WebUiSettings(
+              context: context,
+              cropBoxResizable: true,
+              size: CropperSize(height: 300))
         ],
       );
 

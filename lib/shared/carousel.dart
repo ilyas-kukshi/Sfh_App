@@ -3,6 +3,7 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
@@ -84,12 +85,19 @@ class _CarouselState extends State<Carousel> {
                                     //   );
                                     // },
                                   ))
-                              : Image.file(
-                                  File(widget.files![index].path),
-                                  height: 250,
-                                  // color: Colors.pink,
-                                  fit: BoxFit.cover,
-                                )
+                              : kIsWeb
+                                  ? Image.network(
+                                      widget.files![index].path,
+                                      height: 250,
+                                      // color: Colors.pink,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Image.file(
+                                      File(widget.files![index].path),
+                                      height: 250,
+                                      // color: Colors.pink,
+                                      fit: BoxFit.cover,
+                                    )
                         ],
                       ),
                     ),

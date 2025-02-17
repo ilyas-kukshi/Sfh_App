@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sfh_app/models/category/category_model.dart';
@@ -11,6 +12,7 @@ import 'package:sfh_app/services/auth/auth_service.dart';
 import 'package:sfh_app/services/tags_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 import 'package:sfh_app/shared/constants.dart';
+import 'package:sfh_app/shared/dialogs.dart';
 import 'package:sfh_app/shared/utility.dart';
 
 class ManageTags extends StatefulWidget {
@@ -23,6 +25,9 @@ class ManageTags extends StatefulWidget {
 
 class _ManageTagsState extends State<ManageTags> {
   List<TagModel> tags = [];
+  bool addTagVisible = false;
+
+  TextEditingController tagController = TextEditingController();
 
   String? token;
   Future<void> getToken() async {
@@ -36,53 +41,113 @@ class _ManageTagsState extends State<ManageTags> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:
-          AppThemeShared.appBar(title: widget.category.name, context: context),
-      body: FutureBuilder(
-          future: getTags(widget.category.id!),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              return GridView(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3, mainAxisExtent: 190),
-                children: tags
-                    .map((tag) => Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: GestureDetector(
-                            onTap: () => Navigator.pushNamed(
-                                context, '/manageProducts', arguments: {
-                              "categoryId": widget.category.id!,
-                              "tagId": tag.id!
-                            }),
-                            child: Stack(
-                              children: [
-                                Card(
-                                  child: Column(
+      appBar: AppThemeShared.appBar(
+          title: widget.category.name,
+          context: context,
+          actions: [
+            GestureDetector(
+              onTap: () => setState(() {
+                addTagVisible = !addTagVisible;
+              }),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text("Add Tag",
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelLarge!
+                        .copyWith(color: Colors.white, fontSize: 16)),
+              ),
+            )
+          ]),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            addTagVisible
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      AppThemeShared.textFormField(
+                        context: context,
+                        hintText: "New tag name",
+                        widthPercent: 0.5,
+                        controller: tagController,
+                      ),
+                      const SizedBox(width: 10),
+                      AppThemeShared.sharedButton(
+                        context: context,
+                        width: 80,
+                        height: 55,
+                        buttonText: "Add",
+                        onTap: () async {
+                          DialogShared.loadingDialog(context, "Adding new Tag");
+                          bool added = await TagServices().addTag(TagModel(
+                              name: tagController.text,
+                              category: widget.category));
+
+                          if (added) {
+                            Fluttertoast.showToast(msg: "Tag added");
+                          } else {
+                            Fluttertoast.showToast(msg: "Tag not added");
+                          }
+                          tagController.clear();
+                          Navigator.pop(context);
+                          setState(() {});
+                        },
+                      )
+                    ],
+                  )
+                : const Offstage(),
+            FutureBuilder(
+                future: getTags(widget.category.id!),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return GridView(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3, mainAxisExtent: 190),
+                      children: tags
+                          .map((tag) => Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: GestureDetector(
+                                  onTap: () => Navigator.pushNamed(
+                                      context, '/manageProducts', arguments: {
+                                    "categoryId": widget.category.id!,
+                                    "tagId": tag.id!
+                                  }),
+                                  child: Stack(
                                     children: [
-                                      tag.imageUri != null
-                                          ? CachedNetworkImage(
-                                              fit: BoxFit.fill,
-                                              height: 130,
-                                              imageUrl: tag.imageUri!)
-                                          : const Offstage(),
-                                      const SizedBox(height: 10),
-                                      Text(tag.name)
+                                      Card(
+                                        child: Column(
+                                          children: [
+                                            tag.imageUri != null
+                                                ? CachedNetworkImage(
+                                                    fit: BoxFit.fill,
+                                                    height: 130,
+                                                    imageUrl: tag.imageUri!)
+                                                : const Offstage(),
+                                            const SizedBox(height: 10),
+                                            Text(tag.name)
+                                          ],
+                                        ),
+                                      ),
+                                      editIcon(context, tag)
                                     ],
                                   ),
                                 ),
-                                editIcon(context, tag)
-                              ],
-                            ),
-                          ),
-                        ))
-                    .toList(),
-              );
-            } else {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          }),
+                              ))
+                          .toList(),
+                    );
+                  } else {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                }),
+          ],
+        ),
+      ),
     );
   }
 

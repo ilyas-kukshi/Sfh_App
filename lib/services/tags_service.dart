@@ -47,4 +47,21 @@ class TagServices {
       return false;
     }
   }
+
+  Future<bool> addTag(TagModel tag) async {
+    try {
+      var response = await http.post(Uri.parse("${Constants.baseUrl}/tag/add"),
+          body: {"name": tag.name, "category": tag.category.id});
+
+      if (response.statusCode == 201) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      // print(error);
+      Fluttertoast.showToast(msg: error.toString());
+      return false;
+    }
+  }
 }

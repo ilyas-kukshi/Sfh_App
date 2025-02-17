@@ -130,7 +130,11 @@ class Utility {
 
     if (compressed != null) {
       try {
-        await ref.putFile(File(compressed.path));
+        if (kIsWeb) {
+          ref.putData(await compressed.readAsBytes());
+        } else {
+          await ref.putFile(File(compressed.path));
+        }
       } on FirebaseException catch (error) {
         Fluttertoast.showToast(msg: error.toString());
         // print(error);
@@ -146,17 +150,21 @@ class Utility {
   Future<XFile?> testCompressAndGetFile(
       CroppedFile file, String targetPath) async {
     try {
-      XFile? result = await FlutterImageCompress.compressAndGetFile(
-          file.path,
-          targetPath.endsWith("png")
-              ? "${targetPath}compressed.png"
-              : "${targetPath}compressed.jpeg",
-          quality: 70,
-          format: targetPath.endsWith("png")
-              ? CompressFormat.png
-              : CompressFormat.jpeg
-          // rotate: 180,
-          );
+      XFile? result;
+      if (kIsWeb) {
+      } else {
+        result = await FlutterImageCompress.compressAndGetFile(
+            file.path,
+            targetPath.endsWith("png")
+                ? "${targetPath}compressed.png"
+                : "${targetPath}compressed.jpeg",
+            quality: 70,
+            format: targetPath.endsWith("png")
+                ? CompressFormat.png
+                : CompressFormat.jpeg
+            // rotate: 180,
+            );
+      }
 
       if (result != null) {
         // print(File(result.path).lengthSync());

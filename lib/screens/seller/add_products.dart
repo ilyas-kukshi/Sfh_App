@@ -347,6 +347,9 @@ class _AddProductsState extends ConsumerState<AddProducts> {
         Navigator.pop(context);
         Fluttertoast.showToast(msg: "Product Not added");
       }
+    } else {
+      Fluttertoast.showToast(msg: "Product not added");
+      Navigator.pop(context);
     }
   }
 
@@ -377,6 +380,10 @@ class _AddProductsState extends ConsumerState<AddProducts> {
             IOSUiSettings(
               title: 'Cropper',
             ),
+            WebUiSettings(
+                context: context,
+                cropBoxResizable: true,
+                size: CropperSize(height: 300))
           ],
         );
         if (curr != null) {
