@@ -43,7 +43,7 @@ class _StoryPageState extends State<StoryPage> {
   }
 
   void _startTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 8), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
       if (!_isPaused) {
         if (_currentIndex < stories.length - 1) {
           moveForward();
@@ -129,24 +129,37 @@ class _StoryPageState extends State<StoryPage> {
   @override
   Widget build(BuildContext context) {
     // AdmobService().createInterstitialAd();
-    return SafeArea(
-        top: true,
-        child: Scaffold(
-            backgroundColor: const Color(0xff28282B),
-            body: FutureBuilder(
-                future: getStories(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    return PageView.builder(
-                        controller: _pageController,
-                        itemCount: stories.length,
-                        itemBuilder: (context, index) {
-                          ProductModel currProduct = stories[index];
-                          return Stack(
-                            alignment: Alignment.bottomCenter,
-                            children: [
-                              Center(
-                                child: GestureDetector(
+    return Scaffold(
+        backgroundColor: const Color(0xff28282B),
+        body: Column(
+          children: [
+            Container(
+              height: 50,
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.3),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: categoryCard(categories[currCategoryIndex]),
+            ),
+            Expanded(
+              child: FutureBuilder(
+                  future: getStories(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return PageView.builder(
+                          controller: _pageController,
+                          itemCount: stories.length,
+                          itemBuilder: (context, index) {
+                            ProductModel currProduct = stories[index];
+                            return Column(
+                              children: [
+                                GestureDetector(
                                     onTapUp: (tapUpDetails) {
                                       onTapStory(tapUpDetails);
                                     },
@@ -155,20 +168,8 @@ class _StoryPageState extends State<StoryPage> {
                                         _isPaused = !_isPaused;
                                       });
                                     },
-                                    // onLongPressCancel: ,
-                                    // onVerticalDragDown: (_) {
-                                    //   checkForAd();
-                                    //   Navigator.pop(context);
-                                    // },
-                                    // onLongPress: () {
-                                    //   setState(() {
-                                    //     _isPaused = !_isPaused;
-                                    //   });
-                                    // },
                                     onHorizontalDragEnd: (details) {
                                       if (details.primaryVelocity! > 0) {
-                                        //check for if ad is to be shown
-
                                         // Swipe right, move to the previous story
                                         if (_currentIndex > 0) {
                                           moveBack();
@@ -182,99 +183,40 @@ class _StoryPageState extends State<StoryPage> {
                                         // checkForAd();
                                       }
                                     },
-                                    child: FutureBuilder<void>(
-                                      future: precacheImage(
-                                        NetworkImage(
-                                            currProduct.imageUris.first),
-                                        context,
-                                      ),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.waiting) {
-                                          // Image is still loading
-                                          return const CircularProgressIndicator();
-                                        } else if (snapshot.hasError) {
-                                          // Error loading the image
-                                          return const Text(
-                                              'Error loading image');
-                                        } else {
-                                          // Image loaded successfully
-                                          return Image.network(
-                                            currProduct.imageUris.first,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height -
-                                                kToolbarHeight,
-                                            width: MediaQuery.of(context)
-                                                .size
-                                                .width,
-                                            fit: BoxFit.fill,
-                                          );
-                                        }
+                                    child: CachedNetworkImage(
+                                      imageUrl: currProduct.imageUris.first,
+                                      height:
+                                          MediaQuery.of(context).size.height -
+                                              (180),
+                                      width: MediaQuery.of(context).size.width,
+                                      fit: BoxFit.scaleDown,
+                                      progressIndicatorBuilder:
+                                          (context, url, progress) {
+                                        return SizedBox(
+                                          
+                                          child: CircularProgressIndicator(
+                                            value: progress.progress,
+                                            
+                                          ),
+                                        );
                                       },
                                     )),
-                              ),
-                              Align(
-                                alignment: Alignment.topLeft,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Container(
-                                    //     margin:
-                                    //         const EdgeInsets.only(bottom: 4),
-                                    //     decoration: BoxDecoration(
-                                    //       color: Colors.black.withOpacity(0.3),
-                                    //       borderRadius:
-                                    //           BorderRadius.circular(12),
-                                    //     ),
-                                    //     child: Row(
-                                    //       mainAxisSize: MainAxisSize.min,
-                                    //       children: List.generate(
-                                    //         stories.length,
-                                    //         (index) => StoryProgressBar(
-                                    //           totalDuration:
-                                    //               10, // Set the total duration for each story
-                                    //           currentIndex: _currentIndex,
-                                    //           storyIndex: index,
-                                    //         ),
-                                    //       ),
-                                    //     )),
-                                    Container(
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                        // color:
-                                        //     Colors.black.withOpacity(0.5),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color:
-                                                Colors.black.withOpacity(0.3),
-                                            spreadRadius: 2,
-                                            blurRadius: 5,
-                                            offset: const Offset(0, 3),
-                                          ),
-                                        ],
-                                      ),
-                                      child: categoryCard(currProduct.category),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Align(
-                                  alignment: Alignment.bottomCenter,
-                                  // decoration: BoxDecoration(boxShadow: []),
-                                  child: productDetails(currProduct)),
-                            ],
-                          );
-                        },
-                        onPageChanged: (index) {
-                          setState(() {
-                            _currentIndex = index;
+                                productDetails(currProduct)
+                              ],
+                            );
+                          },
+                          onPageChanged: (index) {
+                            setState(() {
+                              _currentIndex = index;
+                            });
                           });
-                        });
-                  } else {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                })));
+                    } else {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                  }),
+            ),
+          ],
+        ));
   }
 
   Future<void> getStories() async {
@@ -285,22 +227,6 @@ class _StoryPageState extends State<StoryPage> {
       stories = [...fetched];
     }
   }
-
-  // checkForAd() async {
-  //   int? views = await getStoryViewCount();
-  //   if (views != null) {
-  //     if (views >= 8) {
-  //       if (interstitialAd != null) {
-  //         interstitialAd!.show();
-  //         updateStoryViewCount(0);
-  //       }
-  //     } else {
-  //       updateStoryViewCount(++views);
-  //     }
-  //   } else {
-  //     updateStoryViewCount(1);
-  //   }
-  // }
 
   Widget categoryCard(CategoryModel category) {
     return GestureDetector(
@@ -331,7 +257,22 @@ class _StoryPageState extends State<StoryPage> {
                 color: Colors.white,
                 decoration: TextDecoration.underline,
                 decorationColor: Colors.white),
-          ))
+          )),
+          Spacer(),
+          GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                decoration:
+                    BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                child: Icon(
+                  Icons.close,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+          )
         ],
       ),
     );
@@ -349,6 +290,7 @@ class _StoryPageState extends State<StoryPage> {
 
   productDetails(ProductModel currProduct) {
     return Container(
+        height: 130,
         width: MediaQuery.of(context).size.width,
         padding: const EdgeInsets.all(16.0),
         // color: Colors.black.withOpacity(0.5),
