@@ -10,7 +10,7 @@ class Constants {
       'https://2factor.in/API/V1/a7df023c-d584-11ee-8cbb-0200cd936042/SMS';
   // static String baseUrl = 'http://192.168.205.186:8080'; // phone hotspot
 
-  static String whatsappNumber = "919987655052";
+  static String whatsappNumber = "919619854536";
 
   static String admin = "Admin";
   static String seller = "Seller";
