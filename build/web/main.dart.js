@@ -101827,7 +101827,7 @@ l=A.k(g)
 k=p.Q
 j=p.x
 i=p.y
-h="https://wa.me/919987655052?text="+A.jt(B.cC,"Products: "+l+"\n Address:"+k+"\n Final Price: "+(j-i)+"\n Total Discount: "+i+" \n\n I would like to buy these products",B.a2,!0)
+h="https://wa.me/919619854536?text="+A.jt(B.cC,"Products: "+l+"\n Address:"+k+"\n Final Price: "+(j-i)+"\n Total Discount: "+i+" \n\n I would like to buy these products",B.a2,!0)
 s=6
 return A.r(A.a7K(A.bn(h,0,null)),$async$$0)
 case 6:s=b?4:5
@@ -101902,7 +101902,7 @@ $0(){var s=0,r=A.q(t.H),q=1,p,o=this,n,m,l,k,j
 var $async$$0=A.m(function(a,b){if(a===1){p=b
 s=q}while(true)switch(s){case 0:q=3
 l=o.a
-n="https://wa.me/919987655052?text="+A.jt(B.cC,"Order id: "+A.k(l.gbj(l))+"\n Your query:",B.a2,!0)
+n="https://wa.me/919619854536?text="+A.jt(B.cC,"Order id: "+A.k(l.gbj(l))+"\n Your query:",B.a2,!0)
 s=8
 return A.r(A.a7K(A.bn(n,0,null)),$async$$0)
 case 8:s=b?6:7
@@ -105072,7 +105072,7 @@ j=a.gcF()
 i=a.gdu()
 h=a.gdu()
 g=B.d.ao(a.gdu()/a.gcF()*100)
-n="https://wa.me/919987655052?text="+A.jt(B.cC,"Product: "+k+"\n Name: "+l+",\n Price: "+(j-i)+"\n Discount given: "+h+"("+g+"%})\n"+b,B.a2,!0)
+n="https://wa.me/919619854536?text="+A.jt(B.cC,"Product: "+k+"\n Name: "+l+",\n Price: "+(j-i)+"\n Discount given: "+h+"("+g+"%})\n"+b,B.a2,!0)
 s=8
 return A.r(A.a7K(A.bn(n,0,null)),$async$qD)
 case 8:s=d?6:7
