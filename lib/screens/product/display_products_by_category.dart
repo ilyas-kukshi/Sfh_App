@@ -50,6 +50,7 @@ class _DisplayProductsByCategoryState extends State<DisplayProductsByCategory> {
     super.initState();
     // getProducts(widget.category.id!);
     // createBannerAd();
+    getCategoryProducts();
   }
 
   @override
@@ -182,12 +183,23 @@ class _DisplayProductsByCategoryState extends State<DisplayProductsByCategory> {
     data = await TagServices().getByCategory(categoryId);
     // getProductsByTags(selectedTags);
 
-    if (!selectedTagsPopulated) {
-      selectedTags = data;
-      selectedTagsPopulated = true;
-      getProductsByTags(selectedTags);
-    }
+    // if (!selectedTagsPopulated) {
+    //   selectedTags = data;
+    //   selectedTagsPopulated = true;
+    //   getProductsByTags(selectedTags);
+    // }
     return data;
+  }
+
+  getCategoryProducts() async {
+    if (isLoading) {
+      return [];
+    }
+    isLoading = true;
+    products = await ProductServices().getByCategory(widget.category.id!);
+
+    isLoading = false;
+    setState(() {});
   }
 
   getProductsByTags(List<TagModel> tags) async {
@@ -195,14 +207,23 @@ class _DisplayProductsByCategoryState extends State<DisplayProductsByCategory> {
       return [];
     }
     isLoading = true;
+
+    if (tags.isEmpty) {
+      products = await ProductServices().getByCategory(widget.category.id!);
+
+      isLoading = false;
+      setState(() {});
+      return;
+    }
+
     List<String> selectedtagIds = [];
     for (var element in tags) {
       selectedtagIds.add(element.id!);
     }
     // DialogShared.loadingDialog(context, "Applying Filters");
     List<ProductModel> newProducts = [];
-    Tuple2 data = await ProductServices()
-        .getByCategoryAndTag(widget.category.id!, selectedtagIds, currentPage);
+    Tuple2 data =
+        await ProductServices().getByTags(selectedtagIds, currentPage);
     if (data.item1.isNotEmpty) {
       newProducts = data.item1;
       // print(data.item2);
