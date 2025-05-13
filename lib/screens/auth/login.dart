@@ -8,6 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sfh_app/services/auth/auth_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
+import 'package:sfh_app/shared/loading_dialog.dart';
 import 'package:sfh_app/shared/utility.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sms_autofill/sms_autofill.dart';
@@ -106,8 +107,10 @@ class _LoginState extends ConsumerState<Login> {
                       fontWeight: FontWeight.bold),
                   onTap: () async {
                     final valid = formkey.currentState!.validate();
+                    reusableLoadingDialog(context);
                     if (valid) {
                       if (phoneNumber.text == "9111991119") {
+                        Navigator.pop(context);
                         Navigator.pushNamed(context, '/otp', arguments: {
                           "phoneNumber": phoneNumber.text,
                           "otp": "911119"
@@ -120,11 +123,13 @@ class _LoginState extends ConsumerState<Login> {
                             await AuthService().getOtp(phoneNumber.text);
 
                         if (otp != null) {
+                          Navigator.pop(context);
                           Navigator.pushNamed(context, '/otp', arguments: {
                             "phoneNumber": phoneNumber.text,
                             "otp": otp
                           });
                         } else {
+                          Navigator.pop(context);
                           Fluttertoast.showToast(
                               msg: "Failed to fetch OTP. Please try again.");
                         }

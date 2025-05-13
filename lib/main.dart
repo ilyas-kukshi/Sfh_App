@@ -105,7 +105,6 @@ void main() async {
     },
   );
 
-
   runApp(ProviderScope(parent: globalProviderContainer, child: const MyApp()));
 }
 
@@ -146,7 +145,23 @@ class MyApp extends StatelessWidget with WidgetsBindingObserver {
                       fontFamily: 'Roboto', color: Color(0xff0D1B2A))),
             )),
         onGenerateRoute: _routing,
-        home: const SplashScreen());
+        home: LayoutBuilder(builder: (context, constraints) {
+          return constraints.maxWidth > 600
+              ? Scaffold(
+                  backgroundColor: AppThemeShared.primaryColor,
+                  body: const Center(
+                    child: Text(
+                      "This app is not available on Pc/laptop. Please use a mobile browser.",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                )
+              : SplashScreen();
+        }));
   }
 
   @override

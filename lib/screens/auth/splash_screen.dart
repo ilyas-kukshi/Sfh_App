@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sfh_app/services/auth/auth_service.dart';
@@ -27,12 +28,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppThemeShared.primaryColor,
+        backgroundColor: AppThemeShared.primaryColor,
     );
   }
 
   navigateTo() async {
     String? token = await Utility().getStringSf("token");
+
     print(token);
     if (token == null) {
       Navigator.pushNamed(context, '/login');

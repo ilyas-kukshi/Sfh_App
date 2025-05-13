@@ -85,102 +85,105 @@ class _DashboardMainState extends State<DashboardMain> {
   @override
   Widget build(BuildContext context) {
     signature();
-    return WillPopScope(
-      onWillPop: () {
-        if (!kIsWeb) {
-          DialogShared.doubleButtonDialog(context, "Are you sure you to exit",
-              () {
-            if (Platform.isAndroid) {
-              SystemNavigator.pop();
-            }
-          }, () {
-            Navigator.pop(context);
-          });
-        }
+    return LayoutBuilder(builder: (context, constraints) {
+      return WillPopScope(
+        onWillPop: () {
+          if (!kIsWeb) {
+            DialogShared.doubleButtonDialog(context, "Are you sure you to exit",
+                () {
+              if (Platform.isAndroid) {
+                SystemNavigator.pop();
+              }
+            }, () {
+              Navigator.pop(context);
+            });
+          }
 
-        return Future.value(false);
-      },
-      child: SafeArea(
-          top: false,
-          child: Scaffold(
-            key: globalKey,
-            drawer: const DashboardDrawer(),
-            body: NestedScrollView(
-              headerSliverBuilder: (context, innerBoxIsScrolled) {
-                return [
-                  SliverAppBar(
-                    title: Column(
-                      children: [
-                        const SizedBox(height: 10),
-                        Text("Sakina Fashion House",
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleLarge!
-                                .copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                    leading: drawerIcon(),
-                    bottom: PreferredSize(
-                        preferredSize: const Size.fromHeight(50),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: searchBar(),
-                        )),
-                    backgroundColor: AppThemeShared.primaryColor,
-                    pinned: true,
-                    // forceElevated: innerBoxIsScrolled,
-                  ),
-                ];
-              },
-              body: search.text.isNotEmpty
-                  ? CustomScrollView(
-                      slivers: [suggestionListView()],
-                    )
-                  : SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+          return Future.value(false);
+        },
+        child: SafeArea(
+            top: false,
+            child: Scaffold(
+              key: globalKey,
+              drawer: const DashboardDrawer(),
+              body: NestedScrollView(
+                headerSliverBuilder: (context, innerBoxIsScrolled) {
+                  return [
+                    SliverAppBar(
+                      title: Column(
                         children: [
-                          FutureBuilder(
-                              future: getMainBanners(),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.done) {
-                                  return MainBannerCarousel(
-                                      mainBanners: mainBanners);
-                                } else {
-                                  return const Offstage();
-                                }
-                              }),
-                          const DiverseFindsBanner(),
-                          FutureBuilder<void>(
-                            future: getFestivals(),
-                            builder: (context, snapshot) {
-                              if (festivals.isEmpty) {
-                                return const Offstage();
-                              } else {
-                                return ListView.builder(
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  padding: const EdgeInsets.all(0),
-                                  itemCount: festivals.length,
-                                  itemBuilder: (context, index) =>
-                                      FestivalBanners(
-                                          festival: festivals[index]),
-                                );
-                              }
-                            },
-                          ),
-                          const NewArrivalsBanner(),
-                          const PopularCategoriesBanner(),
-                          token != null ? recentlyViewd() : const Offstage()
+                          const SizedBox(height: 10),
+                          Text("Sakina Fashion House",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge!
+                                  .copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold)),
                         ],
                       ),
+                      leading: drawerIcon(),
+                      bottom: PreferredSize(
+                          preferredSize: const Size.fromHeight(50),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: searchBar(),
+                          )),
+                      backgroundColor: AppThemeShared.primaryColor,
+                      pinned: true,
+                      // forceElevated: innerBoxIsScrolled,
                     ),
-            ),
-          )),
-    );
+                  ];
+                },
+                body: search.text.isNotEmpty
+                    ? CustomScrollView(
+                        slivers: [suggestionListView()],
+                      )
+                    : SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            FutureBuilder(
+                                future: getMainBanners(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.done) {
+                                    return MainBannerCarousel(
+                                        mainBanners: mainBanners);
+                                  } else {
+                                    return const Offstage();
+                                  }
+                                }),
+                            const DiverseFindsBanner(),
+                            FutureBuilder<void>(
+                              future: getFestivals(),
+                              builder: (context, snapshot) {
+                                if (festivals.isEmpty) {
+                                  return const Offstage();
+                                } else {
+                                  return ListView.builder(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    padding: const EdgeInsets.all(0),
+                                    itemCount: festivals.length,
+                                    itemBuilder: (context, index) =>
+                                        FestivalBanners(
+                                            festival: festivals[index]),
+                                  );
+                                }
+                              },
+                            ),
+                            const NewArrivalsBanner(),
+                            const PopularCategoriesBanner(),
+                            token != null ? recentlyViewd() : const Offstage()
+                          ],
+                        ),
+                      ),
+              ),
+            )),
+      );
+    });
   }
 
   // Widget newArrivals() {

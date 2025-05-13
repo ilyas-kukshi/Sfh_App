@@ -88,7 +88,6 @@ class _ProductCardState extends State<ProductCard> {
                           .copyWith(fontSize: 18),
                     ),
                   ),
-
                   // GestureDetector(
                   //   onTap: () {
                   //     Uri deeplink = Utility().buildDeepLink(
