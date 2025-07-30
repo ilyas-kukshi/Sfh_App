@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 
 class DialogShared {
-  static loadingDialog(BuildContext context, String text) {
+  static void loadingDialog(BuildContext context, String text) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -35,7 +35,7 @@ class DialogShared {
     );
   }
 
-  static doubleButtonDialog(BuildContext context, String text,
+  static void doubleButtonDialog(BuildContext context, String text,
       void Function()? yesClicked, void Function()? noClicked) {
     showDialog(
       context: context,
@@ -78,7 +78,7 @@ class DialogShared {
     );
   }
 
-  static singleButtonDialog({
+  static void singleButtonDialog({
     required BuildContext context,
     required String text,
     required String buttonText,

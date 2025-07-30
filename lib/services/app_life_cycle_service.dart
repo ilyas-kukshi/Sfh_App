@@ -52,7 +52,7 @@ class AppLifecycleService with WidgetsBindingObserver {
     // print(views);
   }
 
-  getPhoneNumber() async {
+  Future<void> getPhoneNumber() async {
     phoneNumber = await Utility().getPhoneNumberSF();
     // print(phoneNumber);
   }

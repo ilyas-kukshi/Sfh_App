@@ -56,7 +56,7 @@ class _AddProductsState extends ConsumerState<AddProducts> {
     getToken();
   }
 
-  getToken() async {
+  Future<void> getToken() async {
     token = await Utility().getStringSf("token");
     // print(phoneNumber);
   }
@@ -318,7 +318,7 @@ class _AddProductsState extends ConsumerState<AddProducts> {
     );
   }
 
-  addProduct(UserModel user) async {
+  Future<void> addProduct(UserModel user) async {
     List<String>? imageUrls = await Utility().uploadImages(croppedFiles);
     if (imageUrls != null) {
       bool added = await ProductServices().add(
@@ -360,7 +360,7 @@ class _AddProductsState extends ConsumerState<AddProducts> {
     return null;
   }
 
-  pickImage() async {
+  Future<void> pickImage() async {
     files = await picker.pickMultiImage();
 
     if (files.isNotEmpty) {

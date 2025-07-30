@@ -191,7 +191,7 @@ class _ManageCategoriesState extends State<ManageCategories> {
     );
   }
 
-  pickImage() async {
+  Future<void> pickImage() async {
     file = await picker.pickImage(source: ImageSource.gallery);
 
     if (file != null) {

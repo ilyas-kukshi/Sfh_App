@@ -26,7 +26,7 @@ class _WishlistState extends ConsumerState<Wishlist> {
     getToken();
   }
 
-  getToken() async {
+  Future<void> getToken() async {
     token = await Utility().getStringSf("token");
     // print(phoneNumber);
   }
@@ -276,7 +276,7 @@ class _WishlistState extends ConsumerState<Wishlist> {
     return await UserService().updateWishlist(productId, userId);
   }
 
-  remove(ProductModel product, UserModel user) {
+  Future remove(ProductModel product, UserModel user) {
     return showModalBottomSheet(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
       context: context,

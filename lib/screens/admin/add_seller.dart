@@ -103,7 +103,7 @@ class _AddSellerState extends ConsumerState<AddSeller> {
     );
   }
 
-  addSeller() async {
+  Future<void> addSeller() async {
     bool added = await SellerService().add(UserModel(
         phoneNumber: "91${phoneNumber.text}",
         name: name.text,

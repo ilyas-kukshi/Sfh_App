@@ -8,12 +8,12 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:sfh_app/models/category/category_model.dart';
 import 'package:sfh_app/models/products/product_model.dart';
 import 'package:sfh_app/models/tags/tag_model.dart';
+import 'package:sfh_app/screens/product/product_card.dart';
 import 'package:sfh_app/screens/product/product_shimmer.dart';
 import 'package:sfh_app/services/admob_service.dart';
 import 'package:sfh_app/services/product/product_service.dart';
 import 'package:sfh_app/services/tags_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
-import 'package:sfh_app/screens/product/product_card.dart';
 import 'package:sfh_app/shared/no_products_alert.dart';
 import 'package:sfh_app/shared/tag_selection.dart';
 import 'package:shimmer/shimmer.dart';
@@ -191,9 +191,9 @@ class _DisplayProductsByCategoryState extends State<DisplayProductsByCategory> {
     return data;
   }
 
-  getCategoryProducts() async {
+  Future<void> getCategoryProducts() async {
     if (isLoading) {
-      return [];
+      return;
     }
     isLoading = true;
     products = await ProductServices().getByCategory(widget.category.id!);
@@ -202,9 +202,9 @@ class _DisplayProductsByCategoryState extends State<DisplayProductsByCategory> {
     setState(() {});
   }
 
-  getProductsByTags(List<TagModel> tags) async {
+  Future<void> getProductsByTags(List<TagModel> tags) async {
     if (isLoading) {
-      return [];
+      return;
     }
     isLoading = true;
 

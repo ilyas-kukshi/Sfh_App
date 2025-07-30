@@ -37,7 +37,7 @@ class SearchService {
       return suggestions;
     } catch (error) {
       Fluttertoast.showToast(msg: error.toString());
-      print(error);
+      // print(error);
     }
     return [];
   }

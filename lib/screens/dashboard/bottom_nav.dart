@@ -4,7 +4,6 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:sfh_app/screens/category/view_categories.dart';
 import 'package:sfh_app/screens/dashboard/dashboard_main.dart';
 import 'package:sfh_app/screens/settings.dart';
-import 'package:sfh_app/screens/user/my_cart.dart';
 import 'package:sfh_app/services/admob_service.dart';
 import 'package:sfh_app/services/app_life_cycle_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
@@ -93,7 +92,7 @@ class _BottomNavState extends State<BottomNav> {
     });
   }
 
-  createBannerAd() {
+  void createBannerAd() {
     try {
       banner = AdmobService().createBannerAd();
       setState(() {});

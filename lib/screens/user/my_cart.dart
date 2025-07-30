@@ -21,7 +21,7 @@ class _MyCartState extends State<MyCart> {
   int price = 0;
   int discount = 0;
   List<ProductModel> products = [];
-  getToken() async {
+  Future<void> getToken() async {
     token = await Utility().getStringSf("token");
   }
 

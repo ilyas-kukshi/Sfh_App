@@ -113,7 +113,7 @@ class _OtpState extends ConsumerState<Otp> {
     );
   }
 
-  checIfUserExists() async {
+  Future<void> checIfUserExists() async {
     String? token =
         await AuthService().login("91${widget.authDetails["phoneNumber"]}");
 

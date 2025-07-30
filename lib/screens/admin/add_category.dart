@@ -171,7 +171,7 @@ class _AddCategoryState extends State<AddCategory> {
   //   return await ref.getDownloadURL();
   // }
 
-  addCategory() async {
+  Future<void> addCategory() async {
     String? imageUrl = await Utility().uploadImage(croppedFile!);
 
     if (imageUrl != null) {
@@ -199,7 +199,7 @@ class _AddCategoryState extends State<AddCategory> {
     }
   }
 
-  pickImage() async {
+  Future<void> pickImage() async {
     file = await picker.pickImage(source: ImageSource.gallery);
 
     if (file != null) {

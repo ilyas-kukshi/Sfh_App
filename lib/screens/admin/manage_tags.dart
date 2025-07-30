@@ -291,7 +291,7 @@ class _UpdateTagDialogState extends State<UpdateTagDialog> {
     );
   }
 
-  updateTag(String? imageUrl) async {
+  Future<void> updateTag(String? imageUrl) async {
     bool updated = await TagServices().update(TagModel(
         id: widget.tag.id,
         imageUri: imageUrl ?? '',
@@ -303,7 +303,7 @@ class _UpdateTagDialogState extends State<UpdateTagDialog> {
     }
   }
 
-  pickImage() async {
+  Future<void> pickImage() async {
     file = await picker.pickImage(source: ImageSource.gallery);
 
     if (file != null) {

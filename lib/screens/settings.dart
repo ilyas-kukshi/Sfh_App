@@ -25,11 +25,11 @@ class _SettingsState extends ConsumerState<Settings> {
     getToken();
   }
 
-  getToken() async {
+  Future<void> getToken() async {
     token = await Utility().getStringSf("token");
   }
 
-  logoutUser() async {
+  Future<void> logoutUser() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     pref.clear();
   }

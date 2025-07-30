@@ -179,7 +179,7 @@ class _ManageProductsState extends ConsumerState<ManageProducts> {
     );
   }
 
-  deleteProduct() async {
+  Future<void> deleteProduct() async {
     bool deleted = await ProductServices().delete(selectedProductIds);
     if (deleted) {
       Navigator.pop(context);
@@ -312,7 +312,7 @@ class _MoveCategoryDialogState extends ConsumerState<MoveCategoryDialog> {
     );
   }
 
-  moveProducts() async {
+  Future<void> moveProducts() async {
     bool updated = await SellerService().moveProducts(widget.selectedProductIds,
         selectedCategory!.id!, selectedTags.map((e) => e.id!).toList());
 

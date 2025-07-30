@@ -101,7 +101,7 @@ class _SellerLoginState extends ConsumerState<SellerLogin> {
     );
   }
 
-  login() async {
+  Future<void> login() async {
     // UserModel? user = await SellerService().login(
     //     AuthModel(phoneNumber: phoneNumber.text, password: password.text));
     final signin = ref.read(signInProvider(

@@ -1,6 +1,5 @@
 // ignore_for_file: must_be_immutable
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,7 +7,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sfh_app/models/products/product_model.dart';
 import 'package:sfh_app/screens/product/variants_view.dart';
 import 'package:sfh_app/services/auth/auth_service.dart';
-import 'package:sfh_app/services/order/order_service.dart';
 import 'package:sfh_app/services/user_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
 import 'package:sfh_app/shared/carousel.dart';
@@ -122,7 +120,7 @@ class _ProductDetailsState extends ConsumerState<ViewProduct> {
                   onTap: () {
                     Uri deeplink = Utility().buildDeepLink(
                         '/product', {"productId": widget.product.id!});
-                    Share.share("$deeplink");
+                    SharePlus.instance.share(ShareParams(text: "$deeplink"));
                   },
                   child: Align(
                     alignment: Alignment.topRight,
@@ -366,14 +364,14 @@ class _ProductDetailsState extends ConsumerState<ViewProduct> {
 
   final platform = const MethodChannel('upi_payment/init');
 
-  Future<void> initiateUpiPayment(String upiLink) async {
-    try {
-      final response =
-          await platform.invokeMethod('init', {'upiLink': upiLink});
-    } on PlatformException catch (e) {
-      print("Error: ${e.message}");
-    }
-  }
+  // Future<void> initiateUpiPayment(String upiLink) async {
+  //   try {
+  //     final response =
+  //         await platform.invokeMethod('init', {'upiLink': upiLink});
+  //   } on PlatformException catch (e) {
+  //     print("Error: ${e.message}");
+  //   }
+  // }
 
   Widget favouriteIcon() {
     return FutureBuilder(

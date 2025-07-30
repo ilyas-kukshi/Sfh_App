@@ -120,7 +120,7 @@ class _MainBannerCarouselState extends State<MainBannerCarousel> {
     );
   }
 
-  navigateTo(MainBannerModel mainBanner) {
+  void navigateTo(MainBannerModel mainBanner) {
     if (mainBanner.categories!.isNotEmpty) {
       Navigator.pushNamed(context, '/displayProductsByCategory',
           arguments: mainBanner.categories!.first);

@@ -176,12 +176,12 @@ class _LoginState extends ConsumerState<Login> {
     );
   }
 
-  checkUser() async {
+  Future<void> checkUser() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     if (pref.getString("phoneNumber") != null) {
       Navigator.pushNamed(context, '/bottomNav', arguments: 0);
     }
   }
 
-  sendOtp() async {}
+  Future<void> sendOtp() async {}
 }

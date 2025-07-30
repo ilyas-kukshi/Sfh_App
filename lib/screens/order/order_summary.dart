@@ -204,14 +204,14 @@ class _OrderSummaryState extends ConsumerState<OrderSummary> {
 
   final platform = const MethodChannel('upi_payment/init');
 
-  Future<void> initiateUpiPayment(String upiLink) async {
-    try {
-      final response =
-          await platform.invokeMethod('init', {'upiLink': upiLink});
-    } on PlatformException catch (e) {
-      print("Error: ${e.message}");
-    }
-  }
+  // Future<void> initiateUpiPayment(String upiLink) async {
+  //   try {
+  //     final response =
+  //         await platform.invokeMethod('init', {'upiLink': upiLink});
+  //   } on PlatformException catch (e) {
+  //     print("Error: ${e.message}");
+  //   }
+  // }
 
   Widget productCard(ProductModel product) {
     return Card(

@@ -13,7 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class StoryPage extends StatefulWidget {
   final Map<String, dynamic> data;
 
-  const StoryPage({Key? key, required this.data}) : super(key: key);
+  const StoryPage({super.key, required this.data});
 
   @override
   _StoryPageState createState() => _StoryPageState();
@@ -91,7 +91,7 @@ class _StoryPageState extends State<StoryPage> {
     }
   }
 
-  moveBack() async {
+  Future<void> moveBack() async {
     // await checkForAd();
 
     if (_currentIndex > 0) {
@@ -107,7 +107,7 @@ class _StoryPageState extends State<StoryPage> {
     }
   }
 
-  moveForward() async {
+  Future<void> moveForward() async {
     // await checkForAd();
     if (_currentIndex < stories.length - 1) {
       _currentIndex++;
@@ -117,7 +117,7 @@ class _StoryPageState extends State<StoryPage> {
         curve: Curves.easeInOut,
       );
 
-      if (_timer != null && _timer.isActive) {
+      if (_timer.isActive) {
         _timer.cancel();
       }
 
@@ -193,10 +193,8 @@ class _StoryPageState extends State<StoryPage> {
                                       progressIndicatorBuilder:
                                           (context, url, progress) {
                                         return SizedBox(
-                                          
                                           child: CircularProgressIndicator(
                                             value: progress.progress,
-                                            
                                           ),
                                         );
                                       },
@@ -283,12 +281,12 @@ class _StoryPageState extends State<StoryPage> {
     return sharedPref.getInt('storyView');
   }
 
-  updateStoryViewCount(int views) async {
+  Future<void> updateStoryViewCount(int views) async {
     SharedPreferences sharedPref = await SharedPreferences.getInstance();
     sharedPref.setInt("storyView", views);
   }
 
-  productDetails(ProductModel currProduct) {
+  Container productDetails(ProductModel currProduct) {
     return Container(
         height: 130,
         width: MediaQuery.of(context).size.width,
@@ -390,13 +388,13 @@ class _StoryPageState extends State<StoryPage> {
                 // Called when an impression occurs on the ad.
 
                 onAdImpression: (ad) {
-                  print("Impression made");
+                  // print("Impression made");
                 },
                 // Called when the ad failed to show full screen content.
                 onAdFailedToShowFullScreenContent: (ad, err) {
                   // Dispose the ad here to free resources.
                   // ad.dispose();
-                  print('Failed to load interstitial ad: $err');
+                  // print('Failed to load interstitial ad: $err');
                 },
                 // Called when the ad dismissed full screen content.
                 onAdDismissedFullScreenContent: (ad) {
@@ -411,7 +409,7 @@ class _StoryPageState extends State<StoryPage> {
           onAdFailedToLoad: (LoadAdError error) {
             // debugPrint('InterstitialAd failed to load: $error');
             // print(error.toString());
-            print(error);
+            // print(error);
             // Fluttertoast.showToast(msg: error.toString());
           },
         ));
@@ -424,11 +422,11 @@ class StoryProgressBar extends StatelessWidget {
   final int storyIndex;
 
   const StoryProgressBar({
-    Key? key,
+    super.key,
     required this.totalDuration,
     required this.currentIndex,
     required this.storyIndex,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

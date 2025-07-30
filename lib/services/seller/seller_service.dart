@@ -7,7 +7,6 @@ import 'package:sfh_app/models/products/product_model.dart';
 import 'package:sfh_app/models/seller_register/seller_register_model.dart';
 import 'package:sfh_app/models/user/user_model.dart';
 import 'package:sfh_app/shared/constants.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sfh_app/shared/utility.dart';
 
 // part 'seller_service.g.dart';

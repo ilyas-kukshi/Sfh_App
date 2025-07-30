@@ -8,7 +8,7 @@ class AppThemeShared {
 
   static Color textColor = const Color(0xff0D1B2A);
 
-  static appBar(
+  static AppBar appBar(
       {required String title,
       required BuildContext context,
       bool automaticallyImplyLeading = false,
@@ -48,7 +48,7 @@ class AppThemeShared {
     );
   }
 
-  static sharedButton({
+  static ElevatedButton sharedButton({
     required BuildContext context,
     double height = 60,
     bool percent = false,
@@ -87,7 +87,7 @@ class AppThemeShared {
     //     onPressed: onPressed,
   }
 
-  static textFormField(
+  static SizedBox textFormField(
       {required BuildContext context,
       String labelText = '',
       String hintText = '',
@@ -203,7 +203,7 @@ class AppThemeShared {
     );
   }
 
-  static sharedRaisedButton({
+  static ConstrainedBox sharedRaisedButton({
     required BuildContext context,
     required double height,
     required double width,
@@ -225,7 +225,7 @@ class AppThemeShared {
     );
   }
 
-  static sharedDropDown({
+  static Container sharedDropDown({
     required BuildContext context,
     required List<String> items,
     required void Function(String?) onChanged,

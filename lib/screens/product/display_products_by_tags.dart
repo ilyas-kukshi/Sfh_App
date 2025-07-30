@@ -98,9 +98,9 @@ class _DisplayProductsByTagsState extends State<DisplayProductsByTags> {
     );
   }
 
-  getProducts() async {
+  Future<void> getProducts() async {
     if (isLoading) {
-      return [];
+      return;
     }
     isLoading = true;
     if (tagIds.isEmpty) {

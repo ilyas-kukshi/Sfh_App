@@ -18,7 +18,7 @@ class NotificationService {
 
   String sendMessageUrl = "https://fcm.googleapis.com/fcm/send";
 
-  requestPermission() async {
+  Future<void> requestPermission() async {
     FirebaseMessaging.instance.requestPermission(sound: true);
   }
 
@@ -51,13 +51,13 @@ class NotificationService {
     return token;
   }
 
-  isTokenRefresh() async {
+  Future<void> isTokenRefresh() async {
     messaging.onTokenRefresh.listen((event) {
       event.toString();
     });
   }
 
-  catchNotification() {
+  void catchNotification() {
     //When a new notification message is received
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       // Display notifications received when app is in foreground
@@ -75,7 +75,7 @@ class NotificationService {
     });
   }
 
-  static handleNotificationPayload(
+  static Future<void> handleNotificationPayload(
       RemoteMessage message, GlobalKey<NavigatorState> navigatorKey) async {
     // Fluttertoast.showToast(msg: message.data.toString());
 
@@ -133,7 +133,7 @@ class NotificationService {
   //       .show(1, "Test", "Notification", platformChannelSpecifics, payload: "");
   // }
 
-  sendToAll() async {
+  Future<void> sendToAll() async {
     try {
       var response = await http.post(Uri.parse(sendMessageUrl),
           headers: {

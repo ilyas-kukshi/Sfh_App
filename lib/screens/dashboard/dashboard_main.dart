@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -70,7 +69,7 @@ class _DashboardMainState extends State<DashboardMain> {
     NotificationService().isTokenRefresh();
   }
 
-  getMainBanners() async {
+  Future<void> getMainBanners() async {
     mainBanners = await DashboardService().getMainBanners();
   }
 
@@ -78,7 +77,7 @@ class _DashboardMainState extends State<DashboardMain> {
     festivals = await FestivalService().getAll();
   }
 
-  getToken() async {
+  Future<void> getToken() async {
     token = await Utility().getStringSf("token");
   }
 
@@ -86,9 +85,10 @@ class _DashboardMainState extends State<DashboardMain> {
   Widget build(BuildContext context) {
     signature();
     return LayoutBuilder(builder: (context, constraints) {
-      return WillPopScope(
-        onWillPop: () {
-          if (!kIsWeb) {
+      return PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) {
+          if (!didPop) {
             DialogShared.doubleButtonDialog(context, "Are you sure you to exit",
                 () {
               if (Platform.isAndroid) {
@@ -98,8 +98,6 @@ class _DashboardMainState extends State<DashboardMain> {
               Navigator.pop(context);
             });
           }
-
-          return Future.value(false);
         },
         child: SafeArea(
             top: false,
@@ -396,7 +394,7 @@ class _DashboardMainState extends State<DashboardMain> {
                     )));
   }
 
-  navigateFromSuggestion(SearchSuggestionsModel suggestion) {
+  void navigateFromSuggestion(SearchSuggestionsModel suggestion) {
     switch (suggestion.type) {
       case Constants.category:
         Navigator.pushNamed(context, '/displayProductsByCategory',

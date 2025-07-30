@@ -83,7 +83,7 @@ class _SellerRegisterState extends State<SellerRegister> {
     );
   }
 
-  register() async {
+  Future<void> register() async {
     bool registered = await SellerService().register(SellerRegisterModel(
         name: name.text,
         businessName: businessName.text,

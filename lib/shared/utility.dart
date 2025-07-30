@@ -180,7 +180,7 @@ class Utility {
     return null;
   }
 
-  deleteImageFromRef(List<dynamic> imageUrls) async {
+  Future<void> deleteImageFromRef(List<dynamic> imageUrls) async {
     for (String imageUrl in imageUrls) {
       await FirebaseStorage.instance.refFromURL(imageUrl).delete();
     }
@@ -193,7 +193,7 @@ class Utility {
 
   //deep links related Utility methods
 
-  catchDeepLinks(BuildContext context) async {
+  Future<void> catchDeepLinks(BuildContext context) async {
     if (kIsWeb) {
       final Uri currentUri = Uri.base;
       if (currentUri.hasQuery) {
@@ -256,7 +256,7 @@ class Utility {
   }
 
   // To use with enquire button
-  enquireOnWhatsapp(ProductModel product, String? text) async {
+  Future<void> enquireOnWhatsapp(ProductModel product, String? text) async {
     try {
       Uri deeplink =
           Utility().buildDeepLink('/product', {"productId": product.id!});
@@ -274,7 +274,7 @@ class Utility {
     }
   }
 
-  setStringSF(String key, String value) async {
+  Future<void> setStringSF(String key, String value) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString(key, value);

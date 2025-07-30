@@ -125,7 +125,7 @@ class ProductServices {
       }
     } catch (error) {
       Fluttertoast.showToast(msg: error.toString());
-      print(error);
+      // print(error);
     }
     return null;
   }
@@ -150,7 +150,7 @@ class ProductServices {
       }
     } catch (error) {
       Fluttertoast.showToast(msg: error.toString());
-      print(error);
+      // print(error);
     }
     return [];
   }
@@ -298,7 +298,7 @@ class ProductServices {
         Fluttertoast.showToast(msg: data["error"]);
       }
     } catch (error) {
-      print(error);
+      // print(error);
       Fluttertoast.showToast(msg: error.toString());
     }
     return false;

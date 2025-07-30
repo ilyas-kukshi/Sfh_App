@@ -33,7 +33,7 @@ class AddressService {
         return true;
       } else {
         Fluttertoast.showToast(msg: "Not created");
-        print('Failed to add address. Error: ${response.body}');
+        // print('Failed to add address. Error: ${response.body}');
         return false;
       }
     } catch (error) {

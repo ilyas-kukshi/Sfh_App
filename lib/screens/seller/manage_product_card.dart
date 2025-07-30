@@ -154,7 +154,7 @@ class _ManageProductCardState extends State<ManageProductCard> {
     );
   }
 
-  updateProduct(ProductModel product) async {
+  Future<void> updateProduct(ProductModel product) async {
     DialogShared.loadingDialog(context, "Updating");
     bool updated = await ProductServices().updateProduct(product);
     Navigator.pop(context);

@@ -122,7 +122,7 @@ class _VariantsViewState extends State<VariantsView> {
     );
   }
 
-  getVariants() async {
+  Future<List> getVariants() async {
     if (widget.product.variantGroup != null) {
       variants =
           await ProductServices().getVariants(widget.product.variantGroup!);
@@ -130,7 +130,7 @@ class _VariantsViewState extends State<VariantsView> {
     return [];
   }
 
-  variantsShimmer() {
+  SizedBox variantsShimmer() {
     return SizedBox(
       height: 120,
       child: ListView(

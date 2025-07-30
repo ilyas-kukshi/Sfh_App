@@ -9,7 +9,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:sfh_app/models/category/category_model.dart';
 import 'package:sfh_app/models/products/product_model.dart';
 import 'package:sfh_app/models/tags/tag_model.dart';
-import 'package:sfh_app/services/category/category_services.dart';
 import 'package:sfh_app/services/product/product_service.dart';
 import 'package:sfh_app/services/tags_service.dart';
 import 'package:sfh_app/shared/app_theme_shared.dart';
@@ -63,7 +62,6 @@ class _EditProductState extends ConsumerState<EditProduct> {
 
   @override
   Widget build(BuildContext context) {
-    final allCategories = ref.watch(allCategoriesProvider);
     return Scaffold(
       appBar: AppThemeShared.appBar(title: "Edit Product", context: context),
       body: SingleChildScrollView(
@@ -226,7 +224,7 @@ class _EditProductState extends ConsumerState<EditProduct> {
     return null;
   }
 
-  updateProduct(ProductModel product) async {
+  Future<void> updateProduct(ProductModel product) async {
     DialogShared.loadingDialog(context, "Updating");
     bool updated = await ProductServices().updateProduct(product);
     Navigator.pop(context);
@@ -237,7 +235,7 @@ class _EditProductState extends ConsumerState<EditProduct> {
     }
   }
 
-  savedImages() {
+  Wrap savedImages() {
     return Wrap(
       children: widget.product.imageUris
           .map((e) => Column(
@@ -280,7 +278,7 @@ class _EditProductState extends ConsumerState<EditProduct> {
     );
   }
 
-  getTags(CategoryModel category) async {
+  Future<void> getTags(CategoryModel category) async {
     tags = await TagServices().getByCategory(category.id!);
     setState(() {});
   }

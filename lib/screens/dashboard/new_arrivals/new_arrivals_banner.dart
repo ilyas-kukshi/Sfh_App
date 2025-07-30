@@ -71,14 +71,8 @@ class _NewArrivalsBannerState extends State<NewArrivalsBanner> {
                   itemBuilder: (context, index) {
                     return Padding(
                       padding: const EdgeInsets.all(2.0),
-                      child: Container(
-                        // width:
-                        //     MediaQuery.of(context).size.width * 0.47,
-                        // decoration: BoxDecoration(
-                        //     border: Border.all(color: Colors.grey)),
-                        child: ProductCard(
-                          product: products[index],
-                        ),
+                      child: ProductCard(
+                        product: products[index],
                       ),
                     );
                   },
